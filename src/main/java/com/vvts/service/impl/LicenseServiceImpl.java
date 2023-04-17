@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Random;
 
 /**
  * @auther kul.paudel
@@ -25,10 +26,14 @@ public class LicenseServiceImpl implements LicenseService {
         // build entity
         License license = License.builder()
                 .id(licenseDto.getId())
-                .licenseNo(licenseDto.getLicenseNo())
                 .citizenshipNo(licenseDto.getCitizenshipNo())
                 .district(licenseDto.getDistrict())
                 .validDate(new SimpleDateFormat("yyyy-MM-dd").parse(licenseDto.getValidDate())).build();
+        if (licenseDto.getId() == null) {
+            license.setLicenseNo(generateLicenseNumber());
+        } else {
+            license.setLicenseNo(licenseDto.getLicenseNo());
+        }
         // save entity
         license = licenseRepo.save(license);
         licenseDto.setId(license.getId());
@@ -45,5 +50,20 @@ public class LicenseServiceImpl implements LicenseService {
             result = false;
         }
         return result;
+    }
+
+    private String generateLicenseNumber() {
+        Random random = new Random();
+        int num1 = random.nextInt(100);
+        int num2 = random.nextInt(100);
+        int num3 = random.nextInt(100000000);
+        String value = String.format("%02d-%02d-%08d", num1, num2, num3);
+
+        // check give value is already exits or not
+        if (licenseRepo.getCountOfLicenseByLicenseNumber(value) > 0) {
+            // again generate new once until unique is not generate
+            generateLicenseNumber();
+        }
+        return value;
     }
 }
