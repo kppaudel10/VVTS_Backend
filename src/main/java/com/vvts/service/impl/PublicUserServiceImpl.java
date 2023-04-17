@@ -26,10 +26,12 @@ public class PublicUserServiceImpl implements PublicUserService {
                 .name(publicUserDto.getName())
                 .address(publicUserDto.getAddress())
                 .email(publicUserDto.getEmail())
+                .mobileNumber(publicUserDto.getMobileNumber())
                 .isEnable(false)
                 .password(new PasswordEncoder().getEncryptedPassword(publicUserDto.getPassword()))
                 .build();
-        publicUserRepo.save(publicUser);
+       publicUser = publicUserRepo.save(publicUser);
+        publicUserDto.setId(publicUser.getId());
         return publicUserDto;
     }
 }

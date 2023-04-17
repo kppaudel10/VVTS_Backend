@@ -16,7 +16,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "public_user")
+@Table(name = "public_user",uniqueConstraints = {
+        @UniqueConstraint(name = "UniqueEmailAddressPublicUser", columnNames = {"email"}),
+        @UniqueConstraint(name = "UniqueMobileNumberPublicUser",columnNames = {"mobile_number"})})
 public class PublicUser {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "public_user_GEN")
@@ -41,6 +43,5 @@ public class PublicUser {
 
     @Column(name = "is_enable")
     private Boolean isEnable;
-
 
 }

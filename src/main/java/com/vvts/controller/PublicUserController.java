@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class PublicUserController {
 
-    private PublicUserService publicUserService;
+    private final PublicUserService publicUserService;
 
     @PostMapping("/save")
     private GlobalApiResponse savePublicUser(@RequestBody PublicUserDto publicUserDto){
