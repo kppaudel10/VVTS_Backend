@@ -44,4 +44,8 @@ public class PublicUser {
     @Column(name = "is_enable")
     private Boolean isEnable;
 
+    @ManyToOne
+    @JoinColumn(name = "role_id",nullable = false)
+    private Role role;
+
 }

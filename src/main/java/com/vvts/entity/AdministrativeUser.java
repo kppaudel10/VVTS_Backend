@@ -35,7 +35,8 @@ public class AdministrativeUser {
     @Column(nullable = false)
     private String password;
 
-    @Column(name = "Role",nullable = false)
-    private AdministrativeUserRole administrativeUserRole;
+    @ManyToOne
+    @JoinColumn(name = "role_id",nullable = false)
+    private Role role;
 
 }
