@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @created at 2023-04-08
  */
 @RestController
-@RequestMapping("/api/public/user")
+@RequestMapping("/api/public-user")
 @RequiredArgsConstructor
 public class PublicUserController {
 

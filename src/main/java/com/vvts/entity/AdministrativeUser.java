@@ -1,11 +1,11 @@
 package com.vvts.entity;
 
-import com.vvts.enums.AdministrativeUserRole;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
 
 /**
  * @auther kul.paudel
@@ -29,14 +29,14 @@ public class AdministrativeUser {
 
     private String address;
 
-    @Column(name = "user_name",nullable = false)
+    @Column(name = "user_name", nullable = false)
     private String userName;
 
     @Column(nullable = false)
     private String password;
 
     @ManyToOne
-    @JoinColumn(name = "role_id",nullable = false)
+    @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
 }

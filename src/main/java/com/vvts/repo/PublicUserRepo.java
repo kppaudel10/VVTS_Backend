@@ -11,4 +11,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PublicUserRepo extends JpaRepository<PublicUser,Integer> {
+    PublicUser getPublicUserByMobileNumber(String mobileNumber);
 }

@@ -1,12 +1,19 @@
 package com.vvts.entity;
 
-import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
 
 /**
  * @auther kul.paudel
  * @created at 2023-04-18
  */
 @Entity
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "role")
 public class Role {
     @Id

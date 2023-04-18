@@ -1,10 +1,11 @@
 package com.vvts.entity;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
 
 /**
  * @auther kul.paudel
@@ -43,9 +44,5 @@ public class PublicUser {
 
     @Column(name = "is_enable")
     private Boolean isEnable;
-
-    @ManyToOne
-    @JoinColumn(name = "role_id",nullable = false)
-    private Role role;
 
 }

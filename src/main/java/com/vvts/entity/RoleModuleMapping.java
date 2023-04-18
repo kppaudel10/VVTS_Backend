@@ -1,6 +1,6 @@
 package com.vvts.entity;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 
 /**
  * @auther kul.paudel

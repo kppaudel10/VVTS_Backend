@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
  */
 
 @Repository
-public interface AdministrativeUserRepo extends JpaRepository<AdministrativeUser,Integer> {
+public interface AdministrativeUserRepo extends JpaRepository<AdministrativeUser, Integer> {
+    AdministrativeUser getAdministrativeUserByUserName(String userName);
 
 }

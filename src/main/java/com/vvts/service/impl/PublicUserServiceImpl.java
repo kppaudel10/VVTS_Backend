@@ -4,8 +4,8 @@ import com.vvts.dto.PublicUserDto;
 import com.vvts.entity.PublicUser;
 import com.vvts.repo.PublicUserRepo;
 import com.vvts.service.PublicUserService;
-import com.vvts.utiles.PasswordEncoder;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
@@ -18,6 +18,8 @@ public class PublicUserServiceImpl implements PublicUserService {
 
     private final PublicUserRepo publicUserRepo;
 
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
     @Override
     public PublicUserDto savePublicUser(PublicUserDto publicUserDto) {
         // build entity
@@ -28,9 +30,9 @@ public class PublicUserServiceImpl implements PublicUserService {
                 .email(publicUserDto.getEmail())
                 .mobileNumber(publicUserDto.getMobileNumber())
                 .isEnable(false)
-                .password(new PasswordEncoder().getEncryptedPassword(publicUserDto.getPassword()))
+                .password(bCryptPasswordEncoder.encode(publicUserDto.getPassword()))
                 .build();
-       publicUser = publicUserRepo.save(publicUser);
+        publicUserRepo.save(publicUser);
         publicUserDto.setId(publicUser.getId());
         return publicUserDto;
     }
