@@ -16,8 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 
-import javax.servlet.Filter;
-
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity

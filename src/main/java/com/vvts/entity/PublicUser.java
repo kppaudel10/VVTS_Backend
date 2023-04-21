@@ -30,7 +30,6 @@ public class PublicUser {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
     private String address;
 
     @Column(nullable = false)
@@ -44,5 +43,9 @@ public class PublicUser {
 
     @Column(name = "is_enable")
     private Boolean isEnable;
+
+    @Column(name = "profile_image_url")
+    private String profileImageUrl;
+
 
 }

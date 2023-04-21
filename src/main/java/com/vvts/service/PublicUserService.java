@@ -1,6 +1,8 @@
 package com.vvts.service;
 
-import com.vvts.dto.PublicUserDto;
+import com.vvts.dto.PublicUserBasicDataDto;
+
+import java.io.IOException;
 
 /**
  * @auther kul.paudel
@@ -9,6 +11,6 @@ import com.vvts.dto.PublicUserDto;
 
 public interface PublicUserService {
 
-    PublicUserDto savePublicUser(PublicUserDto publicUserDto);
+    PublicUserBasicDataDto savePublicUser(PublicUserBasicDataDto publicUserBasicDataDto) throws IOException;
 
 }

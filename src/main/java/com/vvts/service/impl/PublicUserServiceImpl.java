@@ -1,12 +1,14 @@
 package com.vvts.service.impl;
 
-import com.vvts.dto.PublicUserDto;
+import com.vvts.dto.PublicUserBasicDataDto;
 import com.vvts.entity.PublicUser;
 import com.vvts.repo.PublicUserRepo;
 import com.vvts.service.PublicUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
 
 /**
  * @auther kul.paudel
@@ -21,19 +23,20 @@ public class PublicUserServiceImpl implements PublicUserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
-    public PublicUserDto savePublicUser(PublicUserDto publicUserDto) {
+    public PublicUserBasicDataDto savePublicUser(PublicUserBasicDataDto publicUserBasicDataDto) throws IOException {
         // build entity
         PublicUser publicUser = PublicUser.builder()
-                .id(publicUserDto.getId())
-                .name(publicUserDto.getName())
-                .address(publicUserDto.getAddress())
-                .email(publicUserDto.getEmail())
-                .mobileNumber(publicUserDto.getMobileNumber())
+                .id(publicUserBasicDataDto.getId())
+                .name(publicUserBasicDataDto.getName())
+                .email(publicUserBasicDataDto.getEmail())
+                .mobileNumber(publicUserBasicDataDto.getMobileNumber())
                 .isEnable(false)
-                .password(bCryptPasswordEncoder.encode(publicUserDto.getPassword()))
+                .password(bCryptPasswordEncoder.encode(publicUserBasicDataDto.getPassword()))
                 .build();
         publicUserRepo.save(publicUser);
-        publicUserDto.setId(publicUser.getId());
-        return publicUserDto;
+        publicUserBasicDataDto.setId(publicUser.getId());
+
+        return publicUserBasicDataDto;
     }
+
 }

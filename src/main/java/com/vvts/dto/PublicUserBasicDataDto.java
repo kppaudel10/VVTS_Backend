@@ -12,20 +12,16 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PublicUserDto {
+public class PublicUserBasicDataDto {
 
     private Integer id;
 
     private String name;
-
-    private String address;
 
     private String email;
 
     private String mobileNumber;
 
     private String password;
-
-    private Boolean isEnable;
 
 }
