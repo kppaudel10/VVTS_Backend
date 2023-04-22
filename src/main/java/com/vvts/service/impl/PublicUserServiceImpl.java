@@ -8,8 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-
 /**
  * @auther kul.paudel
  * @created at 2023-04-08
@@ -23,7 +21,24 @@ public class PublicUserServiceImpl implements PublicUserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
-    public PublicUserBasicDataDto savePublicUser(PublicUserBasicDataDto publicUserBasicDataDto) throws IOException {
+    public PublicUserBasicDataDto savePublicUser(PublicUserBasicDataDto publicUserBasicDataDto) {
+        if (publicUserBasicDataDto.getId() == null) {
+            // check mobile number or email already exits or not
+            if (publicUserRepo.getMobileNumberCount(publicUserBasicDataDto.getMobileNumber()) > 0) {
+                throw new RuntimeException("Mobile Number: " + publicUserBasicDataDto.getMobileNumber() + " already exists");
+            }
+            if (publicUserRepo.getEmailCount(publicUserBasicDataDto.getEmail()) > 0) {
+                throw new RuntimeException("Email Address : " + publicUserBasicDataDto.getEmail() + " already exists");
+            }
+        } else {
+            // check mobile number or email already exits or not
+            if (publicUserRepo.getMobileNumberCount(publicUserBasicDataDto.getMobileNumber()) > 1) {
+                throw new RuntimeException("Mobile Number: " + publicUserBasicDataDto.getMobileNumber() + " already exists");
+            }
+            if (publicUserRepo.getEmailCount(publicUserBasicDataDto.getEmail()) > 1) {
+                throw new RuntimeException("Email Address : " + publicUserBasicDataDto.getEmail() + " already exists");
+            }
+        }
         // build entity
         PublicUser publicUser = PublicUser.builder()
                 .id(publicUserBasicDataDto.getId())

@@ -47,5 +47,4 @@ public class PublicUser {
     @Column(name = "profile_image_url")
     private String profileImageUrl;
 
-
 }
