@@ -47,6 +47,9 @@ public class Users {
     @Column(name = "profile_image_url")
     private String profileImageUrl;
 
+    @Column(name = "citizenship_no")
+    private String citizenshipNo;
+
     @ManyToOne
     @JoinColumn(name = "role_id", referencedColumnName = "id")
     private Role role;

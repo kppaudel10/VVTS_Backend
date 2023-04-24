@@ -2,6 +2,7 @@ package com.vvts.service.impl;
 
 import com.vvts.dto.LicenseDto;
 import com.vvts.entity.License;
+import com.vvts.projection.LicenseProjection;
 import com.vvts.repo.LicenseRepo;
 import com.vvts.service.LicenseService;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -23,6 +25,11 @@ public class LicenseServiceImpl implements LicenseService {
 
     @Override
     public LicenseDto saveLicense(LicenseDto licenseDto) throws ParseException {
+
+        // check citizenship number already exits or not
+        if (licenseRepo.getCitizenshipNumberCount(licenseDto.getCitizenshipNo()) > 0) {
+            throw new RuntimeException("Citizenship number : " + licenseDto.getCitizenshipNo() + " already exists");
+        }
         // build entity
         License license = License.builder()
                 .id(licenseDto.getId())
@@ -51,6 +58,11 @@ public class LicenseServiceImpl implements LicenseService {
             result = false;
         }
         return result;
+    }
+
+    @Override
+    public List<LicenseProjection> getAllLicenseList() {
+        return licenseRepo.getLicenseDetailList();
     }
 
     private String generateLicenseNumber() {

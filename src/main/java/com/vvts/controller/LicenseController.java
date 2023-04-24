@@ -24,14 +24,21 @@ public class LicenseController {
 
     @PostMapping("/save")
     private GlobalApiResponse saveLicenseDetail(@RequestBody LicenseDto licenseDto) throws ParseException {
-        return new GlobalApiResponse(messageSource.getMessage("license.save",null,null),
-                true,licenseService.saveLicense(licenseDto));
+        return new GlobalApiResponse(messageSource.getMessage("license.save", null, null),
+                true, licenseService.saveLicense(licenseDto));
     }
 
     @DeleteMapping("/delete/{id}")
-    private GlobalApiResponse deleteLicense(@PathVariable Integer id ) throws ParseException {
-        return new GlobalApiResponse(messageSource.getMessage("license.delete",null,null),
-                true,licenseService.deleteLicense(id));
+    private GlobalApiResponse deleteLicense(@PathVariable Integer id) throws ParseException {
+        return new GlobalApiResponse(messageSource.getMessage("license.delete", null, null),
+                true, licenseService.deleteLicense(id));
     }
+
+    @GetMapping("/list")
+    private GlobalApiResponse getAllLicenseDetailsList() {
+        return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null),
+                true, licenseService.getAllLicenseList());
+    }
+
 
 }

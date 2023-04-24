@@ -6,6 +6,7 @@ import com.vvts.repo.AccessTokenRepo;
 import com.vvts.service.UsersService;
 import com.vvts.utiles.GlobalApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -32,7 +33,7 @@ public class LoginController {
 
     private final UsersService usersService;
 
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final MessageSource messageSource;
 
     @PostMapping("/login")
     public GlobalApiResponse login(@RequestBody JwtRequestModel requestModel) throws Exception {
@@ -63,7 +64,7 @@ public class LoginController {
 
     @PostMapping("/api/logout")
     public GlobalApiResponse userLogout() {
-        return new GlobalApiResponse("user.logout", true, usersService.logoutUser());
+        return new GlobalApiResponse(messageSource.getMessage("user.logout",null,null), true, usersService.logoutUser());
     }
 
 }
