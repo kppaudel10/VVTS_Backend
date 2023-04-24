@@ -37,6 +37,7 @@ public class LicenseServiceImpl implements LicenseService {
         // save entity
         license = licenseRepo.save(license);
         licenseDto.setId(license.getId());
+        licenseDto.setLicenseNo(license.getLicenseNo());
         return licenseDto;
 
     }

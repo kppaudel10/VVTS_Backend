@@ -14,6 +14,7 @@ import java.text.ParseException;
  * @created at 2023-04-17
  */
 @RequiredArgsConstructor
+@RestController
 @RequestMapping("/api/license/")
 public class LicenseController {
 

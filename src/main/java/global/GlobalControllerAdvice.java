@@ -9,6 +9,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -50,6 +51,13 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
     @Bean
     protected GlobalApiResponse handleRunTimeException(RuntimeException ex, WebRequest request) {
         return new GlobalApiResponse(ex.getMessage(), false, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler({BadCredentialsException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @Bean
+    protected GlobalApiResponse handleBadCredentialsException(BadCredentialsException ex, WebRequest request) {
+        return new GlobalApiResponse(ex.getMessage(), false, HttpStatus.BAD_REQUEST);
     }
 
 }

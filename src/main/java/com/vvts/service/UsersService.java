@@ -9,8 +9,9 @@ import java.io.IOException;
  * @created at 2023-04-08
  */
 
-public interface PublicUserService {
+public interface UsersService {
 
     PublicUserBasicDataDto savePublicUser(PublicUserBasicDataDto publicUserBasicDataDto) throws IOException;
+    Boolean logoutUser();
 
 }

@@ -1,7 +1,7 @@
 package com.vvts.controller;
 
 import com.vvts.dto.PublicUserBasicDataDto;
-import com.vvts.service.PublicUserService;
+import com.vvts.service.UsersService;
 import com.vvts.utiles.GlobalApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,12 +18,12 @@ import java.io.IOException;
 @RestController
 @RequestMapping("/api/public-user")
 @RequiredArgsConstructor
-public class PublicUserController {
+public class UsersController {
 
-    private final PublicUserService publicUserService;
+    private final UsersService usersService;
 
     @PostMapping("/save")
     private GlobalApiResponse savePublicUser(@RequestBody PublicUserBasicDataDto publicUserBasicDataDto) throws IOException {
-        return new GlobalApiResponse("User Save Successfully",true,publicUserService.savePublicUser(publicUserBasicDataDto));
+        return new GlobalApiResponse("User Save Successfully",true, usersService.savePublicUser(publicUserBasicDataDto));
     }
 }

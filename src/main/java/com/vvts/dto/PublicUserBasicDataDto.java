@@ -24,4 +24,7 @@ public class PublicUserBasicDataDto {
 
     private String password;
 
+    private String roleName;
+
+
 }

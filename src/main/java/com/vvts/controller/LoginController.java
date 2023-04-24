@@ -1,16 +1,17 @@
 package com.vvts.controller;
 
 import com.vvts.config.jwt.*;
+import com.vvts.entity.AccessToken;
+import com.vvts.repo.AccessTokenRepo;
+import com.vvts.service.UsersService;
 import com.vvts.utiles.GlobalApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @auther kul.paudel
@@ -27,6 +28,12 @@ public class LoginController {
 
     private final AuthenticationManager authenticationManager;
 
+    private final AccessTokenRepo accessTokenRepo;
+
+    private final UsersService usersService;
+
+    private final BCryptPasswordEncoder passwordEncoder;
+
     @PostMapping("/login")
     public GlobalApiResponse login(@RequestBody JwtRequestModel requestModel) throws Exception {
         try {
@@ -35,13 +42,28 @@ public class LoginController {
                             requestModel.getPassword())
             );
         } catch (DisabledException disabledException) {
-            throw new Exception("USER_DISABLED", disabledException);
+            throw new RuntimeException("USER_DISABLED");
+//            return new GlobalApiResponse(disabledException.getMessage(), false, requestModel);
         } catch (BadCredentialsException badCredentialsException) {
-            throw new Exception("INVALID_CREDENTIALS", badCredentialsException);
+            throw new RuntimeException(badCredentialsException.getMessage());
+//            return new GlobalApiResponse(badCredentialsException.getMessage(), false, requestModel);
         }
         final UserDetails userDetails = jwtUserDetailsService.loadUserByUsername(requestModel.getUsername());
         final String jwtToken = tokenManager.generateJwtToken(userDetails);
+        // save access token into database
+        AccessToken accessToken = accessTokenRepo.getAccessTokenExistsOrNot(userDetails.getUsername());
+        if (accessToken == null) {
+            accessToken = new AccessToken();
+        }
+        accessToken.setUserName(userDetails.getUsername());
+        accessToken.setAccessToken(jwtToken);
+        accessTokenRepo.save(accessToken);
         return new GlobalApiResponse("token", true, new JwtResponseModel(jwtToken));
+    }
+
+    @PostMapping("/api/logout")
+    public GlobalApiResponse userLogout() {
+        return new GlobalApiResponse("user.logout", true, usersService.logoutUser());
     }
 
 }

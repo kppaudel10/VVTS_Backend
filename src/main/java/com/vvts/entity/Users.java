@@ -17,10 +17,10 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "public_user",uniqueConstraints = {
+@Table(name = "users", uniqueConstraints = {
         @UniqueConstraint(name = "UniqueEmailAddressPublicUser", columnNames = {"email"}),
-        @UniqueConstraint(name = "UniqueMobileNumberPublicUser",columnNames = {"mobile_number"})})
-public class PublicUser {
+        @UniqueConstraint(name = "UniqueMobileNumberPublicUser", columnNames = {"mobile_number"})})
+public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "public_user_GEN")
     @SequenceGenerator(name = "public_user_GEN", sequenceName = "public_user_SEQ")
@@ -35,10 +35,10 @@ public class PublicUser {
     @Column(nullable = false)
     private String email;
 
-    @Column(name = "mobile_number",nullable = false)
+    @Column(name = "mobile_number", nullable = false)
     private String mobileNumber;
 
-    @Column(name = "password",nullable = false)
+    @Column(name = "password", nullable = false)
     private String password;
 
     @Column(name = "is_enable")
@@ -46,5 +46,9 @@ public class PublicUser {
 
     @Column(name = "profile_image_url")
     private String profileImageUrl;
+
+    @ManyToOne
+    @JoinColumn(name = "role_id", referencedColumnName = "id")
+    private Role role;
 
 }
