@@ -61,8 +61,20 @@ public class LicenseServiceImpl implements LicenseService {
     }
 
     @Override
-    public List<LicenseProjection> getAllLicenseList() {
-        return licenseRepo.getLicenseDetailList();
+    public List<LicenseProjection> getAllLicenseList(String licenseNo, String citizenshipNo, String validDate, String district) {
+        List<LicenseProjection> licenseProjectionList;
+        if (licenseNo != null) {
+            licenseProjectionList = licenseRepo.filterLicenseDetails(licenseNo, "-1", "2018-10-01", "-1");
+        } else if (citizenshipNo != null) {
+            licenseProjectionList = licenseRepo.filterLicenseDetails("-1", citizenshipNo, "2018-10-01", "-1");
+        } else if (validDate != null) {
+            licenseProjectionList = licenseRepo.filterLicenseDetails("-1", "-1", validDate, "-1");
+        } else if (district != null) {
+            licenseProjectionList = licenseRepo.filterLicenseDetails("-1", "-1", "2018-10-01", district);
+        } else {
+            licenseProjectionList = licenseRepo.getLicenseDetailList();
+        }
+        return licenseProjectionList;
     }
 
     private String generateLicenseNumber() {
