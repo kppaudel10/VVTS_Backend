@@ -33,4 +33,10 @@ public class BlueBookController {
         return new GlobalApiResponse(messageSource.getMessage("bluebook.save", null, null), true,
                 blueBookService.saveBlueBook(blueBookDto));
     }
+
+    @GetMapping("/list")
+    public GlobalApiResponse getBlueBookList(@RequestParam(value = "searchValue", required = false) String searchValue) {
+        return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true,
+                blueBookService.filterBlueBook(searchValue));
+    }
 }

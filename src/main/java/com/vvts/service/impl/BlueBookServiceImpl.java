@@ -4,6 +4,7 @@ import com.vvts.dto.BlueBookDto;
 import com.vvts.dto.VehicleTypePojo;
 import com.vvts.entity.BlueBook;
 import com.vvts.enums.VehicleType;
+import com.vvts.projection.BlueBookProjection;
 import com.vvts.repo.BlueBookRepo;
 import com.vvts.repo.VehicleRepo;
 import com.vvts.service.BlueBookService;
@@ -61,6 +62,15 @@ public class BlueBookServiceImpl implements BlueBookService {
             blueBookDto.setVehicleIdentificationNo(savedBlueBook.getVehicleIdentificationNo());
         }
         return blueBookDto;
+    }
+
+    @Override
+    public List<BlueBookProjection> filterBlueBook(String searchData) {
+        if (searchData != null) {
+            return blueBookRepo.getBlueBookData(searchData);
+        } else {
+            return blueBookRepo.getBlueBookData("-1");
+        }
     }
 
 }
