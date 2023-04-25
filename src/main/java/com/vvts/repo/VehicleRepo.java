@@ -16,5 +16,8 @@ public interface VehicleRepo extends JpaRepository<VehicleDetail, Integer> {
     @Query(value = "select * from vehicle_detail where company_code = ?1 and vehicle_type = ?2 order by id desc limit 1", nativeQuery = true)
     VehicleDetail getVehicleDetailByCompanyCodeAndVehicleType(String companyCode, Integer vehicleType);
 
+    @Query(value = "select count(id) from vehicle_detail where identification_no = ?1", nativeQuery = true)
+    Integer getCountByVIN(String identificationNo);
+
 
 }

@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 /**
  * @auther kul.paudel
  * @created at 2023-04-25
@@ -27,7 +29,7 @@ public class BlueBookController {
     }
 
     @PostMapping("/save")
-    public GlobalApiResponse saveBlueBook(@RequestBody BlueBookDto blueBookDto) {
+    public GlobalApiResponse saveBlueBook(@Valid @RequestBody BlueBookDto blueBookDto) {
         return new GlobalApiResponse(messageSource.getMessage("bluebook.save", null, null), true,
                 blueBookService.saveBlueBook(blueBookDto));
     }
