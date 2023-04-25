@@ -1,10 +1,13 @@
 package com.vvts.entity;
 
+import com.vvts.enums.VehicleType;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * @auther kul.paudel
@@ -13,6 +16,7 @@ import javax.persistence.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Entity
 @Table
 public class BlueBook {
@@ -26,9 +30,13 @@ public class BlueBook {
     private String citizenshipNo;
 
     @Column(name = "vehicle_type", nullable = false)
-    private String vehicleType;
+    private VehicleType vehicleType;
 
     @Column(name = "vehicle_identification_no", nullable = false)
     private String vehicleIdentificationNo;
+
+    @Column(name = "effective_date", nullable = false)
+    @Temporal(TemporalType.DATE)
+    private Date effectiveDate;
 
 }

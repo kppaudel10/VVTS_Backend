@@ -28,4 +28,13 @@ public enum VehicleType {
         return vehicleTypeList;
     }
 
+    public static VehicleType getVehicleTypeKey(Integer key) {
+        for (VehicleType vehicleType : Arrays.asList(VehicleType.values())) {
+            if (vehicleType.ordinal() == key) {
+                return vehicleType;
+            }
+        }
+        return null;
+    }
+
 }

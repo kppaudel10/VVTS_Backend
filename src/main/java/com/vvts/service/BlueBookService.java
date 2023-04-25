@@ -1,5 +1,6 @@
 package com.vvts.service;
 
+import com.vvts.dto.BlueBookDto;
 import com.vvts.dto.VehicleTypePojo;
 
 import java.util.List;
@@ -11,5 +12,6 @@ import java.util.List;
 public interface BlueBookService {
 
     List<VehicleTypePojo> getAllVehicleType();
+    BlueBookDto saveBlueBook(BlueBookDto blueBookDto);
 
 }
