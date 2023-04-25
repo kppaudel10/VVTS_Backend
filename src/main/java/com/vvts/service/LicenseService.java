@@ -16,6 +16,6 @@ public interface LicenseService {
 
     Boolean deleteLicense(Integer id);
 
-    List<LicenseProjection> getAllLicenseList(String licenseNo, String citizenshipNo, String validDate,String district);
+    List<LicenseProjection> getAllLicenseList(String searchValue);
 
 }

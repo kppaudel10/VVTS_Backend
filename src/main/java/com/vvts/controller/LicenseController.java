@@ -35,12 +35,9 @@ public class LicenseController {
     }
 
     @GetMapping("/list")
-    private GlobalApiResponse getAllLicenseDetailsList(@RequestParam(value = "licenseNo", required = false) String licenseNo,
-                                                       @RequestParam(value = "citizenshipNo", required = false) String citizenshipNo,
-                                                       @RequestParam(value = "validDate", required = false) String validDate,
-                                                       @RequestParam(value = "district",required = false) String district) {
+    private GlobalApiResponse getAllLicenseDetailsList(@RequestParam(value = "searchValue", required = false) String searchValue) {
         return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null),
-                true, licenseService.getAllLicenseList(licenseNo, citizenshipNo, validDate,district));
+                true, licenseService.getAllLicenseList(searchValue));
     }
 
 
