@@ -35,6 +35,12 @@ public class VehicleDetail {
     @Column(name = "vehicle_type", nullable = false)
     private VehicleType vehicleType;
 
+    @Column(name = "company_name")
+    private String companyName;
+
+    @Column(name = "company_code", nullable = false)
+    private String companyCode;
+
     @ManyToOne
     @JoinColumn(name = "vendor_id", referencedColumnName = "id")
     private Users vendor;

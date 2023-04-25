@@ -37,7 +37,7 @@ public class TokenManager implements Serializable {
         claims.put("user_id", users.getId());
         claims.put("name", users.getName());
         claims.put("username", userDetails.getUsername());
-        return Jwts.builder().setClaims(claims).setSubject("token payload")
+        return Jwts.builder().setClaims(claims).setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis())).setExpiration(new Date(System.currentTimeMillis() + TOKEN_VALIDITY * 1000))
                 .signWith(SignatureAlgorithm.HS512, jwtSecret).compact();
     }
