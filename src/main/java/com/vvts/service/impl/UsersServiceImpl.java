@@ -107,6 +107,10 @@ public class UsersServiceImpl implements UsersService {
 
     @Override
     public KycUpdateResponseDto updateUserKyc(UserKycUpdateDto userKycUpdateDto) throws IOException {
+        // check citizenship number is already exits or not
+        if (usersRepo.getVerifiedCitizenshipCount(userKycUpdateDto.getCitizenshipNo()) > 0) {
+            throw new RemoteException("Citizenship number : " + userKycUpdateDto.getCitizenshipNo() + " already exists");
+        }
         // first validate the three picture pp , citizen font and back
         String ppExtension = imageValidation.validateImage(userKycUpdateDto.getProfilePicture());
         String cfExtension = imageValidation.validateImage(userKycUpdateDto.getCitizenshipFont());
@@ -172,6 +176,7 @@ public class UsersServiceImpl implements UsersService {
         }
         users.setCitizenshipNo(userKycUpdateDto.getCitizenshipNo());
         users.setIsNewKycRequest(true);
+        users.setAddress(userKycUpdateDto.getAddress());
         users = usersRepo.save(users);
 
         // make response dto

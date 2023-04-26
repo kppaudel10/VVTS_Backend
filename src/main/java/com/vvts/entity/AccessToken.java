@@ -26,7 +26,7 @@ public class AccessToken {
     @Column(name = "user_name")
     private String userName;
 
-    @Column(name = "access_token")
+    @Column(name = "access_token", length = 500)
     private String accessToken;
 
 }
