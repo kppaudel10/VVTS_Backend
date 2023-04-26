@@ -3,8 +3,10 @@ package com.vvts.service;
 import com.vvts.dto.KycUpdateResponseDto;
 import com.vvts.dto.PublicUserBasicDataDto;
 import com.vvts.dto.UserKycUpdateDto;
+import com.vvts.projection.UserDetailProjection;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @auther kul.paudel
@@ -14,7 +16,11 @@ import java.io.IOException;
 public interface UsersService {
 
     PublicUserBasicDataDto savePublicUser(PublicUserBasicDataDto publicUserBasicDataDto) throws IOException;
+
     Boolean logoutUser();
+
     KycUpdateResponseDto updateUserKyc(UserKycUpdateDto userKycUpdateDto) throws IOException;
+
+    List<UserDetailProjection> getNewKycRequest();
 
 }

@@ -19,6 +19,8 @@ public class UserKycUpdateDto {
 
     private Integer userId;
 
+    private String address;
+    
     @NotNull(message = "Citizenship no must be required")
     private String citizenshipNo;
 

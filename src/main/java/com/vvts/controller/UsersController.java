@@ -42,4 +42,11 @@ public class UsersController {
                 usersService.updateUserKyc(userKycUpdateDto));
     }
 
+    @GetMapping("/kyc-request")
+    public GlobalApiResponse getNewKycRequest() {
+        return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true,
+                usersService.getNewKycRequest());
+    }
+
+
 }

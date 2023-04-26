@@ -6,6 +6,7 @@ import com.vvts.dto.PublicUserBasicDataDto;
 import com.vvts.dto.UserKycUpdateDto;
 import com.vvts.entity.Role;
 import com.vvts.entity.Users;
+import com.vvts.projection.UserDetailProjection;
 import com.vvts.repo.AccessTokenRepo;
 import com.vvts.repo.RoleRepo;
 import com.vvts.repo.UsersRepo;
@@ -23,6 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.rmi.RemoteException;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -50,6 +52,7 @@ public class UsersServiceImpl implements UsersService {
 
     @Override
     public PublicUserBasicDataDto savePublicUser(PublicUserBasicDataDto publicUserBasicDataDto) {
+        publicUserBasicDataDto.setRoleName("Public User");
         if (publicUserBasicDataDto.getId() == null) {
             // check mobile number or email already exits or not
             if (usersRepo.getMobileNumberCount(publicUserBasicDataDto.getMobileNumber()) > 0) {
@@ -168,6 +171,7 @@ public class UsersServiceImpl implements UsersService {
             users.setCitizenshipBackUrl(String.valueOf(cbFilePath));
         }
         users.setCitizenshipNo(userKycUpdateDto.getCitizenshipNo());
+        users.setIsNewKycRequest(true);
         users = usersRepo.save(users);
 
         // make response dto
@@ -178,6 +182,11 @@ public class UsersServiceImpl implements UsersService {
                 .citizenshipFontUrl(users.getCitizenshipFontUrl())
                 .citizenshipBackUrl(users.getCitizenshipBackUrl())
                 .profilePictureUrl(users.getProfileImageUrl()).build();
+    }
+
+    @Override
+    public List<UserDetailProjection> getNewKycRequest() {
+        return usersRepo.getNewKycRequestUserData();
     }
 
 }

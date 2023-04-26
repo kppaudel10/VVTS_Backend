@@ -56,6 +56,9 @@ public class Users {
     @Column(name = "citizenship_no")
     private String citizenshipNo;
 
+    @Column(name = "is_new_kyc_request")
+    private Boolean isNewKycRequest = true;
+
     @ManyToOne
     @JoinColumn(name = "role_id", referencedColumnName = "id")
     private Role role;
