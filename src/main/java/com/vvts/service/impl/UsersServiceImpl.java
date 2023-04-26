@@ -1,18 +1,29 @@
 package com.vvts.service.impl;
 
 import com.vvts.config.jwt.JwtUserDetailsService;
+import com.vvts.dto.KycUpdateResponseDto;
 import com.vvts.dto.PublicUserBasicDataDto;
+import com.vvts.dto.UserKycUpdateDto;
 import com.vvts.entity.Role;
 import com.vvts.entity.Users;
 import com.vvts.repo.AccessTokenRepo;
 import com.vvts.repo.RoleRepo;
 import com.vvts.repo.UsersRepo;
 import com.vvts.service.UsersService;
+import com.vvts.utiles.ImageUtils;
+import com.vvts.utiles.ImageValidation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.rmi.RemoteException;
+import java.util.Optional;
 
 /**
  * @auther kul.paudel
@@ -31,6 +42,10 @@ public class UsersServiceImpl implements UsersService {
     private final JwtUserDetailsService jwtUserDetailsService;
 
     private final AccessTokenRepo accessTokenRepo;
+
+    private final ImageValidation imageValidation;
+
+    private final ImageUtils imageUtils;
 
 
     @Override
@@ -85,6 +100,84 @@ public class UsersServiceImpl implements UsersService {
             return false;
         }
 
+    }
+
+    @Override
+    public KycUpdateResponseDto updateUserKyc(UserKycUpdateDto userKycUpdateDto) throws IOException {
+        // first validate the three picture pp , citizen font and back
+        String ppExtension = imageValidation.validateImage(userKycUpdateDto.getProfilePicture());
+        String cfExtension = imageValidation.validateImage(userKycUpdateDto.getCitizenshipFont());
+        String cbExtension = imageValidation.validateImage(userKycUpdateDto.getCitizenshipBack());
+
+        // fetch user entity
+        Optional<Users> optionalUsers = usersRepo.findById(userKycUpdateDto.getUserId());
+        if (!optionalUsers.isPresent()) {
+            throw new RemoteException("User does not exists with id: " + userKycUpdateDto.getUserId());
+        }
+        Users users = optionalUsers.get();
+        String profilePictureName = imageUtils.generateUniqueImageName(users.getName(), users.getId(), "profilePicture", ppExtension);
+        String citizenshipFontImageName = imageUtils.generateUniqueImageName(users.getName(), users.getId(), "citizenshipfont", cfExtension);
+        String citizenshipBackImageName = imageUtils.generateUniqueImageName(users.getName(), users.getId(), "citizenshipback", cbExtension);
+        // create folder if not already not exists
+        String uploadDir = "";
+        Path uploadPath = null;
+        Path ppFilePath;
+        if (userKycUpdateDto.getProfilePicture() != null) {
+            // create folder if not already not exists
+            uploadDir = System.getProperty("user.home").concat("/vvts/profile");
+            uploadPath = Paths.get(uploadDir);
+            // create upload file directory if already not exists
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+            // create full url
+            ppFilePath = uploadPath.resolve(profilePictureName);
+            userKycUpdateDto.getProfilePicture().transferTo(ppFilePath);
+            // set save url to users table
+            users.setProfileImageUrl(String.valueOf(ppFilePath));
+        }
+
+        if (userKycUpdateDto.getCitizenshipFont() != null) {
+            // create folder if not already not exists
+            uploadDir = System.getProperty("user.home").concat("/vvts/citizen");
+            uploadPath = Paths.get(uploadDir);
+            // create upload file directory if already not exists
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+            // create full url
+            Path cfFilePath = uploadPath.resolve(citizenshipFontImageName);
+            userKycUpdateDto.getCitizenshipFont().transferTo(cfFilePath);
+            // set save url to users table
+            users.setCitizenshipFontUrl(String.valueOf(cfFilePath));
+        }
+
+        if (userKycUpdateDto.getCitizenshipBack() != null) {
+
+            // create folder if not already not exists
+            uploadDir = System.getProperty("user.home").concat("/vvts/citizen");
+            uploadPath = Paths.get(uploadDir);
+            // create upload file directory if already not exists
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+            // create full url
+            Path cbFilePath = uploadPath.resolve(citizenshipBackImageName);
+            userKycUpdateDto.getCitizenshipBack().transferTo(cbFilePath);
+            // set save url to users table
+            users.setCitizenshipBackUrl(String.valueOf(cbFilePath));
+        }
+        users.setCitizenshipNo(userKycUpdateDto.getCitizenshipNo());
+        users = usersRepo.save(users);
+
+        // make response dto
+        return KycUpdateResponseDto.builder()
+                .userId(users.getId())
+                .name(users.getName())
+                .citizenshipNo(users.getCitizenshipNo())
+                .citizenshipFontUrl(users.getCitizenshipFontUrl())
+                .citizenshipBackUrl(users.getCitizenshipBackUrl())
+                .profilePictureUrl(users.getProfileImageUrl()).build();
     }
 
 }

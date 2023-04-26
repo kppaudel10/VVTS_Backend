@@ -47,6 +47,12 @@ public class Users {
     @Column(name = "profile_image_url")
     private String profileImageUrl;
 
+    @Column(name = "citizenship_font_url")
+    private String citizenshipFontUrl;
+
+    @Column(name = "citizenship_back_url")
+    private String citizenshipBackUrl;
+
     @Column(name = "citizenship_no")
     private String citizenshipNo;
 
