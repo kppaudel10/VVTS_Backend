@@ -65,8 +65,9 @@ public class LoginController {
     }
 
     @PostMapping("/api/logout")
-    public GlobalApiResponse userLogout() {
-        return new GlobalApiResponse(messageSource.getMessage("user.logout", null, null), true, usersService.logoutUser());
+    public GlobalApiResponse userLogout(Authentication authentication) {
+        return new GlobalApiResponse(messageSource.getMessage("user.logout", null, null), true,
+                usersService.logoutUser(userDataConfig.getUserName(authentication)));
     }
 
     @GetMapping("/init")

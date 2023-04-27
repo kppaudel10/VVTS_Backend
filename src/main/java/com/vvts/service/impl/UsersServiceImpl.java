@@ -15,7 +15,6 @@ import com.vvts.service.UsersService;
 import com.vvts.utiles.ImageUtils;
 import com.vvts.utiles.ImageValidation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -94,11 +93,10 @@ public class UsersServiceImpl implements UsersService {
 
     @Override
     @Transactional
-    public Boolean logoutUser() {
+    public Boolean logoutUser(String userName) {
         // get username of login user
         try {
-            User user = jwtUserDetailsService.getAuthenticatedUser();
-            accessTokenRepo.deleteAccessTokenByUserName(user.getUsername());
+            accessTokenRepo.deleteAccessTokenByUserName(userName);
             return true;
         } catch (Exception e) {
             return false;

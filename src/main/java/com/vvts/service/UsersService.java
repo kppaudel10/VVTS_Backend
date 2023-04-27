@@ -18,7 +18,7 @@ public interface UsersService {
 
     PublicUserBasicDataDto savePublicUser(PublicUserBasicDataDto publicUserBasicDataDto) throws IOException;
 
-    Boolean logoutUser();
+    Boolean logoutUser(String userName);
 
     KycUpdateResponseDto updateUserKyc(UserKycUpdateDto userKycUpdateDto) throws IOException;
 
