@@ -19,5 +19,14 @@ public interface VehicleRepo extends JpaRepository<VehicleDetail, Integer> {
     @Query(value = "select count(id) from vehicle_detail where identification_no = ?1", nativeQuery = true)
     Integer getCountByVIN(String identificationNo);
 
+    @Query(value = "select count(vd.id)\n" +
+            "from vehicle_detail vd\n" +
+            "         inner join blue_book bb on vd.identification_no = bb.vehicle_identification_no\n" +
+            "where vd.identification_no = ?1\n" +
+            "  and bb.citizenship_no = ?2\n" +
+            "group by bb.effective_date\n" +
+            "order by bb.effective_date desc limit 1", nativeQuery = true)
+    Integer getVehicleDetailByVINAndNumber(String vin, String citizenshipNo);
+
 
 }

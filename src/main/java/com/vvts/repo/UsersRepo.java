@@ -40,5 +40,9 @@ public interface UsersRepo extends JpaRepository<Users, Integer> {
     @Query(value = "select count(id) from users where citizenship_no = ?1 and is_enable = true", nativeQuery = true)
     Integer getVerifiedCitizenshipCount(String citizenshipNo);
 
+    @Query(value = "select * from users where mobile_number = ?1", nativeQuery = true)
+    Users getUserMobileNumberCount(String mobileNumber);
+    
+
 
 }

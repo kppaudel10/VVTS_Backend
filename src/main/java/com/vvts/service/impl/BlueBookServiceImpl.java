@@ -6,6 +6,7 @@ import com.vvts.entity.BlueBook;
 import com.vvts.enums.VehicleType;
 import com.vvts.projection.BlueBookProjection;
 import com.vvts.repo.BlueBookRepo;
+import com.vvts.repo.UsersRepo;
 import com.vvts.repo.VehicleRepo;
 import com.vvts.service.BlueBookService;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,8 @@ public class BlueBookServiceImpl implements BlueBookService {
 
     private final VehicleRepo vehicleRepo;
 
+    private final UsersRepo usersRepo;
+
 
     @Override
     public List<VehicleTypePojo> getAllVehicleType() {
@@ -38,6 +41,10 @@ public class BlueBookServiceImpl implements BlueBookService {
         //check identification number is valid or not
         if (vehicleRepo.getCountByVIN(blueBookDto.getVehicleIdentificationNo()).equals(0)) {
             throw new RuntimeException("Invalid identification number: " + blueBookDto.getVehicleIdentificationNo());
+        }
+        // check citizenship number is valid or not
+        if (usersRepo.getVerifiedCitizenshipCount(blueBookDto.getCitizenshipNo()) == 0) {
+            throw new RuntimeException("Invalid citizenship number: " + blueBookDto.getCitizenshipNo());
         }
         /*
         check data already exits or not with same data

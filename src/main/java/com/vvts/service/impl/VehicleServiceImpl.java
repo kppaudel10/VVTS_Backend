@@ -1,9 +1,12 @@
 package com.vvts.service.impl;
 
+import com.vvts.dto.BuyRequestPojo;
 import com.vvts.dto.VehicleDto;
+import com.vvts.entity.OwnershipTransfer;
 import com.vvts.entity.Users;
 import com.vvts.entity.VehicleDetail;
 import com.vvts.enums.VehicleType;
+import com.vvts.repo.OwnershipTransferRepo;
 import com.vvts.repo.UsersRepo;
 import com.vvts.repo.VehicleRepo;
 import com.vvts.service.VehicleService;
@@ -11,6 +14,7 @@ import com.vvts.utiles.VINGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.Optional;
 
 /**
@@ -26,6 +30,8 @@ public class VehicleServiceImpl implements VehicleService {
     private final UsersRepo usersRepo;
 
     private final VINGenerator vinGenerator;
+
+    private final OwnershipTransferRepo ownershipTransferRepo;
 
     @Override
     public VehicleDto saveVehicleDetail(VehicleDto vehicleDto, Integer loginUserId) {
@@ -50,5 +56,32 @@ public class VehicleServiceImpl implements VehicleService {
         vehicleDto.setId(vehicleDetail.getId());
         vehicleDto.setIdentificationNo(vehicleDetail.getVehicleIdentificationNo());
         return vehicleDto;
+    }
+
+    @Override
+    public BuyRequestPojo saveVehicleBuyRequest(BuyRequestPojo buyRequestPojo, Integer loginUserId) {
+        // first check the owner name and mobile number are valid or not
+        Users users = usersRepo.getUserMobileNumberCount(buyRequestPojo.getOwnerMobileNumber());
+        if (users == null) {
+            throw new RuntimeException("Insufficient Owner information.");
+        }
+        if (!users.getName().equalsIgnoreCase(buyRequestPojo.getOwnerName())) {
+            throw new RuntimeException("Invalid Owner name.");
+        }
+        // check vehicle identification number is exists or not
+        Integer existenceCount = vehicleRepo.getVehicleDetailByVINAndNumber(buyRequestPojo.getVehicleIdentificationNo(),
+                users.getCitizenshipNo());
+        if (existenceCount == null || existenceCount.equals(0)) {
+            throw new RuntimeException("Invalid Vehicle identification number");
+        }
+        // build entity
+        Users buyer = new Users();
+        buyer.setId(loginUserId);
+        OwnershipTransfer ownershipTransfer = OwnershipTransfer.builder()
+                .transferRequestDate(new Date())
+                .seller(users)
+                .buyer(buyer).build();
+        ownershipTransferRepo.save(ownershipTransfer);
+        return buyRequestPojo;
     }
 }

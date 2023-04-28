@@ -1,5 +1,6 @@
 package com.vvts.service;
 
+import com.vvts.dto.BuyRequestPojo;
 import com.vvts.dto.VehicleDto;
 
 /**
@@ -7,6 +8,8 @@ import com.vvts.dto.VehicleDto;
  * @created at 2023-04-25
  */
 public interface VehicleService {
-    VehicleDto saveVehicleDetail(VehicleDto vehicleDto,Integer loginUserId);
+    VehicleDto saveVehicleDetail(VehicleDto vehicleDto, Integer loginUserId);
+
+    BuyRequestPojo saveVehicleBuyRequest(BuyRequestPojo buyRequestPojo, Integer loginUserId);
 
 }
