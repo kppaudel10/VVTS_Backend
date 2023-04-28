@@ -24,14 +24,14 @@ public class VINGenerator {
         String vehicleTypeName = Objects.requireNonNull(VehicleType.getVehicleTypeKey(vehicleType)).name();
         if (vehicleDetail != null) {
             // fetch series number of vehicle
-            int codeAndTypeLength = companyCode.concat(vehicleTypeName).length();
+            int codeAndTypeLength = companyCode.concat(vehicleTypeName).length()+2;
             String seriesNumber = vehicleDetail.getVehicleIdentificationNo().substring(codeAndTypeLength);
             // increase VIN by 1
             Integer vinSeries = Integer.parseInt(seriesNumber) + 1;
             // create new VIN
-            return companyCode.concat(vehicleTypeName).concat(String.valueOf(vinSeries));
+            return companyCode.concat("-"+vehicleTypeName).concat("-"+ vinSeries);
         } else {
-            return companyCode.concat(vehicleTypeName).concat(String.valueOf(manufactureYear)).concat("00000");
+            return companyCode.concat("-"+ vehicleTypeName).concat("-"+ manufactureYear).concat("00000");
         }
     }
 

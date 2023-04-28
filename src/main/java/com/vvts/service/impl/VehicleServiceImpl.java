@@ -66,13 +66,13 @@ public class VehicleServiceImpl implements VehicleService {
             throw new RuntimeException("Insufficient Owner information.");
         }
         if (!users.getName().equalsIgnoreCase(buyRequestPojo.getOwnerName())) {
-            throw new RuntimeException("Invalid Owner name.");
+            throw new RuntimeException("Invalid Owner name: "+buyRequestPojo.getOwnerName());
         }
         // check vehicle identification number is exists or not
         Integer existenceCount = vehicleRepo.getVehicleDetailByVINAndNumber(buyRequestPojo.getVehicleIdentificationNo(),
                 users.getCitizenshipNo());
         if (existenceCount == null || existenceCount.equals(0)) {
-            throw new RuntimeException("Invalid Vehicle identification number");
+            throw new RuntimeException("Invalid Vehicle identification number: "+buyRequestPojo.getVehicleIdentificationNo());
         }
         // build entity
         Users buyer = new Users();
