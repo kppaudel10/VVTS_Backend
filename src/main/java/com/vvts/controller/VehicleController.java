@@ -9,10 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.mail.EmailException;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
 import javax.validation.Valid;
@@ -42,6 +39,12 @@ public class VehicleController {
     public GlobalApiResponse vehicleBuyRequest(@Valid @RequestBody BuyRequestPojo buyRequestPojo, Authentication authentication) throws MessagingException, EmailException {
         return new GlobalApiResponse(messageSource.getMessage("buy.request", null, null), true,
                 vehicleService.saveVehicleBuyRequest(buyRequestPojo, userDataConfig.getLoggedInUserId(authentication)));
+    }
+
+    @GetMapping("/sell-request")
+    public GlobalApiResponse vehicleBuyRequestList(Authentication authentication) throws MessagingException, EmailException {
+        return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true,
+                vehicleService.getBuyRequestList(userDataConfig.getLoggedInUserId(authentication)));
     }
 
 

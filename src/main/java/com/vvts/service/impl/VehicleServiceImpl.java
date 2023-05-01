@@ -7,17 +7,18 @@ import com.vvts.entity.OwnershipTransfer;
 import com.vvts.entity.Users;
 import com.vvts.entity.VehicleDetail;
 import com.vvts.enums.VehicleType;
+import com.vvts.projection.BuyRequestProjection;
 import com.vvts.repo.OwnershipTransferRepo;
 import com.vvts.repo.UsersRepo;
 import com.vvts.repo.VehicleRepo;
 import com.vvts.service.VehicleService;
 import com.vvts.utiles.VINGenerator;
-import global.MailSend;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.mail.EmailException;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -85,15 +86,21 @@ public class VehicleServiceImpl implements VehicleService {
         mailSendDto.setEmail(users.getEmail());
         mailSendDto.setUserName(users.getName());
         mailSendDto.setMessage("Your pin code");
-        new MailSend().sendMail(mailSendDto);
+//        new MailSend().sendMail(mailSendDto);
         // build entity
         Users buyer = new Users();
         buyer.setId(loginUserId);
         OwnershipTransfer ownershipTransfer = OwnershipTransfer.builder()
                 .transferRequestDate(new Date())
+                .vehicleIdentificationNo(buyRequestPojo.getVehicleIdentificationNo())
                 .seller(users)
                 .buyer(buyer).build();
         ownershipTransferRepo.save(ownershipTransfer);
         return buyRequestPojo;
+    }
+
+    @Override
+    public List<BuyRequestProjection> getBuyRequestList(Integer loginUserId) {
+        return ownershipTransferRepo.getOwnershipTransferByOwnerId(loginUserId);
     }
 }

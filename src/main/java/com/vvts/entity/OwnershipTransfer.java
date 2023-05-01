@@ -39,6 +39,9 @@ public class OwnershipTransfer {
     @Column(name = "is_approve_by_admin")
     private Boolean isApproveByAdmin = false;
 
+    @Column(name = "vehicle_identification_no",nullable = false)
+    private String vehicleIdentificationNo;
+
     @ManyToOne
     @JoinColumn(name = "buyer_id", referencedColumnName = "id")
     private Users buyer;
