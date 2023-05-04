@@ -27,4 +27,6 @@ public class BlueBookDto {
     @NotNull(message = "Vehicle Identification No must be required")
     private String vehicleIdentificationNo;
 
+
+
 }

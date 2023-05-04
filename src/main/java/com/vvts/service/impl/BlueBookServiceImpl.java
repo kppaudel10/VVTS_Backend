@@ -9,6 +9,7 @@ import com.vvts.repo.BlueBookRepo;
 import com.vvts.repo.UsersRepo;
 import com.vvts.repo.VehicleRepo;
 import com.vvts.service.BlueBookService;
+import com.vvts.utiles.NumberPlateGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +30,8 @@ public class BlueBookServiceImpl implements BlueBookService {
     private final VehicleRepo vehicleRepo;
 
     private final UsersRepo usersRepo;
+
+    private final NumberPlateGenerator numberPlateGenerator;
 
 
     @Override
@@ -57,6 +60,8 @@ public class BlueBookServiceImpl implements BlueBookService {
                     .id(blueBookDto.getId())
                     .citizenshipNo(blueBookDto.getCitizenshipNo())
                     .effectiveDate(new Date())
+                    .numberPlate(numberPlateGenerator.getNumberPlate(getCompanyCode(blueBookDto.getVehicleIdentificationNo()),
+                            blueBookDto.getVehicleType()))
                     .vehicleType(VehicleType.getVehicleTypeKey(blueBookDto.getVehicleType()))
                     .vehicleIdentificationNo(blueBookDto.getVehicleIdentificationNo())
                     .build();
@@ -77,6 +82,15 @@ public class BlueBookServiceImpl implements BlueBookService {
             return blueBookRepo.getBlueBookData(searchData);
         } else {
             return blueBookRepo.getBlueBookData("-1");
+        }
+    }
+
+    private String getCompanyCode(String vehicleIdentificationNo) {
+        String[] strings = vehicleIdentificationNo.split("-");
+        if (strings.length >= 1) {
+            return strings[0];
+        } else {
+            throw new RuntimeException("Unable to find company code");
         }
     }
 

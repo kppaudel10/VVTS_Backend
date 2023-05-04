@@ -30,5 +30,8 @@ public interface BlueBookRepo extends JpaRepository<BlueBook, Integer> {
             "   or ('-1' = ?1)", nativeQuery = true)
     List<BlueBookProjection> getBlueBookData(String searchData);
 
+    @Query(value = "select count(id) from blue_book where number_plate = ?1", nativeQuery = true)
+    Integer getCountNumberPlateExits(String numberPlate);
+
 
 }
