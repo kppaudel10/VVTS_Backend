@@ -6,13 +6,16 @@ import com.vvts.dto.VehicleDto;
 import com.vvts.service.VehicleService;
 import com.vvts.utiles.GlobalApiResponse;
 import lombok.RequiredArgsConstructor;
+import net.sourceforge.tess4j.TesseractException;
 import org.apache.commons.mail.EmailException;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
 import javax.validation.Valid;
+import java.io.IOException;
 
 /**
  * @auther kul.paudel
@@ -45,6 +48,12 @@ public class VehicleController {
     public GlobalApiResponse vehicleBuyRequestList(Authentication authentication) throws MessagingException, EmailException {
         return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true,
                 vehicleService.getBuyRequestList(userDataConfig.getLoggedInUserId(authentication)));
+    }
+
+    @PostMapping("/number-plate/scan")
+    public GlobalApiResponse getScanNumberPlate(@ModelAttribute MultipartFile numberPlateImage) throws TesseractException, IOException {
+        return new GlobalApiResponse(messageSource.getMessage("data.fetch",null,null),true,
+                vehicleService.getScanNumberPlate(numberPlateImage));
     }
 
 

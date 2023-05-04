@@ -2,6 +2,7 @@ package com.vvts.utiles;
 
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
+import org.springframework.stereotype.Component;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -14,10 +15,11 @@ import java.io.IOException;
  * @auther kul.paudel
  * @created at 2023-05-04
  */
+@Component
 public class ImageScanner {
 
-    public static String processImg(BufferedImage ipimage,
-                                    float scaleFactor, float offset) throws IOException, TesseractException {
+    public String processImg(BufferedImage ipimage,
+                             float scaleFactor, float offset) throws IOException, TesseractException {
         // Making an empty image buffer
         // to store image later
         // ipimage is an image buffer
@@ -57,16 +59,18 @@ public class ImageScanner {
         // which is used to perform OCR
         Tesseract it = new Tesseract();
 
-        it.setDatapath("/usr/share/tesseract-ocr/");
+        it.setDatapath("/usr/share/tesseract-ocr/5/tessdata");
+        it.setLanguage("eng");
 
         // doing OCR on the image
         // and storing result in string str
         String str = it.doOCR(fopimage);
         System.out.println(str);
+        str.replace("\n","");
         return str;
     }
 
-    public static void scan(String imageFilePath) throws TesseractException, IOException {
+    public String scan(String imageFilePath) throws TesseractException, IOException {
         File f = new File(imageFilePath);
 
         BufferedImage ipimage = ImageIO.read(f);
@@ -77,21 +81,23 @@ public class ImageScanner {
                 .getRGB(ipimage.getTileWidth() / 2,
                         ipimage.getTileHeight() / 2);
 
+        String output = null;
         // comparing the values
         // and setting new scaling values
         // that are later on used by RescaleOP
         if (d >= -1.4211511E7 && d < -7254228) {
-            processImg(ipimage, 3f, -10f);
+            output = processImg(ipimage, 3f, -10f);
         } else if (d >= -7254228 && d < -2171170) {
-            processImg(ipimage, 1.455f, -47f);
+            output = processImg(ipimage, 1.455f, -47f);
         } else if (d >= -2171170 && d < -1907998) {
-            processImg(ipimage, 1.35f, -10f);
+            output = processImg(ipimage, 1.35f, -10f);
         } else if (d >= -1907998 && d < -257) {
-            processImg(ipimage, 1.19f, 0.5f);
+            output = processImg(ipimage, 1.19f, 0.5f);
         } else if (d >= -257 && d < -1) {
-            processImg(ipimage, 1f, 0.5f);
+            output = processImg(ipimage, 1f, 0.5f);
         } else if (d >= -1 && d < 2) {
-            processImg(ipimage, 1f, 0.35f);
+            output = processImg(ipimage, 1f, 0.35f);
         }
+        return output.replace("\n","");
     }
 }

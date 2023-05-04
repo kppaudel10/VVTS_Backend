@@ -1,6 +1,7 @@
 package com.vvts.repo;
 
 import com.vvts.entity.VehicleDetail;
+import com.vvts.projection.NumberPlateScannerProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -27,6 +28,18 @@ public interface VehicleRepo extends JpaRepository<VehicleDetail, Integer> {
             "group by bb.effective_date\n" +
             "order by bb.effective_date desc limit 1", nativeQuery = true)
     Integer getVehicleDetailByVINAndNumber(String vin, String citizenshipNo);
+
+
+    @Query(value = "select u.id                as \"userId\",\n" +
+            "       u.name              as \"name\",\n" +
+            "       u.mobile_number     as \"contact\",\n" +
+            "       u.email             as \"email\",\n" +
+            "       u.citizenship_no    as \"citizenshipNo\",\n" +
+            "       u.profile_image_url as \"profileImageUrl\"\n" +
+            "from blue_book bb\n" +
+            "         inner join users u on bb.citizenship_no = u.citizenship_no\n" +
+            "where bb.number_plate = ?1", nativeQuery = true)
+    NumberPlateScannerProjection getUserAndVehicleDetailByNumberPlate(String numberPlate);
 
 
 }

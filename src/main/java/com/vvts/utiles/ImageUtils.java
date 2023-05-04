@@ -2,6 +2,8 @@ package com.vvts.utiles;
 
 import org.springframework.stereotype.Component;
 
+import java.util.Random;
+
 /**
  * @auther kul.paudel
  * @created at 2023-04-18
@@ -17,5 +19,23 @@ public class ImageUtils {
         return uniqueName;
     }
 
+    public String generateRandomString() {
+        int length = 5;
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < length; i++) {
+            int index = random.nextInt(characters.length());
+            sb.append(characters.charAt(index));
+        }
+
+        return sb.toString();
+    }
+
+    public int generateRandomInt() {
+        Random random = new Random();
+        return random.nextInt(9000) + 1000;
+    }
 
 }

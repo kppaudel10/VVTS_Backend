@@ -2,21 +2,32 @@ package com.vvts.service.impl;
 
 import com.vvts.dto.BuyRequestPojo;
 import com.vvts.dto.MailSendDto;
+import com.vvts.dto.NumberPlateScannerResponsePojo;
 import com.vvts.dto.VehicleDto;
 import com.vvts.entity.OwnershipTransfer;
 import com.vvts.entity.Users;
 import com.vvts.entity.VehicleDetail;
 import com.vvts.enums.VehicleType;
 import com.vvts.projection.BuyRequestProjection;
+import com.vvts.projection.NumberPlateScannerProjection;
 import com.vvts.repo.OwnershipTransferRepo;
 import com.vvts.repo.UsersRepo;
 import com.vvts.repo.VehicleRepo;
 import com.vvts.service.VehicleService;
+import com.vvts.utiles.ImageScanner;
+import com.vvts.utiles.ImageUtils;
+import com.vvts.utiles.ImageValidation;
 import com.vvts.utiles.VINGenerator;
 import lombok.RequiredArgsConstructor;
+import net.sourceforge.tess4j.TesseractException;
 import org.apache.commons.mail.EmailException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +47,12 @@ public class VehicleServiceImpl implements VehicleService {
     private final VINGenerator vinGenerator;
 
     private final OwnershipTransferRepo ownershipTransferRepo;
+
+    private final ImageValidation imageValidation;
+
+    private final ImageUtils imageUtils;
+
+    private final ImageScanner imageScanner;
 
 
     @Override
@@ -102,5 +119,48 @@ public class VehicleServiceImpl implements VehicleService {
     @Override
     public List<BuyRequestProjection> getBuyRequestList(Integer loginUserId) {
         return ownershipTransferRepo.getOwnershipTransferByOwnerId(loginUserId);
+    }
+
+    @Override
+    public NumberPlateScannerResponsePojo getScanNumberPlate(MultipartFile scanImage) throws IOException, TesseractException {
+        // first validate number plate image extension
+        String ppExtension = imageValidation.validateImage(scanImage);
+
+        String uploadDir = "";
+        Path uploadPath = null;
+        Path scanImageFilePath;
+        if (scanImage != null) {
+            String scanImageName = imageUtils.generateUniqueImageName(imageUtils.generateRandomString(),
+                    imageUtils.generateRandomInt(), "scan_image", ppExtension);
+            // create folder if not already not exists
+            uploadDir = System.getProperty("user.home").concat("/vvts/scan_image");
+            uploadPath = Paths.get(uploadDir);
+            // create upload file directory if already not exists
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+            // create full url and save image
+            scanImageFilePath = uploadPath.resolve(scanImageName);
+            scanImage.transferTo(scanImageFilePath);
+
+            // now scan that save number plate image
+            String scanOutput = imageScanner.scan(String.valueOf(scanImageFilePath));
+            if (scanOutput != null) {
+                NumberPlateScannerProjection npcp = vehicleRepo.getUserAndVehicleDetailByNumberPlate(scanOutput);
+                if (npcp != null) {
+                    NumberPlateScannerResponsePojo scannerResponsePojo = new NumberPlateScannerResponsePojo();
+                    scannerResponsePojo.setName(npcp.getName());
+                    scannerResponsePojo.setUserId(npcp.getUserId());
+                    scannerResponsePojo.setAddress(npcp.getAddress());
+                    scannerResponsePojo.setContact(npcp.getContact());
+                    scannerResponsePojo.setEmail(npcp.getEmail());
+                    scannerResponsePojo.setProfileImageUrl(npcp.getProfileImageUrl());
+                    scannerResponsePojo.setLicenseValidDate(npcp.getLicenseValidDate());
+
+                    return scannerResponsePojo;
+                }
+            }
+        }
+        return null;
     }
 }

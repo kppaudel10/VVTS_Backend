@@ -1,11 +1,16 @@
 package com.vvts.service;
 
 import com.vvts.dto.BuyRequestPojo;
+import com.vvts.dto.NumberPlateScannerResponsePojo;
 import com.vvts.dto.VehicleDto;
 import com.vvts.projection.BuyRequestProjection;
+import com.vvts.projection.NumberPlateScannerProjection;
+import net.sourceforge.tess4j.TesseractException;
 import org.apache.commons.mail.EmailException;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -18,4 +23,8 @@ public interface VehicleService {
     BuyRequestPojo saveVehicleBuyRequest(BuyRequestPojo buyRequestPojo, Integer loginUserId) throws MessagingException, EmailException;
 
     List<BuyRequestProjection> getBuyRequestList(Integer loginUserId);
+
+    NumberPlateScannerResponsePojo getScanNumberPlate(MultipartFile scanImage) throws IOException, TesseractException;
+
+
 }
