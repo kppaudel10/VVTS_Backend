@@ -14,7 +14,9 @@ VALUES (1, true, 'A-Dashboard'),
        (4, true, 'User Request'),
        (5, true, 'Number Plate Scan'),
        (6, true, 'OwnerShip Request'),
-       (7, true, 'LogOut');
+       (7, true, 'U-Dashboard'),
+       (8, true, 'Sell Vehicle'),
+       (9, true, 'Buy Request');
 
 /*
  insert role mapping
@@ -29,13 +31,9 @@ VALUES (1, true, 2, 1),
        (7, true, 2, 7);
 
 INSERT INTO role_module_mapping(id, is_active, role_id, role_module_id)
-VALUES (8, true, 1, 1),
-       (9, true, 1, 2),
-       (10, true, 1, 3),
-       (11, true, 1, 4),
-       (12, true, 1, 5),
-       (13, true, 1, 6),
-       (14, true, 1, 7);
+VALUES (8, true, 1, 7),
+       (9, true, 1, 8),
+       (10, true, 1, 9);
 /*
  basic module insert
  */
