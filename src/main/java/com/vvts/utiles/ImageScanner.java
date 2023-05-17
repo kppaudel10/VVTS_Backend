@@ -65,7 +65,7 @@ public class ImageScanner {
         // doing OCR on the image
         // and storing result in string str
         String str = it.doOCR(fopimage);
-        System.out.println(str);
+        System.out.println("scan output:.............................: "+str);
         str.replace("\n","");
         return str;
     }

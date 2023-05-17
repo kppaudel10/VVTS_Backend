@@ -7,6 +7,7 @@ import com.vvts.dto.UserKycUpdateDto;
 import com.vvts.entity.Role;
 import com.vvts.entity.Users;
 import com.vvts.projection.InitProjection;
+import com.vvts.projection.UserBasicProjection;
 import com.vvts.projection.UserDetailProjection;
 import com.vvts.repo.AccessTokenRepo;
 import com.vvts.repo.RoleRepo;
@@ -196,6 +197,11 @@ public class UsersServiceImpl implements UsersService {
     @Override
     public List<InitProjection> getRoleModuleMappingDetail(Integer roleId) {
         return roleRepo.getUserModuleAccess(roleId);
+    }
+
+    @Override
+    public UserBasicProjection getUserByUserId(Integer userId) {
+        return usersRepo.getUsersByUserId(userId);
     }
 
 }

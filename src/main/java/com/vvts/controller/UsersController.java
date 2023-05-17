@@ -48,5 +48,12 @@ public class UsersController {
                 usersService.getNewKycRequest());
     }
 
+    @GetMapping("/basic-detail")
+    public GlobalApiResponse getUserBasicDetail(Authentication authentication){
+        return new GlobalApiResponse(messageSource.getMessage("data.fetch",null,null),true,
+                usersService.getUserByUserId(userDataConfig.getLoggedInUserId(authentication)));
+    }
+
+
 
 }

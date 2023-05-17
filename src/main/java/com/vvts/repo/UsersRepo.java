@@ -1,6 +1,7 @@
 package com.vvts.repo;
 
 import com.vvts.entity.Users;
+import com.vvts.projection.UserBasicProjection;
 import com.vvts.projection.UserDetailProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -42,7 +43,15 @@ public interface UsersRepo extends JpaRepository<Users, Integer> {
 
     @Query(value = "select * from users where mobile_number = ?1", nativeQuery = true)
     Users getUserMobileNumberCount(String mobileNumber);
-    
+
+    @Query(value = "select u.id            as \"userId\",\n" +
+            "       u.name          as \"name\",\n" +
+            "       u.mobile_number as \"contact\",\n" +
+            "       u.email         as \"email\",\n" +
+            "       u.address       as \"address\"\n" +
+            "from users u\n" +
+            "where u.id = ?1", nativeQuery = true)
+    UserBasicProjection getUsersByUserId(Integer userId);
 
 
 }

@@ -4,6 +4,7 @@ import com.vvts.dto.KycUpdateResponseDto;
 import com.vvts.dto.PublicUserBasicDataDto;
 import com.vvts.dto.UserKycUpdateDto;
 import com.vvts.projection.InitProjection;
+import com.vvts.projection.UserBasicProjection;
 import com.vvts.projection.UserDetailProjection;
 
 import java.io.IOException;
@@ -25,5 +26,7 @@ public interface UsersService {
     List<UserDetailProjection> getNewKycRequest();
 
     List<InitProjection> getRoleModuleMappingDetail(Integer roleId);
+
+    UserBasicProjection getUserByUserId(Integer userId);
 
 }
