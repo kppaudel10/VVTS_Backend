@@ -8,12 +8,27 @@ public interface UserBasicProjection {
 
     Integer getUserId();
 
-    String getName();
+    String getAddress();
 
     String getEmail();
 
     String getContact();
 
-    String getAddress();
+    String getName();
+
+    String getCitizenshipNo();
+
+    String getProfilePictureUrl();
+
+    String getCitizenshipFontUrl();
+
+    String getCitizenshipBackUrl();
+
+    Boolean getIsKycPending();
+
+    Boolean getIsKycRejected();
+
+    Boolean getIsKycCompleted();
+
 
 }

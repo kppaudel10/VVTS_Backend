@@ -27,7 +27,7 @@ public interface UsersRepo extends JpaRepository<Users, Integer> {
     @Query(value = "select id                   as \"userId\",\n" +
             "       address,\n" +
             "       email,\n" +
-            "       mobile_number        as \"mobileNumber\",\n" +
+            "       mobile_number        as \"contact\",\n" +
             "       name,\n" +
             "       citizenship_no       as \"citizenshipNo\",\n" +
             "       profile_image_url    as \"profilePictureUrl\",\n" +
@@ -44,13 +44,26 @@ public interface UsersRepo extends JpaRepository<Users, Integer> {
     @Query(value = "select * from users where mobile_number = ?1", nativeQuery = true)
     Users getUserMobileNumberCount(String mobileNumber);
 
-    @Query(value = "select u.id            as \"userId\",\n" +
-            "       u.name          as \"name\",\n" +
-            "       u.mobile_number as \"contact\",\n" +
-            "       u.email         as \"email\",\n" +
-            "       u.address       as \"address\"\n" +
-            "from users u\n" +
-            "where u.id = ?1", nativeQuery = true)
+    @Query(value = "select id                                                  as \"userId\",\n" +
+            "       address,\n" +
+            "       email,\n" +
+            "       mobile_number                                       as \"contact\",\n" +
+            "       name,\n" +
+            "       citizenship_no                                      as \"citizenshipNo\",\n" +
+            "       profile_image_url                                   as \"profilePictureUrl\",\n" +
+            "       citizenship_font_url                                as \"citizenshipFontUrl\",\n" +
+            "       citizenship_back_url                                as \"citizenshipBackUrl\",\n" +
+            "       case\n" +
+            "           when is_new_kyc_request = true and is_enable = false then true\n" +
+            "           else false\n" +
+            "           end                                             as \"isKycPending\",\n" +
+            "       case\n" +
+            "           when is_new_kyc_request = false and is_enable = false then true\n" +
+            "           else false end                                  as \"isKycRejected\",\n" +
+            "       case when is_enable = true then true else false end as \"isKycCompleted\"\n" +
+            "\n" +
+            "from users\n" +
+            "where id = ?1", nativeQuery = true)
     UserBasicProjection getUsersByUserId(Integer userId);
 
 

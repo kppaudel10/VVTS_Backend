@@ -12,7 +12,7 @@ public interface UserDetailProjection {
 
     String getEmail();
 
-    String getMobileNumber();
+    String getContact();
 
     String getName();
 
