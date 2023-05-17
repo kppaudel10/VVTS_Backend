@@ -31,9 +31,15 @@ VALUES (1, true, 2, 1),
        (7, true, 2, 7);
 
 INSERT INTO role_module_mapping(id, is_active, role_id, role_module_id)
-VALUES (8, true, 1, 7),
-       (9, true, 1, 8),
-       (10, true, 1, 9);
+VALUES (1, true, 1, 1),
+       (2, true, 1, 2),
+       (3, true, 1, 3),
+       (4, true, 1, 4),
+       (5, true, 1, 5),
+       (6, true, 1, 6),
+       (7, true, 1, 7),
+       (8, true, 1, 8),
+       (9, true, 1, 9);
 /*
  basic module insert
  */
