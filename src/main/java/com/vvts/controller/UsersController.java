@@ -10,6 +10,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
 
@@ -34,8 +35,9 @@ public class UsersController {
                 usersService.savePublicUser(publicUserBasicDataDto));
     }
 
-    @PostMapping("/kyc-update")
-    private GlobalApiResponse updateUserKyc(@Valid @ModelAttribute UserKycUpdateDto userKycUpdateDto, Authentication authentication) throws IOException {
+    @PostMapping(value = "/kyc-update")
+    private GlobalApiResponse updateUserKyc(@Valid @ModelAttribute UserKycUpdateDto userKycUpdateDto,
+                                            Authentication authentication, HttpServletRequest request) throws IOException {
         Integer userId = userDataConfig.getLoggedInUserId(authentication);
         userKycUpdateDto.setUserId(userId);
         return new GlobalApiResponse(messageSource.getMessage("user.kyc", null, null), true,
