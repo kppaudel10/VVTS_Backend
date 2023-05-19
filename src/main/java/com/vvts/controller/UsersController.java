@@ -7,12 +7,17 @@ import com.vvts.service.UsersService;
 import com.vvts.utiles.GlobalApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 /**
  * @auther kul.paudel
@@ -45,17 +50,36 @@ public class UsersController {
     }
 
     @GetMapping("/kyc-request")
-    public GlobalApiResponse getNewKycRequest() {
+    public GlobalApiResponse getNewKycRequest() throws IOException {
         return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true,
                 usersService.getNewKycRequest());
     }
 
     @GetMapping("/basic-detail")
-    public GlobalApiResponse getUserBasicDetail(Authentication authentication){
-        return new GlobalApiResponse(messageSource.getMessage("data.fetch",null,null),true,
+    public GlobalApiResponse getUserBasicDetail(Authentication authentication) {
+        return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true,
                 usersService.getUserByUserId(userDataConfig.getLoggedInUserId(authentication)));
     }
 
+    @GetMapping("/getUserImage/{imageType}/{imageName}")
+    public ResponseEntity<byte[]> getImage(@PathVariable String imageName, @PathVariable String imageType) throws IOException {
+        // Load the image file from the classpath
+        String imagePath = "";
+        if (imageType.equalsIgnoreCase("profile")) {
+            imagePath = System.getProperty("user.home").concat("/vvts/profile/").concat(imageName);
+        } else if (imageType.equalsIgnoreCase("citizen")) {
+            imagePath = System.getProperty("user.home").concat("/vvts/citizen/").concat(imageName);
+        }
+        File file = new File(imagePath);
+        byte[] imageBytes = Files.readAllBytes(file.toPath());
 
+        // Set the response headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.IMAGE_JPEG_VALUE); // Adjust the media type based on the image format
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(imageBytes);
+    }
 
 }

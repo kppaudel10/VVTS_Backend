@@ -1,8 +1,8 @@
 package com.vvts.service.impl;
 
-import com.vvts.config.jwt.JwtUserDetailsService;
 import com.vvts.dto.KycUpdateResponseDto;
 import com.vvts.dto.PublicUserBasicDataDto;
+import com.vvts.dto.UserKycDetailDto;
 import com.vvts.dto.UserKycUpdateDto;
 import com.vvts.entity.Role;
 import com.vvts.entity.Users;
@@ -16,6 +16,7 @@ import com.vvts.service.UsersService;
 import com.vvts.utiles.ImageUtils;
 import com.vvts.utiles.ImageValidation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,14 +43,16 @@ public class UsersServiceImpl implements UsersService {
     private final BCryptPasswordEncoder passwordEncoder;
 
     private final RoleRepo roleRepo;
-
-    private final JwtUserDetailsService jwtUserDetailsService;
-
     private final AccessTokenRepo accessTokenRepo;
 
     private final ImageValidation imageValidation;
 
     private final ImageUtils imageUtils;
+
+    @Value("${server.port}")
+    private String serverPort;
+
+    private String imageAccessBaseUrl = "/api/public-user/getUserImage/";
 
 
     @Override
@@ -190,8 +194,27 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public List<UserDetailProjection> getNewKycRequest() {
-        return usersRepo.getNewKycRequestUserData();
+    public List<UserKycDetailDto> getNewKycRequest() {
+        List<UserDetailProjection> userDetailList = usersRepo.getNewKycRequestUserData();
+        List<UserKycDetailDto> userKycDetailDtoList = new ArrayList<>();
+        for (UserDetailProjection user : userDetailList) {
+            UserKycDetailDto userKycDetailDto = UserKycDetailDto.builder()
+                    .userId(user.getUserId())
+                    .name(user.getName())
+                    .address(user.getAddress())
+                    .contact(user.getContact())
+                    .citizenshipNo(user.getCitizenshipNo())
+                    .profilePictureUrl(imageAccessBaseUrl.concat("/profile/").concat(user.getProfilePictureUrl().split("/")
+                            [user.getProfilePictureUrl().split("/").length - 1]))
+                    .citizenshipFontUrl(imageAccessBaseUrl.concat("/citizen/").concat(user.getCitizenshipFontUrl().split("/")
+                            [user.getCitizenshipFontUrl().split("/").length -1]))
+                    .citizenshipBackUrl(imageAccessBaseUrl.concat("/citizen/").concat(user.getCitizenshipBackUrl().split("/")
+                            [user.getCitizenshipBackUrl().split("/").length-1]))
+                    .build();
+            userKycDetailDtoList.add(userKycDetailDto);
+
+        }
+        return userKycDetailDtoList;
     }
 
     @Override
