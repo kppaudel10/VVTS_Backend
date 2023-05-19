@@ -2,6 +2,7 @@ package com.vvts.repo;
 
 import com.vvts.entity.License;
 import com.vvts.projection.LicenseProjection;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -39,6 +40,6 @@ public interface LicenseRepo extends JpaRepository<License, Integer> {
             "   or l.district = ?1\n" +
             "   or ('-1' = ?1)\n" +
             "order by l.id desc", nativeQuery = true)
-    List<LicenseProjection> filterLicenseDetails(String searchValue);
+    List<LicenseProjection> filterLicenseDetails(String searchValue, Pageable pageable);
 
 }

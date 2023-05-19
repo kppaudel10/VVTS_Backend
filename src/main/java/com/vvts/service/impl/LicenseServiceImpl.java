@@ -6,6 +6,7 @@ import com.vvts.projection.LicenseProjection;
 import com.vvts.repo.LicenseRepo;
 import com.vvts.service.LicenseService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -61,11 +62,11 @@ public class LicenseServiceImpl implements LicenseService {
     }
 
     @Override
-    public List<LicenseProjection> getAllLicenseList(String searchValue) {
+    public List<LicenseProjection> getAllLicenseList(String searchValue, Pageable pageable) {
         if (searchValue != null) {
-            return licenseRepo.filterLicenseDetails(searchValue);
+            return licenseRepo.filterLicenseDetails(searchValue, pageable);
         } else {
-            return licenseRepo.filterLicenseDetails("-1");
+            return licenseRepo.filterLicenseDetails("-1", pageable);
         }
     }
 

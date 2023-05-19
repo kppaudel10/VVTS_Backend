@@ -8,12 +8,17 @@ public interface BlueBookProjection {
 
     Integer getId();
 
-    String effectiveDate();
+    String getEffectiveDate();
 
     String getCitizenshipNo();
 
     String getVehicleType();
 
     String getVehicleIdentificationNo();
+
+    String getCurrentBlueBookOwnUserName();
+
+    String getContact();
+
 
 }
