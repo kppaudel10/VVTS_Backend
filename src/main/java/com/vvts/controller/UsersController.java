@@ -61,6 +61,13 @@ public class UsersController {
                 usersService.getUserByUserId(userDataConfig.getLoggedInUserId(authentication)));
     }
 
+    @GetMapping("/kyc-action/{userId}/{actionType}")
+    public GlobalApiResponse actionOnKycRequest(@PathVariable Integer userId, @PathVariable String actionType) {
+        return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true,
+                usersService.getTakeActionOnKycRequest(userId,actionType));
+    }
+
+
     @GetMapping("/getUserImage/{imageType}/{imageName}")
     public ResponseEntity<byte[]> getImage(@PathVariable String imageName, @PathVariable String imageType) throws IOException {
         // Load the image file from the classpath

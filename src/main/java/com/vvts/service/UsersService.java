@@ -6,7 +6,6 @@ import com.vvts.dto.UserKycDetailDto;
 import com.vvts.dto.UserKycUpdateDto;
 import com.vvts.projection.InitProjection;
 import com.vvts.projection.UserBasicProjection;
-import com.vvts.projection.UserDetailProjection;
 
 import java.io.IOException;
 import java.util.List;
@@ -29,5 +28,7 @@ public interface UsersService {
     List<InitProjection> getRoleModuleMappingDetail(Integer roleId);
 
     UserBasicProjection getUserByUserId(Integer userId);
+
+    String getTakeActionOnKycRequest(Integer userId, String actionType);
 
 }

@@ -4,6 +4,7 @@ import com.vvts.entity.Users;
 import com.vvts.projection.UserBasicProjection;
 import com.vvts.projection.UserDetailProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -66,5 +67,14 @@ public interface UsersRepo extends JpaRepository<Users, Integer> {
             "where id = ?1", nativeQuery = true)
     UserBasicProjection getUsersByUserId(Integer userId);
 
+    @Modifying
+    @Query(value = "update users set is_enable = true where id = ?1", nativeQuery = true)
+    void getAcceptUserKyc(Integer userId);
+
+    @Modifying
+    @Query(value = "update users\n" +
+            "set is_enable = false, is_new_kyc_request = false , is_new_user_request = false\n" +
+            "where id = ?1", nativeQuery = true)
+    void getRejectUserKyc(Integer userId);
 
 }

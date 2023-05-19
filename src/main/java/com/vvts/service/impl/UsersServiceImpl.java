@@ -52,7 +52,7 @@ public class UsersServiceImpl implements UsersService {
     @Value("${server.port}")
     private String serverPort;
 
-    private String imageAccessBaseUrl = "/api/public-user/getUserImage/";
+    private String imageAccessBaseUrl = "/api/public-user/getUserImage";
 
 
     @Override
@@ -207,9 +207,9 @@ public class UsersServiceImpl implements UsersService {
                     .profilePictureUrl(imageAccessBaseUrl.concat("/profile/").concat(user.getProfilePictureUrl().split("/")
                             [user.getProfilePictureUrl().split("/").length - 1]))
                     .citizenshipFontUrl(imageAccessBaseUrl.concat("/citizen/").concat(user.getCitizenshipFontUrl().split("/")
-                            [user.getCitizenshipFontUrl().split("/").length -1]))
+                            [user.getCitizenshipFontUrl().split("/").length - 1]))
                     .citizenshipBackUrl(imageAccessBaseUrl.concat("/citizen/").concat(user.getCitizenshipBackUrl().split("/")
-                            [user.getCitizenshipBackUrl().split("/").length-1]))
+                            [user.getCitizenshipBackUrl().split("/").length - 1]))
                     .build();
             userKycDetailDtoList.add(userKycDetailDto);
 
@@ -225,6 +225,20 @@ public class UsersServiceImpl implements UsersService {
     @Override
     public UserBasicProjection getUserByUserId(Integer userId) {
         return usersRepo.getUsersByUserId(userId);
+    }
+
+    @Transactional
+    @Override
+    public String getTakeActionOnKycRequest(Integer userId, String actionType) {
+        if (actionType.equalsIgnoreCase("accept")) {
+            usersRepo.getAcceptUserKyc(userId);
+            return "Kyc Request Accept Successfully.";
+        }
+        if (actionType.equalsIgnoreCase("reject")) {
+            usersRepo.getRejectUserKyc(userId);
+            return "Kyc Request Reject Successfully.";
+        }
+        return null;
     }
 
 }
