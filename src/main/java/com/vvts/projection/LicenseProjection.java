@@ -18,5 +18,7 @@ public interface LicenseProjection {
 
     String getLicensedUserName();
 
+    Integer getVehicleType();
+
 
 }

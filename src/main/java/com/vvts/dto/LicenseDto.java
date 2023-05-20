@@ -31,4 +31,7 @@ public class LicenseDto {
     @NotNull(message = "District must be required.")
     private String district;
 
+    @NotNull(message = "vehicleType must be required.")
+    private Integer vehicleType;
+
 }

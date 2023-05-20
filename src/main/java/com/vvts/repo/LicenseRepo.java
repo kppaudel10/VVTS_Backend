@@ -32,7 +32,8 @@ public interface LicenseRepo extends JpaRepository<License, Integer> {
             "       l.district,\n" +
             "       l.license_no     as \"licenseNo\",\n" +
             "       l.valid_date     as \"validDate\",\n" +
-            "       u.name           as \"licensedUserName\"\n" +
+            "       u.name           as \"licensedUserName\",\n" +
+            "       l.vehicle_type   as \"vehicleType\"\n" +
             "from license l\n" +
             "         inner join users u on l.citizenship_no = u.citizenship_no\n" +
             "where l.license_no = ?1\n" +

@@ -2,6 +2,7 @@ package com.vvts.service.impl;
 
 import com.vvts.dto.LicenseDto;
 import com.vvts.entity.License;
+import com.vvts.enums.VehicleType;
 import com.vvts.projection.LicenseProjection;
 import com.vvts.repo.LicenseRepo;
 import com.vvts.service.LicenseService;
@@ -36,6 +37,7 @@ public class LicenseServiceImpl implements LicenseService {
                 .id(licenseDto.getId())
                 .citizenshipNo(licenseDto.getCitizenshipNo())
                 .district(licenseDto.getDistrict())
+                .vehicleType(VehicleType.getVehicleTypeKey(licenseDto.getVehicleType()))
                 .validDate(new SimpleDateFormat("yyyy-MM-dd").parse(licenseDto.getValidDate())).build();
         if (licenseDto.getId() == null) {
             license.setLicenseNo(generateLicenseNumber());
