@@ -61,7 +61,7 @@ public class LoginController {
         accessToken.setUserName(userDetails.getUsername());
         accessToken.setAccessToken(jwtToken);
         accessTokenRepo.save(accessToken);
-        return new GlobalApiResponse("token", true, new JwtResponseModel(jwtToken));
+        return new GlobalApiResponse("Login Successfully", true, new JwtResponseModel(jwtToken));
     }
 
     @PostMapping("/api/logout")

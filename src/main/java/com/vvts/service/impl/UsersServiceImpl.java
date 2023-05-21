@@ -202,6 +202,7 @@ public class UsersServiceImpl implements UsersService {
                     .userId(user.getUserId())
                     .name(user.getName())
                     .address(user.getAddress())
+                    .email(user.getEmail())
                     .contact(user.getContact())
                     .citizenshipNo(user.getCitizenshipNo())
                     .profilePictureUrl(imageAccessBaseUrl.concat("/profile/").concat(user.getProfilePictureUrl().split("/")

@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -64,12 +63,12 @@ public class UsersController {
     @GetMapping("/kyc-action/{userId}/{actionType}")
     public GlobalApiResponse actionOnKycRequest(@PathVariable Integer userId, @PathVariable String actionType) {
         return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true,
-                usersService.getTakeActionOnKycRequest(userId,actionType));
+                usersService.getTakeActionOnKycRequest(userId, actionType));
     }
 
 
     @GetMapping("/getUserImage/{imageType}/{imageName}")
-    public ResponseEntity<byte[]> getImage(@PathVariable String imageName, @PathVariable String imageType) throws IOException {
+    public GlobalApiResponse getImage(@PathVariable String imageName, @PathVariable String imageType) throws IOException {
         // Load the image file from the classpath
         String imagePath = "";
         if (imageType.equalsIgnoreCase("profile")) {
@@ -84,9 +83,10 @@ public class UsersController {
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.IMAGE_JPEG_VALUE); // Adjust the media type based on the image format
 
-        return ResponseEntity.ok()
-                .headers(headers)
-                .body(imageBytes);
+//        return ResponseEntity.ok()
+//                .headers(headers)
+//                .body(imageBytes);
+        return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true, imageBytes);
     }
 
 }
