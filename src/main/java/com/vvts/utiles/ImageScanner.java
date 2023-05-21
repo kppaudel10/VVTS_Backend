@@ -1,14 +1,17 @@
 package com.vvts.utiles;
 
+import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
@@ -17,6 +20,15 @@ import java.io.IOException;
  */
 @Component
 public class ImageScanner {
+
+    public static File convert(MultipartFile file) throws IOException {
+        File convFile = new File(file.getOriginalFilename());
+        convFile.createNewFile();
+        FileOutputStream fos = new FileOutputStream(convFile);
+        fos.write(file.getBytes());
+        fos.close();
+        return convFile;
+    }
 
     public String processImg(BufferedImage ipimage,
                              float scaleFactor, float offset) throws IOException, TesseractException {
@@ -59,18 +71,18 @@ public class ImageScanner {
         // which is used to perform OCR
         Tesseract it = new Tesseract();
 
-        it.setDatapath("/usr/share/tesseract-ocr/5/tessdata");
+        it.setDatapath(getFolderAbsolutePath("tessdata"));
         it.setLanguage("eng");
 
         // doing OCR on the image
         // and storing result in string str
         String str = it.doOCR(fopimage);
-        System.out.println("scan output:.............................: "+str);
-        str.replace("\n","");
+        System.out.println("scan output:.............................: " + str);
+        str.replace("\n", "");
         return str;
     }
 
-    public String scan(String imageFilePath) throws TesseractException, IOException {
+    public String scan(String imageFilePath, String LanguageCode) throws TesseractException, IOException {
         File f = new File(imageFilePath);
 
         BufferedImage ipimage = ImageIO.read(f);
@@ -98,6 +110,48 @@ public class ImageScanner {
         } else if (d >= -1 && d < 2) {
             output = processImg(ipimage, 1f, 0.35f);
         }
-        return output.replace("\n","");
+        return output.replace("\n", "");
+    }
+
+    public String doOCR(MultipartFile multipartFile, String LanguageCode) {
+        ITesseract instance = new Tesseract();
+
+        try {
+
+            BufferedImage in = ImageIO.read(convert(multipartFile));
+
+            BufferedImage newImage = new BufferedImage(in.getWidth(), in.getHeight(), BufferedImage.TYPE_INT_ARGB);
+
+            Graphics2D g = newImage.createGraphics();
+            g.drawImage(in, 0, 0, null);
+            g.dispose();
+
+            instance.setLanguage(LanguageCode);
+//            instance.setDatapath("/home/kul-java/Desktop/6TH_SEM/Project-II/VVTS_Backend/tessdata");
+            instance.setDatapath(getFolderAbsolutePath("tessdata"));
+            String result = instance.doOCR(newImage);
+            System.out.println(result);
+
+            return result;
+
+        } catch (TesseractException | IOException e) {
+            System.err.println(e.getMessage());
+            return "Error while reading image";
+        }
+
+    }
+
+    private String getFolderAbsolutePath(String folderName) {
+        // Replace with the name of the folder you want to find the path for
+        File folder = new File(folderName);
+
+        if (folder.exists() && folder.isDirectory()) {
+            String path = folder.getAbsolutePath();
+            System.out.println("Path of the folder '" + folderName + "': " + path);
+            return path;
+        } else {
+            System.out.println("Folder '" + folderName + "' does not exist.");
+            return null;
+        }
     }
 }

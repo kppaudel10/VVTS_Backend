@@ -122,7 +122,35 @@ public class VehicleServiceImpl implements VehicleService {
     }
 
     @Override
-    public NumberPlateScannerResponsePojo getScanNumberPlate(MultipartFile scanImage) throws IOException, TesseractException {
+    public NumberPlateScannerResponsePojo getScanNumberPlate(MultipartFile scanImage, String destinationLanguage) throws IOException {
+        //check language
+        if (!(destinationLanguage.equals("eng") || destinationLanguage.equals("nep"))) {
+            throw new RuntimeException("Invalid Language Code : " + destinationLanguage);
+        }
+        String scanOutput = imageScanner.doOCR(scanImage, destinationLanguage);
+        System.out.println(scanOutput);
+        if (scanOutput != null) {
+            char[] scanOutputChars = scanOutput.toCharArray();
+            String modifiedOutput = scanOutput.replaceAll("\n", "");
+            NumberPlateScannerProjection npcp = vehicleRepo.getUserAndVehicleDetailByNumberPlate(modifiedOutput);
+            if (npcp != null) {
+                NumberPlateScannerResponsePojo scannerResponsePojo = new NumberPlateScannerResponsePojo();
+                scannerResponsePojo.setName(npcp.getName());
+                scannerResponsePojo.setUserId(npcp.getUserId());
+                scannerResponsePojo.setAddress(npcp.getAddress());
+                scannerResponsePojo.setContact(npcp.getContact());
+                scannerResponsePojo.setEmail(npcp.getEmail());
+                scannerResponsePojo.setProfileImageUrl(npcp.getProfileImageUrl());
+                scannerResponsePojo.setLicenseValidDate(npcp.getLicenseValidDate());
+
+                return scannerResponsePojo;
+            }
+        }
+        return null;
+    }
+
+
+    private String saveAndScanImage(MultipartFile scanImage, String languageCode) throws IOException, TesseractException {
         // first validate number plate image extension
         String ppExtension = imageValidation.validateImage(scanImage);
 
@@ -144,22 +172,8 @@ public class VehicleServiceImpl implements VehicleService {
             scanImage.transferTo(scanImageFilePath);
 
             // now scan that save number plate image
-            String scanOutput = imageScanner.scan(String.valueOf(scanImageFilePath));
-            if (scanOutput != null) {
-                NumberPlateScannerProjection npcp = vehicleRepo.getUserAndVehicleDetailByNumberPlate(scanOutput);
-                if (npcp != null) {
-                    NumberPlateScannerResponsePojo scannerResponsePojo = new NumberPlateScannerResponsePojo();
-                    scannerResponsePojo.setName(npcp.getName());
-                    scannerResponsePojo.setUserId(npcp.getUserId());
-                    scannerResponsePojo.setAddress(npcp.getAddress());
-                    scannerResponsePojo.setContact(npcp.getContact());
-                    scannerResponsePojo.setEmail(npcp.getEmail());
-                    scannerResponsePojo.setProfileImageUrl(npcp.getProfileImageUrl());
-                    scannerResponsePojo.setLicenseValidDate(npcp.getLicenseValidDate());
-
-                    return scannerResponsePojo;
-                }
-            }
+            String scanOutput = imageScanner.scan(String.valueOf(scanImageFilePath), languageCode);
+            return scanOutput;
         }
         return null;
     }

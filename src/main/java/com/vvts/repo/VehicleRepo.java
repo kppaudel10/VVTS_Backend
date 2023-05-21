@@ -5,6 +5,8 @@ import com.vvts.projection.NumberPlateScannerProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
+
 /**
  * @auther kul.paudel
  * @created at 2023-04-25
@@ -38,8 +40,8 @@ public interface VehicleRepo extends JpaRepository<VehicleDetail, Integer> {
             "       u.profile_image_url as \"profileImageUrl\"\n" +
             "from blue_book bb\n" +
             "         inner join users u on bb.citizenship_no = u.citizenship_no\n" +
-            "where bb.number_plate = ?1", nativeQuery = true)
-    NumberPlateScannerProjection getUserAndVehicleDetailByNumberPlate(String numberPlate);
+            "where bb.number_plate similar to ?1", nativeQuery = true)
+    NumberPlateScannerProjection getUserAndVehicleDetailByNumberPlate(String scanOutput);
 
 
 }

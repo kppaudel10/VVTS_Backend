@@ -51,9 +51,9 @@ public class VehicleController {
     }
 
     @PostMapping("/number-plate/scan")
-    public GlobalApiResponse getScanNumberPlate(@ModelAttribute MultipartFile numberPlateImage) throws TesseractException, IOException {
-        return new GlobalApiResponse(messageSource.getMessage("data.fetch",null,null),true,
-                vehicleService.getScanNumberPlate(numberPlateImage));
+    public GlobalApiResponse getScanNumberPlate(@ModelAttribute MultipartFile numberPlateImage, @RequestParam String LanguageCode) throws TesseractException, IOException {
+        return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true,
+                vehicleService.getScanNumberPlate(numberPlateImage,LanguageCode));
     }
 
 
