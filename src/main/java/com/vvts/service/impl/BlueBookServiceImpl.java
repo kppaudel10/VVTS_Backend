@@ -43,11 +43,11 @@ public class BlueBookServiceImpl implements BlueBookService {
     public BlueBookDto saveBlueBook(BlueBookDto blueBookDto) {
         //check identification number is valid or not
         if (vehicleRepo.getCountByVIN(blueBookDto.getVehicleIdentificationNo()).equals(0)) {
-            throw new RuntimeException("Invalid identification number: " + blueBookDto.getVehicleIdentificationNo());
+            throw new RuntimeException("Vehicle not found with provided identification number: " + blueBookDto.getVehicleIdentificationNo());
         }
         // check citizenship number is valid or not
         if (usersRepo.getVerifiedCitizenshipCount(blueBookDto.getCitizenshipNo()) == 0) {
-            throw new RuntimeException("Invalid citizenship number: " + blueBookDto.getCitizenshipNo());
+            throw new RuntimeException("User not found with provided citizenship number: " + blueBookDto.getCitizenshipNo());
         }
         /*
         check data already exits or not with same data
@@ -79,9 +79,11 @@ public class BlueBookServiceImpl implements BlueBookService {
     @Override
     public List<BlueBookProjection> filterBlueBook(String searchData) {
         if (searchData != null) {
-            return blueBookRepo.getBlueBookData(searchData);
+            String searchValueWithLike = "%".concat(searchData).concat("%");
+            return blueBookRepo.getBlueBookData(searchValueWithLike);
         } else {
-            return blueBookRepo.getBlueBookData("-1");
+            String searchValueWithLike = "%".concat("--1").concat("%");
+            return blueBookRepo.getBlueBookData(searchValueWithLike);
         }
     }
 

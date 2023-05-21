@@ -5,6 +5,7 @@ import com.vvts.entity.License;
 import com.vvts.enums.VehicleType;
 import com.vvts.projection.LicenseProjection;
 import com.vvts.repo.LicenseRepo;
+import com.vvts.repo.UsersRepo;
 import com.vvts.service.LicenseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -25,12 +26,19 @@ public class LicenseServiceImpl implements LicenseService {
 
     private final LicenseRepo licenseRepo;
 
+    private final UsersRepo usersRepo;
+
     @Override
     public LicenseDto saveLicense(LicenseDto licenseDto) throws ParseException {
+        // check citizenship number is valid or not
+        if (usersRepo.getVerifiedCitizenshipCount(licenseDto.getCitizenshipNo()) == 0) {
+            throw new RuntimeException("User not found with provided Citizenship number: " + licenseDto.getCitizenshipNo());
+        }
 
         // check citizenship number already exits or not
-        if (licenseRepo.getCitizenshipNumberCount(licenseDto.getCitizenshipNo()) > 0) {
-            throw new RuntimeException("Citizenship number : " + licenseDto.getCitizenshipNo() + " already exists");
+        if (licenseRepo.getCitizenshipNumberCount(licenseDto.getCitizenshipNo(), licenseDto.getVehicleType()) > 0) {
+            throw new RuntimeException("User with Citizenship number : " + licenseDto.getCitizenshipNo() +
+                    " already has license of " + VehicleType.getVehicleTypeKey(licenseDto.getVehicleType()).name());
         }
         // build entity
         License license = License.builder()
@@ -66,9 +74,11 @@ public class LicenseServiceImpl implements LicenseService {
     @Override
     public List<LicenseProjection> getAllLicenseList(String searchValue, Pageable pageable) {
         if (searchValue != null) {
-            return licenseRepo.filterLicenseDetails(searchValue, pageable);
+            String concatWithLike = "%".concat(searchValue).concat("%");
+            return licenseRepo.filterLicenseDetails(concatWithLike, pageable);
         } else {
-            return licenseRepo.filterLicenseDetails("-1", pageable);
+            String concatWithLike = "%".concat("--1").concat("%");
+            return licenseRepo.filterLicenseDetails(concatWithLike, pageable);
         }
     }
 
