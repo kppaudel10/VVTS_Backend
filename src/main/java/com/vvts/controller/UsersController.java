@@ -17,6 +17,7 @@ import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Base64;
 
 /**
  * @auther kul.paudel
@@ -83,10 +84,12 @@ public class UsersController {
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.IMAGE_JPEG_VALUE); // Adjust the media type based on the image format
 
+
+        String encodedImage = Base64.getEncoder().encodeToString(imageBytes);
 //        return ResponseEntity.ok()
 //                .headers(headers)
 //                .body(imageBytes);
-        return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true, imageBytes);
+        return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true, encodedImage);
     }
 
 }

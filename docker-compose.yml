@@ -1,0 +1,8 @@
+version: '3'
+services:
+  vvts_system:
+    image: vvts_system
+    ports:
+      - 8848:8848
+    volumes:
+      - ./src:/app/src

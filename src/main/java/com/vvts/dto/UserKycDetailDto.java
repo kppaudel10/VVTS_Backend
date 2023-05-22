@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.core.io.Resource;
 
 /**
  * @auther kul.paudel
@@ -21,8 +22,8 @@ public class UserKycDetailDto {
     String email;
     String contact;
     String citizenshipNo;
-    String profilePictureUrl;
-    String citizenshipFontUrl;
-    String citizenshipBackUrl;
+    Resource profilePictureUrl;
+    Resource citizenshipFontUrl;
+    Resource citizenshipBackUrl;
 
 }
