@@ -148,7 +148,7 @@ public class UsersServiceImpl implements UsersService {
 
             // create full url
             ppFilePath = uploadPath.resolve(profilePictureName);
-            userKycUpdateDto.getProfilePicture().transferTo(ppFilePath.);
+            userKycUpdateDto.getProfilePicture().transferTo(ppFilePath);
             // set save url to users table
             users.setProfileImageUrl(String.valueOf(ppFilePath));
         }
