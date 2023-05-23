@@ -31,4 +31,6 @@ public interface UsersService {
 
     String getTakeActionOnKycRequest(Integer userId, String actionType);
 
+    String getProfileImagePathOfLoginUser(Integer loginUserId);
+
 }

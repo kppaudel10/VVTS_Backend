@@ -245,4 +245,14 @@ public class UsersServiceImpl implements UsersService {
         return null;
     }
 
+    @Override
+    public String getProfileImagePathOfLoginUser(Integer loginUserId) {
+        Optional<Users> optionalUsers = usersRepo.findById(loginUserId);
+        if (!optionalUsers.isPresent()) {
+            throw new RuntimeException("User does not exists with user id : " + loginUserId);
+        }
+        Users users = optionalUsers.get();
+        return users.getProfileImageUrl();
+    }
+
 }

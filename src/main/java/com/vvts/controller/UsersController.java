@@ -34,37 +34,32 @@ public class UsersController {
 
     private final UserDataConfig userDataConfig;
 
+
     @PostMapping("/save")
     private GlobalApiResponse savePublicUser(@RequestBody PublicUserBasicDataDto publicUserBasicDataDto) throws IOException {
-        return new GlobalApiResponse(messageSource.getMessage("user.save", null, null), true,
-                usersService.savePublicUser(publicUserBasicDataDto));
+        return new GlobalApiResponse(messageSource.getMessage("user.save", null, null), true, usersService.savePublicUser(publicUserBasicDataDto));
     }
 
     @PostMapping(value = "/kyc-update")
-    private GlobalApiResponse updateUserKyc(@Valid @ModelAttribute UserKycUpdateDto userKycUpdateDto,
-                                            Authentication authentication, HttpServletRequest request) throws IOException {
+    private GlobalApiResponse updateUserKyc(@Valid @ModelAttribute UserKycUpdateDto userKycUpdateDto, Authentication authentication, HttpServletRequest request) throws IOException {
         Integer userId = userDataConfig.getLoggedInUserId(authentication);
         userKycUpdateDto.setUserId(userId);
-        return new GlobalApiResponse(messageSource.getMessage("user.kyc", null, null), true,
-                usersService.updateUserKyc(userKycUpdateDto));
+        return new GlobalApiResponse(messageSource.getMessage("user.kyc", null, null), true, usersService.updateUserKyc(userKycUpdateDto));
     }
 
     @GetMapping("/kyc-request")
     public GlobalApiResponse getNewKycRequest() throws IOException {
-        return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true,
-                usersService.getNewKycRequest());
+        return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true, usersService.getNewKycRequest());
     }
 
     @GetMapping("/basic-detail")
     public GlobalApiResponse getUserBasicDetail(Authentication authentication) {
-        return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true,
-                usersService.getUserByUserId(userDataConfig.getLoggedInUserId(authentication)));
+        return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true, usersService.getUserByUserId(userDataConfig.getLoggedInUserId(authentication)));
     }
 
     @GetMapping("/kyc-action/{userId}/{actionType}")
     public GlobalApiResponse actionOnKycRequest(@PathVariable Integer userId, @PathVariable String actionType) {
-        return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true,
-                usersService.getTakeActionOnKycRequest(userId, actionType));
+        return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true, usersService.getTakeActionOnKycRequest(userId, actionType));
     }
 
 
@@ -77,18 +72,28 @@ public class UsersController {
         } else if (imageType.equalsIgnoreCase("citizen")) {
             imagePath = System.getProperty("user.home").concat("/vvts/citizen/").concat(imageName);
         }
+        return getResponseByImagePath(imagePath);
+    }
+
+    /*
+    this api is used to fetch profile picture of login user
+     */
+    @GetMapping("/profile-picture")
+    public ResponseEntity<byte[]> getProfilePictureOfLoginUser(Authentication authentication) throws IOException {
+        String imagePath = usersService.getProfileImagePathOfLoginUser(userDataConfig.getLoggedInUserId(authentication));
+        return getResponseByImagePath(imagePath);
+    }
+
+    private ResponseEntity<byte[]> getResponseByImagePath(String imagePath) throws IOException {
         File imageFile = new File(imagePath);
         FileInputStream fis = new FileInputStream(imageFile);
         byte[] imageBytes = fis.readAllBytes();
 
         // Set the response headers
+        fis.close();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.IMAGE_JPEG);
         headers.setContentLength(imageBytes.length);
-
-        return ResponseEntity.ok()
-                .headers(headers)
-                .body(imageBytes);
+        return ResponseEntity.ok().headers(headers).body(imageBytes);
     }
-
 }
