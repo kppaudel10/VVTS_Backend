@@ -9,15 +9,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.util.Base64;
 
 /**
  * @auther kul.paudel
@@ -69,7 +69,7 @@ public class UsersController {
 
 
     @GetMapping("/getUserImage/{imageType}/{imageName}")
-    public GlobalApiResponse getImage(@PathVariable String imageName, @PathVariable String imageType) throws IOException {
+    public ResponseEntity<byte[]> getImage(@PathVariable String imageName, @PathVariable String imageType) throws IOException {
         // Load the image file from the classpath
         String imagePath = "";
         if (imageType.equalsIgnoreCase("profile")) {
@@ -77,19 +77,18 @@ public class UsersController {
         } else if (imageType.equalsIgnoreCase("citizen")) {
             imagePath = System.getProperty("user.home").concat("/vvts/citizen/").concat(imageName);
         }
-        File file = new File(imagePath);
-        byte[] imageBytes = Files.readAllBytes(file.toPath());
+        File imageFile = new File(imagePath);
+        FileInputStream fis = new FileInputStream(imageFile);
+        byte[] imageBytes = fis.readAllBytes();
 
         // Set the response headers
         HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.IMAGE_JPEG_VALUE); // Adjust the media type based on the image format
+        headers.setContentType(MediaType.IMAGE_JPEG);
+        headers.setContentLength(imageBytes.length);
 
-
-        String encodedImage = Base64.getEncoder().encodeToString(imageBytes);
-//        return ResponseEntity.ok()
-//                .headers(headers)
-//                .body(imageBytes);
-        return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true, encodedImage);
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(imageBytes);
     }
 
 }
