@@ -22,8 +22,8 @@ public class UserKycDetailDto {
     String email;
     String contact;
     String citizenshipNo;
-    Resource profilePictureUrl;
-    Resource citizenshipFontUrl;
-    Resource citizenshipBackUrl;
+    String profilePictureUrl;
+    String citizenshipFontUrl;
+    String citizenshipBackUrl;
 
 }

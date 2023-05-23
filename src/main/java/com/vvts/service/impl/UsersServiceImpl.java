@@ -17,7 +17,6 @@ import com.vvts.utiles.ImageUtils;
 import com.vvts.utiles.ImageValidation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -134,18 +133,17 @@ public class UsersServiceImpl implements UsersService {
         String citizenshipFontImageName = imageUtils.generateUniqueImageName(users.getName(), users.getId(), "citizenshipfont", cfExtension);
         String citizenshipBackImageName = imageUtils.generateUniqueImageName(users.getName(), users.getId(), "citizenshipback", cbExtension);
         // create folder if not already not exists
+        String uploadDir = "";
         Path uploadPath = null;
         Path ppFilePath;
         if (userKycUpdateDto.getProfilePicture() != null) {
             // create folder if not already not exists
-//            uploadDir = System.getProperty("user.home").concat("/vvts/profile");
-
-            uploadPath = Paths.get(uploadDir.concat("profile"));
+            uploadDir = System.getProperty("user.home").concat("/vvts/profile");
+            uploadPath = Paths.get(uploadDir);
             // create upload file directory if already not exists
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
             }
-
             // create full url
             ppFilePath = uploadPath.resolve(profilePictureName);
             userKycUpdateDto.getProfilePicture().transferTo(ppFilePath);
@@ -155,9 +153,8 @@ public class UsersServiceImpl implements UsersService {
 
         if (userKycUpdateDto.getCitizenshipFont() != null) {
             // create folder if not already not exists
-//            uploadDir = System.getProperty("user.home").concat("/vvts/citizen");
-
-            uploadPath = Paths.get(uploadDir.concat("citizen"));
+            uploadDir = System.getProperty("user.home").concat("/vvts/citizen");
+            uploadPath = Paths.get(uploadDir);
             // create upload file directory if already not exists
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
@@ -172,8 +169,8 @@ public class UsersServiceImpl implements UsersService {
         if (userKycUpdateDto.getCitizenshipBack() != null) {
 
             // create folder if not already not exists
-//            uploadDir = System.getProperty("user.home").concat("/vvts/citizen");
-            uploadPath = Paths.get(uploadDir.concat("citizen"));
+            uploadDir = System.getProperty("user.home").concat("/vvts/citizen");
+            uploadPath = Paths.get(uploadDir);
             // create upload file directory if already not exists
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
@@ -199,7 +196,7 @@ public class UsersServiceImpl implements UsersService {
                 .profilePictureUrl(users.getProfileImageUrl()).build();
     }
 
-/*    @Override
+    @Override
     public List<UserKycDetailDto> getNewKycRequest() {
         List<UserDetailProjection> userDetailList = usersRepo.getNewKycRequestUserData();
         List<UserKycDetailDto> userKycDetailDtoList = new ArrayList<>();
@@ -217,29 +214,6 @@ public class UsersServiceImpl implements UsersService {
                             [user.getCitizenshipFontUrl().split("/").length - 1]))
                     .citizenshipBackUrl(imageAccessBaseUrl.concat("/citizen/").concat(user.getCitizenshipBackUrl().split("/")
                             [user.getCitizenshipBackUrl().split("/").length - 1]))
-                    .build();
-            userKycDetailDtoList.add(userKycDetailDto);
-
-        }
-        return userKycDetailDtoList;
-    }*/
-
-
-    @Override
-    public List<UserKycDetailDto> getNewKycRequest() {
-        List<UserDetailProjection> userDetailList = usersRepo.getNewKycRequestUserData();
-        List<UserKycDetailDto> userKycDetailDtoList = new ArrayList<>();
-        for (UserDetailProjection user : userDetailList) {
-            UserKycDetailDto userKycDetailDto = UserKycDetailDto.builder()
-                    .userId(user.getUserId())
-                    .name(user.getName())
-                    .address(user.getAddress())
-                    .email(user.getEmail())
-                    .contact(user.getContact())
-                    .citizenshipNo(user.getCitizenshipNo())
-                    .profilePictureUrl(new ClassPathResource(user.getProfilePictureUrl()))
-                    .citizenshipFontUrl(new ClassPathResource(user.getCitizenshipFontUrl()))
-                    .citizenshipBackUrl(new ClassPathResource(user.getCitizenshipBackUrl()))
                     .build();
             userKycDetailDtoList.add(userKycDetailDto);
 
