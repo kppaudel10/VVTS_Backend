@@ -39,4 +39,7 @@ public class BlueBook {
     @Temporal(TemporalType.DATE)
     private Date effectiveDate;
 
+    @Column(name = "number_plate", nullable = false)
+    private String numberPlate;
+
 }

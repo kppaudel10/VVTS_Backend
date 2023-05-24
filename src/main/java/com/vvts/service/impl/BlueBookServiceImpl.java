@@ -6,8 +6,10 @@ import com.vvts.entity.BlueBook;
 import com.vvts.enums.VehicleType;
 import com.vvts.projection.BlueBookProjection;
 import com.vvts.repo.BlueBookRepo;
+import com.vvts.repo.UsersRepo;
 import com.vvts.repo.VehicleRepo;
 import com.vvts.service.BlueBookService;
+import com.vvts.utiles.NumberPlateGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +29,10 @@ public class BlueBookServiceImpl implements BlueBookService {
 
     private final VehicleRepo vehicleRepo;
 
+    private final UsersRepo usersRepo;
+
+    private final NumberPlateGenerator numberPlateGenerator;
+
 
     @Override
     public List<VehicleTypePojo> getAllVehicleType() {
@@ -37,7 +43,11 @@ public class BlueBookServiceImpl implements BlueBookService {
     public BlueBookDto saveBlueBook(BlueBookDto blueBookDto) {
         //check identification number is valid or not
         if (vehicleRepo.getCountByVIN(blueBookDto.getVehicleIdentificationNo()).equals(0)) {
-            throw new RuntimeException("Invalid identification number: " + blueBookDto.getVehicleIdentificationNo());
+            throw new RuntimeException("Vehicle not found with provided identification number: " + blueBookDto.getVehicleIdentificationNo());
+        }
+        // check citizenship number is valid or not
+        if (usersRepo.getVerifiedCitizenshipCount(blueBookDto.getCitizenshipNo()) == 0) {
+            throw new RuntimeException("User not found with provided citizenship number: " + blueBookDto.getCitizenshipNo());
         }
         /*
         check data already exits or not with same data
@@ -50,6 +60,8 @@ public class BlueBookServiceImpl implements BlueBookService {
                     .id(blueBookDto.getId())
                     .citizenshipNo(blueBookDto.getCitizenshipNo())
                     .effectiveDate(new Date())
+                    .numberPlate(numberPlateGenerator.getNumberPlate(getCompanyCode(blueBookDto.getVehicleIdentificationNo()),
+                            blueBookDto.getVehicleType()))
                     .vehicleType(VehicleType.getVehicleTypeKey(blueBookDto.getVehicleType()))
                     .vehicleIdentificationNo(blueBookDto.getVehicleIdentificationNo())
                     .build();
@@ -67,9 +79,20 @@ public class BlueBookServiceImpl implements BlueBookService {
     @Override
     public List<BlueBookProjection> filterBlueBook(String searchData) {
         if (searchData != null) {
-            return blueBookRepo.getBlueBookData(searchData);
+            String searchValueWithLike = "%".concat(searchData).concat("%");
+            return blueBookRepo.getBlueBookData(searchValueWithLike);
         } else {
-            return blueBookRepo.getBlueBookData("-1");
+            String searchValueWithLike = "%".concat("--1").concat("%");
+            return blueBookRepo.getBlueBookData(searchValueWithLike);
+        }
+    }
+
+    private String getCompanyCode(String vehicleIdentificationNo) {
+        String[] strings = vehicleIdentificationNo.split("-");
+        if (strings.length >= 1) {
+            return strings[0];
+        } else {
+            throw new RuntimeException("Unable to find company code");
         }
     }
 

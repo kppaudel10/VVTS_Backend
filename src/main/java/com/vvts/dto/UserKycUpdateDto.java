@@ -19,6 +19,15 @@ public class UserKycUpdateDto {
 
     private Integer userId;
 
+    private String name;
+
+    private String email;
+
+    private String contact;
+
+    @NotNull(message = "Address must be required")
+    private String address;
+
     @NotNull(message = "Citizenship no must be required")
     private String citizenshipNo;
 

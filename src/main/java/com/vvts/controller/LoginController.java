@@ -10,8 +10,8 @@ import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -34,6 +34,8 @@ public class LoginController {
     private final UsersService usersService;
 
     private final MessageSource messageSource;
+
+    private final UserDataConfig userDataConfig;
 
     @PostMapping("/login")
     public GlobalApiResponse login(@RequestBody JwtRequestModel requestModel) throws Exception {
@@ -59,12 +61,20 @@ public class LoginController {
         accessToken.setUserName(userDetails.getUsername());
         accessToken.setAccessToken(jwtToken);
         accessTokenRepo.save(accessToken);
-        return new GlobalApiResponse("token", true, new JwtResponseModel(jwtToken));
+        return new GlobalApiResponse("Login Successfully", true, new JwtResponseModel(jwtToken));
     }
 
     @PostMapping("/api/logout")
-    public GlobalApiResponse userLogout() {
-        return new GlobalApiResponse(messageSource.getMessage("user.logout",null,null), true, usersService.logoutUser());
+    public GlobalApiResponse userLogout(Authentication authentication) {
+        return new GlobalApiResponse(messageSource.getMessage("user.logout", null, null), true,
+                usersService.logoutUser(userDataConfig.getUserName(authentication)));
     }
+
+    @GetMapping("/init")
+    public GlobalApiResponse getUserRoleModuleDetail(Authentication authentication) {
+        return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true,
+                usersService.getRoleModuleMappingDetail(userDataConfig.getRoleId(authentication)));
+    }
+
 
 }

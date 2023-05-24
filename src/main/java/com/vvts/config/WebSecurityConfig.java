@@ -44,7 +44,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         request -> new CorsConfiguration().applyPermitDefaultValues())
                 .and()
                 .csrf().disable()
-                .authorizeRequests().antMatchers("/login", "/api/public-user/save").permitAll()
+                .authorizeRequests().antMatchers("/login", "/api/public-user/save","/api/public-user/getUserImage/*").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)

@@ -12,7 +12,7 @@ import java.util.List;
  */
 public enum VehicleType {
 
-    CAR(0), MOTORCYCLE(1);
+    SCOOTER(0), BIKE(1),CAR(2);
 
     VehicleType(int i) {
     }

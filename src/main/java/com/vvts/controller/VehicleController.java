@@ -1,19 +1,21 @@
 package com.vvts.controller;
 
 import com.vvts.config.jwt.UserDataConfig;
+import com.vvts.dto.BuyRequestPojo;
 import com.vvts.dto.VehicleDto;
 import com.vvts.service.VehicleService;
 import com.vvts.utiles.GlobalApiResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
+import net.sourceforge.tess4j.TesseractException;
+import org.apache.commons.mail.EmailException;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.mail.MessagingException;
 import javax.validation.Valid;
+import java.io.IOException;
 
 /**
  * @auther kul.paudel
@@ -35,4 +37,24 @@ public class VehicleController {
         return new GlobalApiResponse(messageSource.getMessage("data.save", null, null), true,
                 vehicleService.saveVehicleDetail(vehicleDto, userDataConfig.getLoggedInUserId(authentication)));
     }
+
+    @PostMapping("/buy-request")
+    public GlobalApiResponse vehicleBuyRequest(@Valid @RequestBody BuyRequestPojo buyRequestPojo, Authentication authentication) throws MessagingException, EmailException {
+        return new GlobalApiResponse(messageSource.getMessage("buy.request", null, null), true,
+                vehicleService.saveVehicleBuyRequest(buyRequestPojo, userDataConfig.getLoggedInUserId(authentication)));
+    }
+
+    @GetMapping("/sell-request")
+    public GlobalApiResponse vehicleBuyRequestList(Authentication authentication) throws MessagingException, EmailException {
+        return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true,
+                vehicleService.getBuyRequestList(userDataConfig.getLoggedInUserId(authentication)));
+    }
+
+    @PostMapping("/number-plate/scan")
+    public GlobalApiResponse getScanNumberPlate(@ModelAttribute MultipartFile numberPlateImage, @RequestParam String LanguageCode) throws TesseractException, IOException {
+        return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true,
+                vehicleService.getScanNumberPlate(numberPlateImage,LanguageCode));
+    }
+
+
 }

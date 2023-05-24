@@ -17,6 +17,11 @@ public class UserDataConfig {
 
     private final UsersRepo usersRepo;
 
+    /*
+    ---------------------------------INFO-------------------------------------
+    This class is used to fetch user detail like userid , username , roleId etc.
+     from Token (Authentication).
+     */
     public Integer getLoggedInUserId(Authentication authentication) {
         Users userDetail = getUserByUserName(authentication);
         return userDetail.getId();
@@ -31,6 +36,12 @@ public class UserDataConfig {
         Users userDetail = getUserByUserName(authentication);
         return userDetail.getRole().getId();
     }
+
+    public String getUserName(Authentication authentication) {
+        Users userDetail = getUserByUserName(authentication);
+        return userDetail.getMobileNumber();
+    }
+
 
     private Users getUserByUserName(Authentication authentication) {
         UserDetails user = (UserDetails) authentication.getPrincipal();
