@@ -1,16 +1,22 @@
+# Use a base image with Maven to build the application
+FROM maven:3.8.4-openjdk-11 AS build
+WORKDIR /app
+COPY pom.xml .
+RUN mvn dependency:go-offline
 
+# Copy the source code and build the application
+COPY src ./src
 RUN mvn clean package -DskipTests
-# Use a base image with Java 11
-FROM adoptopenjdk:11-jdk-hotspot
 
-# Set the working directory in the container
+# Use a base image with Java 11 to run the application
+FROM adoptopenjdk:11-jdk-hotspot
 WORKDIR /app
 
-# Copy the JAR file into the container
-COPY target/VVTS-0.0.1-SNAPSHOT.jar VVTS-0.0.1-SNAPSHOT.jar
+# Copy the built JAR file from the build stage
+COPY --from=build /app/target/VVTS-0.0.1-SNAPSHOT.jar app.jar
 
 # Expose the desired port
-EXPOSE 8848
+EXPOSE 8080
 
 # Set the entrypoint to run the Spring Boot application
-ENTRYPOINT ["java", "-jar", "VVTS-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
