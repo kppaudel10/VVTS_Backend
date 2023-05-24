@@ -18,6 +18,12 @@ import com.vvts.utiles.ImageValidation;
 import global.QRCodeGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,6 +55,8 @@ public class UsersServiceImpl implements UsersService {
     private final ImageValidation imageValidation;
 
     private final ImageUtils imageUtils;
+
+    private final ResourceLoader resourceLoader;
 
     @Value("${server.port}")
     private String serverPort;
@@ -258,16 +266,39 @@ public class UsersServiceImpl implements UsersService {
 
     @Override
     public String getGenerateQrCode(Integer loginUserId) throws IOException {
+        String qrCodeImageName = getQrcodeNameByLoginUser(loginUserId);
+        String imageFilePath = QRCodeGenerator.getQrCode("", qrCodeImageName);
+        return imageFilePath;
+    }
+
+    @Override
+    public ResponseEntity<Resource> downloadImage(Integer loginUserId) {
+        String qrCodeImageName = getQrcodeNameByLoginUser(loginUserId);
+        String imagePath = System.getProperty("user.home").concat("/vvts/qr_code/".concat(qrCodeImageName));
+
+        // Load the image file as a Resource
+        Resource imageResource = resourceLoader.getResource("file:" + imagePath);
+        if (!imageResource.exists()) {
+            throw new RuntimeException("image doses not exists");
+        }
+        // Set the appropriate headers and return the image as a ResponseEntity
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_PNG);
+        headers.setContentDisposition(ContentDisposition.builder("attachment").filename(qrCodeImageName).build());
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(imageResource);
+    }
+
+    private String getQrcodeNameByLoginUser(Integer loginUserId) {
         Optional<Users> optionalUsers = usersRepo.findById(loginUserId);
         if (!optionalUsers.isPresent()) {
             throw new RuntimeException("User does not exists with user id : " + loginUserId);
         }
         Users users = optionalUsers.get();
         String qrCodeImageName = imageUtils.generateUniqueImageName(users.getName(), users.getId(), "qrcode", "png");
-
-        String imageFilePath = QRCodeGenerator.getQrCode("", qrCodeImageName);
-
-        return imageFilePath;
+        return qrCodeImageName;
     }
 
 }

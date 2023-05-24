@@ -6,6 +6,8 @@ import com.vvts.dto.UserKycDetailDto;
 import com.vvts.dto.UserKycUpdateDto;
 import com.vvts.projection.InitProjection;
 import com.vvts.projection.UserBasicProjection;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
 import java.util.List;
@@ -34,5 +36,7 @@ public interface UsersService {
     String getProfileImagePathOfLoginUser(Integer loginUserId);
 
     String getGenerateQrCode(Integer loginUserId) throws IOException;
+
+    ResponseEntity<Resource> downloadImage(Integer loginUserId);
 
 }

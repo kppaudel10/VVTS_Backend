@@ -7,6 +7,7 @@ import com.vvts.service.UsersService;
 import com.vvts.utiles.GlobalApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -107,5 +108,10 @@ public class UsersController {
     public ResponseEntity<byte[]> generateQrCodeOfLoginUser(Authentication authentication) throws IOException {
         String imagePath = usersService.getGenerateQrCode(userDataConfig.getLoggedInUserId(authentication));
         return getResponseByImagePath(imagePath);
+    }
+
+    @GetMapping("/qr-code/download")
+    public ResponseEntity<Resource> downloadQrCode(Authentication authentication) {
+        return usersService.downloadImage(userDataConfig.getLoggedInUserId(authentication));
     }
 }
