@@ -16,7 +16,7 @@ WORKDIR /app
 COPY --from=build /app/target/VVTS-0.0.1-SNAPSHOT.jar VVTS-0.0.1-SNAPSHOT.jar
 
 # Expose the desired port
-EXPOSE 8080
+EXPOSE 8848
 
 # Set the entrypoint to run the Spring Boot application
 ENTRYPOINT ["java", "-jar", "VVTS-0.0.1-SNAPSHOT.jar"]
