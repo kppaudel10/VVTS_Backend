@@ -1,3 +1,5 @@
+
+RUN mvn clean package -DskipTests
 # Use a base image with Java 11
 FROM adoptopenjdk:11-jdk-hotspot
 
