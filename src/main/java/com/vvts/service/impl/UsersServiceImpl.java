@@ -15,6 +15,7 @@ import com.vvts.repo.UsersRepo;
 import com.vvts.service.UsersService;
 import com.vvts.utiles.ImageUtils;
 import com.vvts.utiles.ImageValidation;
+import global.QRCodeGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -253,6 +254,20 @@ public class UsersServiceImpl implements UsersService {
         }
         Users users = optionalUsers.get();
         return users.getProfileImageUrl();
+    }
+
+    @Override
+    public String getGenerateQrCode(Integer loginUserId) throws IOException {
+        Optional<Users> optionalUsers = usersRepo.findById(loginUserId);
+        if (!optionalUsers.isPresent()) {
+            throw new RuntimeException("User does not exists with user id : " + loginUserId);
+        }
+        Users users = optionalUsers.get();
+        String qrCodeImageName = imageUtils.generateUniqueImageName(users.getName(), users.getId(), "qrcode", "png");
+
+        String imageFilePath = QRCodeGenerator.getQrCode("", qrCodeImageName);
+
+        return imageFilePath;
     }
 
 }

@@ -33,4 +33,6 @@ public interface UsersService {
 
     String getProfileImagePathOfLoginUser(Integer loginUserId);
 
+    String getGenerateQrCode(Integer loginUserId) throws IOException;
+
 }

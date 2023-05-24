@@ -96,4 +96,16 @@ public class UsersController {
         headers.setContentLength(imageBytes.length);
         return ResponseEntity.ok().headers(headers).body(imageBytes);
     }
+
+    /**
+     * This API is used to generate the qr code of login user
+     *
+     * @param authentication
+     * @return
+     */
+    @GetMapping("/qr-code-generate")
+    public ResponseEntity<byte[]> generateQrCodeOfLoginUser(Authentication authentication) throws IOException {
+        String imagePath = usersService.getGenerateQrCode(userDataConfig.getLoggedInUserId(authentication));
+        return getResponseByImagePath(imagePath);
+    }
 }
