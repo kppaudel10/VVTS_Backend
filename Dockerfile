@@ -5,10 +5,10 @@ FROM adoptopenjdk:11-jdk-hotspot
 WORKDIR /app
 
 # Copy the JAR file into the container
-COPY target/VVTS-0.0.1-SNAPSHOT.jar app.jar
+COPY target/VVTS-0.0.1-SNAPSHOT.jar VVTS-0.0.1-SNAPSHOT.jar
 
 # Expose the desired port
 EXPOSE 8848
 
 # Set the entrypoint to run the Spring Boot application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "VVTS-0.0.1-SNAPSHOT.jar"]
