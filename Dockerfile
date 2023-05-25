@@ -12,11 +12,12 @@ RUN mvn clean install -DskipTests
 FROM openjdk:11
 # Copy the built JAR file from the build stage
 #COPY --from=build /app/target/VVTS-0.0.1-SNAPSHOT.jar VVTS-0.0.1-SNAPSHOT.jar
-COPY target/VVTS-0.0.1-SNAPSHOT.jar VVTS-0.0.1-SNAPSHOT.jar
+WORKDIR /app
+COPY target/VVTS-0.0.1-SNAPSHOT.jar app.jar
 
 
 # Expose the desired port
 EXPOSE 8848
 
 # Set the entrypoint to run the Spring Boot application
-ENTRYPOINT ["java", "-jar", "/VVTS-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "/app.jar"]
