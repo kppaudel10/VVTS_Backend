@@ -1,8 +1,8 @@
 # Use a base image with Maven to build the application
-#FROM maven:3.8.4-openjdk-11 AS build
-#WORKDIR /app
-#COPY pom.xml .
-#RUN mvn dependency:go-offline
+FROM maven:3.8.4-openjdk-11 AS build
+WORKDIR /app
+COPY pom.xml .
+RUN mvn dependency:go-offline
 
 # Copy the source code and build the application
 COPY src ./src
