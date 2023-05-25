@@ -6,7 +6,7 @@ RUN mvn dependency:go-offline
 
 # Copy the source code and build the application
 COPY src ./src
-RUN mvn clean package -DskipTests
+RUN mvn clean install -DskipTests
 
 # Use a base image with Java 11 to run the application
 FROM openjdk:11
