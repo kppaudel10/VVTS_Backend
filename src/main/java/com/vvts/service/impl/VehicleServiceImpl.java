@@ -5,19 +5,19 @@ import com.vvts.dto.MailSendDto;
 import com.vvts.dto.NumberPlateScannerResponsePojo;
 import com.vvts.dto.VehicleDto;
 import com.vvts.entity.OwnershipTransfer;
+import com.vvts.entity.PinCode;
 import com.vvts.entity.Users;
 import com.vvts.entity.VehicleDetail;
 import com.vvts.enums.VehicleType;
 import com.vvts.projection.BuyRequestProjection;
 import com.vvts.projection.NumberPlateScannerProjection;
 import com.vvts.repo.OwnershipTransferRepo;
+import com.vvts.repo.PinCodeRepo;
 import com.vvts.repo.UsersRepo;
 import com.vvts.repo.VehicleRepo;
 import com.vvts.service.VehicleService;
-import com.vvts.utiles.ImageScanner;
-import com.vvts.utiles.ImageUtils;
-import com.vvts.utiles.ImageValidation;
-import com.vvts.utiles.VINGenerator;
+import com.vvts.utiles.*;
+import global.MailSend;
 import lombok.RequiredArgsConstructor;
 import net.sourceforge.tess4j.TesseractException;
 import org.apache.commons.mail.EmailException;
@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -53,6 +54,8 @@ public class VehicleServiceImpl implements VehicleService {
     private final ImageUtils imageUtils;
 
     private final ImageScanner imageScanner;
+
+    private final PinCodeRepo pinCodeRepo;
 
 
     @Override
@@ -99,11 +102,6 @@ public class VehicleServiceImpl implements VehicleService {
         if (existenceCount == null || existenceCount.equals(0)) {
             throw new RuntimeException("Invalid Vehicle identification number: " + buyRequestPojo.getVehicleIdentificationNo());
         }
-        MailSendDto mailSendDto = new MailSendDto();
-        mailSendDto.setEmail(users.getEmail());
-        mailSendDto.setUserName(users.getName());
-        mailSendDto.setMessage("Your pin code");
-//        new MailSend().sendMail(mailSendDto);
         // build entity
         Users buyer = new Users();
         buyer.setId(loginUserId);
@@ -113,7 +111,20 @@ public class VehicleServiceImpl implements VehicleService {
                 .seller(users)
                 .buyer(buyer).build();
         ownershipTransferRepo.save(ownershipTransfer);
+        // save pin code
         return buyRequestPojo;
+    }
+
+    private Date getAddMinOnDate(int min) {
+        Calendar calendar = Calendar.getInstance();
+
+        // Add 3 minutes
+        calendar.add(Calendar.MINUTE, min);
+
+        // Get the updated date and time
+        java.util.Date updatedDate = calendar.getTime();
+
+        return updatedDate;
     }
 
     @Override
@@ -147,6 +158,32 @@ public class VehicleServiceImpl implements VehicleService {
             }
         }
         return null;
+    }
+
+    @Override
+    public boolean generateValidationToken(Integer loginUserId) throws EmailException {
+        Optional<Users> optionalUsers = usersRepo.findById(loginUserId);
+        if (!optionalUsers.isPresent()) {
+            throw new RuntimeException("Invalid user");
+        }
+        Users users = optionalUsers.get();
+        if (users.getIsEnable() == false || users.getIsEnable() == null) {
+            throw new RuntimeException("Only verified user can buy and sell their vehicle." +
+                    " Please apply for your Kyc verification");
+        }
+        String token = new RandomCodeGenerator().generateRandomCode(10);
+        MailSendDto mailSendDto = new MailSendDto();
+        mailSendDto.setEmail(users.getEmail());
+        mailSendDto.setUserName(users.getName());
+        mailSendDto.setMessage(token);
+        new MailSend().sendMail(mailSendDto);
+        // save pin code
+        PinCode pinCode = PinCode.builder()
+                .pinCode(token)
+                .users(Users.builder().id(loginUserId).build())
+                .expiredDate(getAddMinOnDate(3)).build();
+        pinCodeRepo.save(pinCode);
+        return true;
     }
 
 

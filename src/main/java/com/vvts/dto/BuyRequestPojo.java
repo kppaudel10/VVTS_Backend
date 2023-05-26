@@ -27,5 +27,4 @@ public class BuyRequestPojo {
     @NotNull(message = "Vehicle Identification number must required.")
     private String vehicleIdentificationNo;
 
-
 }

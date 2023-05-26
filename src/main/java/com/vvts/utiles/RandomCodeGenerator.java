@@ -1,7 +1,5 @@
 package com.vvts.utiles;
 
-import org.springframework.stereotype.Component;
-
 import java.util.Random;
 
 /**

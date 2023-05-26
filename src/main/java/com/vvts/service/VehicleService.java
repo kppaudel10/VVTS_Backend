@@ -24,6 +24,7 @@ public interface VehicleService {
     List<BuyRequestProjection> getBuyRequestList(Integer loginUserId);
 
     NumberPlateScannerResponsePojo getScanNumberPlate(MultipartFile scanImage, String destinationLanguage) throws IOException, TesseractException;
+    boolean generateValidationToken(Integer loginUserId) throws EmailException;
 
 
 }
