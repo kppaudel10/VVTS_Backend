@@ -17,11 +17,11 @@ import com.vvts.repo.UsersRepo;
 import com.vvts.repo.VehicleRepo;
 import com.vvts.service.VehicleService;
 import com.vvts.utiles.*;
-import global.MailSend;
 import lombok.RequiredArgsConstructor;
 import net.sourceforge.tess4j.TesseractException;
 import org.apache.commons.mail.EmailException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -86,6 +86,28 @@ public class VehicleServiceImpl implements VehicleService {
     @Override
     public BuyRequestPojo saveVehicleBuyRequest(BuyRequestPojo buyRequestPojo, Integer loginUserId) throws EmailException {
         // first check the owner name and mobile number are valid or not
+        Users users = validateUser(buyRequestPojo, loginUserId);
+        //check user already applied for vehicle buy request or not
+        // build entity
+        VehicleDetail vehicleDetail = vehicleRepo.getVehicleDetailByVehicleIdentificationNo(buyRequestPojo.
+                getVehicleIdentificationNo());
+        if (vehicleDetail == null) {
+            throw new RuntimeException("Invalid Vehicle Identification Number : " + buyRequestPojo.getVehicleIdentificationNo());
+        }
+        Users buyer = new Users();
+        buyer.setId(loginUserId);
+        OwnershipTransfer ownershipTransfer = OwnershipTransfer.builder()
+                .transferRequestDate(new Date())
+                .vehicleDetail(vehicleDetail)
+                .seller(users)
+                .buyer(buyer).build();
+        ownershipTransferRepo.save(ownershipTransfer);
+        // save pin code
+        return buyRequestPojo;
+    }
+
+    private Users validateUser(BuyRequestPojo buyRequestPojo, Integer loginUserId) {
+        // first check the owner name and mobile number are valid or not
         Users users = usersRepo.getUserMobileNumberCount(buyRequestPojo.getOwnerMobileNumber());
         if (users == null) {
             throw new RuntimeException("Insufficient Owner information.");
@@ -102,17 +124,13 @@ public class VehicleServiceImpl implements VehicleService {
         if (existenceCount == null || existenceCount.equals(0)) {
             throw new RuntimeException("Invalid Vehicle identification number: " + buyRequestPojo.getVehicleIdentificationNo());
         }
-        // build entity
-        Users buyer = new Users();
-        buyer.setId(loginUserId);
-        OwnershipTransfer ownershipTransfer = OwnershipTransfer.builder()
-                .transferRequestDate(new Date())
-                .vehicleIdentificationNo(buyRequestPojo.getVehicleIdentificationNo())
-                .seller(users)
-                .buyer(buyer).build();
-        ownershipTransferRepo.save(ownershipTransfer);
-        // save pin code
-        return buyRequestPojo;
+        // check if user already applied buy request or not
+        Integer count = ownershipTransferRepo.getCountBuyRequest(buyRequestPojo.getVehicleIdentificationNo(),
+                loginUserId, users.getId());
+        if (count > 0) {
+            throw new RuntimeException("Your buy request already on pending.");
+        }
+        return users;
     }
 
     private Date getAddMinOnDate(int min) {
@@ -161,42 +179,49 @@ public class VehicleServiceImpl implements VehicleService {
     }
 
     @Override
-    public boolean generateValidationToken(Integer loginUserId) throws EmailException {
-        Optional<Users> optionalUsers = usersRepo.findById(loginUserId);
-        if (!optionalUsers.isPresent()) {
-            throw new RuntimeException("Invalid user");
-        }
-        Users users = optionalUsers.get();
+    public boolean generateValidationToken(BuyRequestPojo buyRequestPojo, Integer loginUserId) throws EmailException {
+        Users users = validateUser(buyRequestPojo, loginUserId);
         if (users.getIsEnable() == false || users.getIsEnable() == null) {
             throw new RuntimeException("Only verified user can buy and sell their vehicle." +
                     " Please apply for your Kyc verification");
         }
-        String token = new RandomCodeGenerator().generateRandomCode(10);
+        String token = new RandomCodeGenerator().generateRandomCode(6);
         MailSendDto mailSendDto = new MailSendDto();
         mailSendDto.setEmail(users.getEmail());
         mailSendDto.setUserName(users.getName());
         mailSendDto.setMessage(token);
         new MailSend().sendMail(mailSendDto);
-        // save pin code
-        PinCode pinCode = PinCode.builder()
-                .pinCode(token)
-                .users(Users.builder().id(loginUserId).build())
-                .expiredDate(getAddMinOnDate(3)).build();
-        pinCodeRepo.save(pinCode);
+        // check pinCode already exists or not
+        PinCode existPinCode = pinCodeRepo.getPinCodeByUserId(loginUserId);
+        if (existPinCode == null) {
+            // save pin code
+            existPinCode = PinCode.builder()
+                    .pinCode(token)
+                    .users(Users.builder().id(loginUserId).build())
+                    .expiredDate(getAddMinOnDate(3)).build();
+        } else {
+            existPinCode.setPinCode(token);
+            existPinCode.setExpiredDate(getAddMinOnDate(3));
+        }
+        pinCodeRepo.save(existPinCode);
         return true;
     }
 
     @Override
+    @Transactional
     public Boolean validatePincode(String pinCode, Integer loginUserId) {
-        String actualToken = pinCodeRepo.getPinCodeByUserId(loginUserId);
-        if (!actualToken.equals(pinCode)) {
+        PinCode actualToken = pinCodeRepo.getPinCodeByUserId(loginUserId);
+        if (actualToken == null || !actualToken.getPinCode().equals(pinCode)) {
             throw new RuntimeException("Invalid PinCode.");
         }
+        // delete that token after success message
+        pinCodeRepo.deleteById(actualToken.getId());
         return true;
     }
 
 
-    private String saveAndScanImage(MultipartFile scanImage, String languageCode) throws IOException, TesseractException {
+    private String saveAndScanImage(MultipartFile scanImage, String languageCode) throws
+            IOException, TesseractException {
         // first validate number plate image extension
         String ppExtension = imageValidation.validateImage(scanImage);
 

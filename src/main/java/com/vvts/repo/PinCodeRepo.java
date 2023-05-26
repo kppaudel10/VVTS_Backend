@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.Query;
  */
 public interface PinCodeRepo extends JpaRepository<PinCode, Integer> {
 
-    @Query(value = "select pc.pin_code from pin_code pc where pc.user_id = ?1", nativeQuery = true)
-    String getPinCodeByUserId(Integer loginUserId);
+    @Query(value = "select * from pin_code pc where pc.user_id = ?1", nativeQuery = true)
+    PinCode getPinCodeByUserId(Integer loginUserId);
 
 }

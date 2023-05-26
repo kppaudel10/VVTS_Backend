@@ -60,8 +60,7 @@ public class BlueBookServiceImpl implements BlueBookService {
                     .id(blueBookDto.getId())
                     .citizenshipNo(blueBookDto.getCitizenshipNo())
                     .effectiveDate(new Date())
-                    .numberPlate(numberPlateGenerator.getNumberPlate(getCompanyCode(blueBookDto.getVehicleIdentificationNo()),
-                            blueBookDto.getVehicleType()))
+                    .numberPlate(blueBookDto.getNumberPlate())
                     .vehicleType(VehicleType.getVehicleTypeKey(blueBookDto.getVehicleType()))
                     .vehicleIdentificationNo(blueBookDto.getVehicleIdentificationNo())
                     .build();

@@ -25,7 +25,7 @@ public interface VehicleService {
 
     NumberPlateScannerResponsePojo getScanNumberPlate(MultipartFile scanImage, String destinationLanguage) throws IOException, TesseractException;
 
-    boolean generateValidationToken(Integer loginUserId) throws EmailException;
+    boolean generateValidationToken(BuyRequestPojo buyRequestPojo ,Integer loginUserId) throws EmailException;
     Boolean validatePincode(String pinCode, Integer loginUserId);
 
 

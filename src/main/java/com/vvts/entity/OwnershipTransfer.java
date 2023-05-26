@@ -39,8 +39,9 @@ public class OwnershipTransfer {
     @Column(name = "is_approve_by_admin")
     private Boolean isApproveByAdmin = false;
 
-    @Column(name = "vehicle_identification_no",nullable = false)
-    private String vehicleIdentificationNo;
+    @ManyToOne
+    @JoinColumn(name = "vehicle_id", referencedColumnName = "id")
+    private VehicleDetail vehicleDetail;
 
     @ManyToOne
     @JoinColumn(name = "buyer_id", referencedColumnName = "id")
@@ -49,5 +50,7 @@ public class OwnershipTransfer {
     @ManyToOne
     @JoinColumn(name = "seller_id", referencedColumnName = "id")
     private Users seller;
+
+    private Integer status = 1;
 
 }

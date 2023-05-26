@@ -9,7 +9,8 @@ import java.util.Random;
 public class RandomCodeGenerator {
 
     public String generateRandomCode(int length) {
-        String alphanumeric = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"; // Possible characters in the code
+//        String alphanumeric = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"; // Possible characters in the code
+        String alphanumeric = "0123456789"; // Possible characters in the code
         Random random = new Random();
         StringBuilder codeBuilder = new StringBuilder(length);
         for (int i = 0; i < length; i++) {

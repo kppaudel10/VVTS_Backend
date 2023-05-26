@@ -35,4 +35,11 @@ public interface OwnershipTransferRepo extends JpaRepository<OwnershipTransfer, 
     List<BuyRequestProjection> getOwnershipTransferByOwnerId(Integer ownerId);
 
 
+    @Query(value = "select count(vd.id)\n" +
+            "from ownership_transfer ot\n" +
+            "         inner join vehicle_detail vd on ot.vehicle_id = vd.id\n" +
+            "where vd.identification_no = ?1\n" +
+            "  and ot.buyer_id = ?2\n" +
+            "  and ot.buyer_id = ?3", nativeQuery = true)
+    Integer getCountBuyRequest(String vehicleNo, Integer buyerId, Integer sellerId);
 }
