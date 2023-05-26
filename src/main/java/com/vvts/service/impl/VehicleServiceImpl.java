@@ -17,6 +17,7 @@ import com.vvts.repo.UsersRepo;
 import com.vvts.repo.VehicleRepo;
 import com.vvts.service.VehicleService;
 import com.vvts.utiles.*;
+import global.MailSend;
 import lombok.RequiredArgsConstructor;
 import net.sourceforge.tess4j.TesseractException;
 import org.apache.commons.mail.EmailException;
