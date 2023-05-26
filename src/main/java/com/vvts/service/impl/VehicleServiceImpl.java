@@ -186,6 +186,15 @@ public class VehicleServiceImpl implements VehicleService {
         return true;
     }
 
+    @Override
+    public Boolean validatePincode(String pinCode, Integer loginUserId) {
+        String actualToken = pinCodeRepo.getPinCodeByUserId(loginUserId);
+        if (!actualToken.equals(pinCode)) {
+            throw new RuntimeException("Invalid PinCode.");
+        }
+        return true;
+    }
+
 
     private String saveAndScanImage(MultipartFile scanImage, String languageCode) throws IOException, TesseractException {
         // first validate number plate image extension
