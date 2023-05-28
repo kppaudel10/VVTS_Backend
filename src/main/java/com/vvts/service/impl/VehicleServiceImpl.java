@@ -1,9 +1,6 @@
 package com.vvts.service.impl;
 
-import com.vvts.dto.BuyRequestPojo;
-import com.vvts.dto.MailSendDto;
-import com.vvts.dto.NumberPlateScannerResponsePojo;
-import com.vvts.dto.VehicleDto;
+import com.vvts.dto.*;
 import com.vvts.entity.OwnershipTransfer;
 import com.vvts.entity.PinCode;
 import com.vvts.entity.Users;
@@ -22,6 +19,7 @@ import global.MailSend;
 import lombok.RequiredArgsConstructor;
 import net.sourceforge.tess4j.TesseractException;
 import org.apache.commons.mail.EmailException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,10 +28,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @auther kul.paudel
@@ -58,6 +53,9 @@ public class VehicleServiceImpl implements VehicleService {
     private final ImageScanner imageScanner;
 
     private final PinCodeRepo pinCodeRepo;
+
+    @Value("${image.fetch.api}")
+    private String imageAccessBaseUrl;
 
 
     @Override
@@ -151,8 +149,27 @@ public class VehicleServiceImpl implements VehicleService {
     }
 
     @Override
-    public List<BuyRequestProjection> getBuyRequestList(Integer loginUserId) {
-        return ownershipTransferRepo.getOwnershipTransferByOwnerId(loginUserId);
+    public List<BuyRequestResponseDto> getBuyRequestList(Integer loginUserId) {
+        List<BuyRequestProjection> buyerRequestProjectionList = ownershipTransferRepo.getOwnershipTransferByOwnerId(loginUserId);
+        List<BuyRequestResponseDto> buyRequestResponseDtoList = new ArrayList<>();
+        for (BuyRequestProjection brp : buyerRequestProjectionList) {
+            BuyRequestResponseDto buyRequestResponseDto = BuyRequestResponseDto.builder()
+                    .id(brp.getId())
+                    .requestDate(brp.getRequestDate())
+                    .companyCode(brp.getCompanyCode())
+                    .manufactureYear(brp.getManufactureYear())
+                    .buyerAddress(brp.getBuyerAddress())
+                    .buyerName(brp.getBuyerName())
+                    .buyerMobileNumber(brp.getBuyerMobileNumber())
+                    .buyerAddress(brp.getBuyerAddress())
+                    .vehicleIdentificationNo(brp.getVehicleIdentificationNo())
+                    .vehicleType(brp.getVehicleType())
+                    .buyerProfilePictureUrl(imageAccessBaseUrl.concat("/profile/").concat(brp.getBuyerProfileUrl().split("/")
+                            [brp.getBuyerProfileUrl().split("/").length - 1])).build();
+            //add to list
+            buyRequestResponseDtoList.add(buyRequestResponseDto);
+        }
+        return buyRequestResponseDtoList;
     }
 
     @Override

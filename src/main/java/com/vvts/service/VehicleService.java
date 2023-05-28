@@ -1,6 +1,7 @@
 package com.vvts.service;
 
 import com.vvts.dto.BuyRequestPojo;
+import com.vvts.dto.BuyRequestResponseDto;
 import com.vvts.dto.NumberPlateScannerResponsePojo;
 import com.vvts.dto.VehicleDto;
 import com.vvts.projection.BuyRequestProjection;
@@ -22,7 +23,7 @@ public interface VehicleService {
 
     BuyRequestPojo saveVehicleBuyRequest(BuyRequestPojo buyRequestPojo, Integer loginUserId) throws MessagingException, EmailException;
 
-    List<BuyRequestProjection> getBuyRequestList(Integer loginUserId);
+    List<BuyRequestResponseDto> getBuyRequestList(Integer loginUserId);
 
     NumberPlateScannerResponsePojo getScanNumberPlate(MultipartFile scanImage, String destinationLanguage) throws IOException, TesseractException;
 

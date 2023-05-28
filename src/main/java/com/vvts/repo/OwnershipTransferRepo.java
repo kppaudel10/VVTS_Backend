@@ -15,23 +15,24 @@ import java.util.List;
 public interface OwnershipTransferRepo extends JpaRepository<OwnershipTransfer, Integer> {
 
     @Query(value = "select distinct ot.id,\n" +
-            "       ot.is_approve_by_admin       as \"isApproveByAdmin\",\n" +
-            "       ot.is_approve_by_owner       as \"isApproveByOwner\",\n" +
-            "       ot.approve_date              as \"approveDate\",\n" +
-            "       ot.request_date              as \"requestDate\",\n" +
-            "       ot.vehicle_identification_no as \"vehicleIdentificationNo\",\n" +
-            "       vd.company_code           as \"companyCode\",\n" +
-            "       vd.manufacture_year       as \"manufactureYear\",\n" +
-            "       vd.vehicle_type           as \"vehicleType\",\n" +
-            "       u.name                    as \"buyerName\",\n" +
-            "       u.mobile_number           as \"buyerMobileNumber\",\n" +
-            "       u.profile_image_url       as \"buyerProfileUrl\",\n" +
-            "       u.citizenship_no          as \"buyerCitizenshipNo\",\n" +
-            "       u.citizenship_font_url    as \"buyerCitizenshipFontUrl\",\n" +
-            "       u.citizenship_back_url    as \"buyerCitizenshipBackUrl\"\n" +
+            "                ot.is_approve_by_admin as \"isApproveByAdmin\",\n" +
+            "                ot.is_approve_by_owner as \"isApproveByOwner\",\n" +
+            "                ot.approve_date        as \"approveDate\",\n" +
+            "                ot.request_date        as \"requestDate\",\n" +
+            "                vd.identification_no   as \"vehicleIdentificationNo\",\n" +
+            "                vd.company_code        as \"companyCode\",\n" +
+            "                vd.manufacture_year    as \"manufactureYear\",\n" +
+            "                vd.vehicle_type        as \"vehicleType\",\n" +
+            "                u.name                 as \"buyerName\",\n" +
+            "                u.mobile_number        as \"buyerMobileNumber\",\n" +
+            "                u.address              as \"buyerAddress\",\n" +
+            "                u.profile_image_url    as \"buyerProfileUrl\",\n" +
+            "                u.citizenship_no       as \"buyerCitizenshipNo\",\n" +
+            "                u.citizenship_font_url as \"buyerCitizenshipFontUrl\",\n" +
+            "                u.citizenship_back_url as \"buyerCitizenshipBackUrl\"\n" +
             "from ownership_transfer ot\n" +
-            "         inner join users u on ot.buyer_id = u.id\n" +
-            "         inner join vehicle_detail vd on u.id = vd.vendor_id\n" +
+            "         inner join users u on ot.seller_id = u.id\n" +
+            "         inner join vehicle_detail vd on vd.id = ot.vehicle_id\n" +
             "where ot.seller_id = ?1", nativeQuery = true)
     List<BuyRequestProjection> getOwnershipTransferByOwnerId(Integer ownerId);
 

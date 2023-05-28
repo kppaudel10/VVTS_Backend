@@ -64,7 +64,8 @@ public class UsersServiceImpl implements UsersService {
     @Value("${upload.path}")
     private String uploadDir;
 
-    private String imageAccessBaseUrl = "/api/public-user/getUserImage";
+    @Value("${image.fetch.api}")
+    private String imageAccessBaseUrl ;
 
 
     @Override
