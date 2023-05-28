@@ -2,6 +2,7 @@ package com.vvts.controller;
 
 import com.vvts.config.jwt.UserDataConfig;
 import com.vvts.dto.BuyRequestPojo;
+import com.vvts.dto.SellRequestActionPojo;
 import com.vvts.dto.VehicleDto;
 import com.vvts.service.VehicleService;
 import com.vvts.utiles.GlobalApiResponse;
@@ -55,6 +56,12 @@ public class VehicleController {
     public GlobalApiResponse vehicleBuyRequestList(Authentication authentication) {
         return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true,
                 vehicleService.getBuyRequestList(userDataConfig.getLoggedInUserId(authentication)));
+    }
+
+    @PostMapping("/sell-request/action")
+    public GlobalApiResponse takeActionOnSellRequest(@Valid @RequestBody SellRequestActionPojo sellRequestActionPojo) {
+        return new GlobalApiResponse(messageSource.getMessage("data.update", null, null), true,
+                vehicleService.takeActionOnSellRequest(sellRequestActionPojo));
     }
 
     @PostMapping("/number-plate/scan")

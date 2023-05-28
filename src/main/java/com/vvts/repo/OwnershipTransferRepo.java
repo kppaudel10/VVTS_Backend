@@ -4,6 +4,7 @@ import com.vvts.entity.OwnershipTransfer;
 import com.vvts.projection.BuyRequestProjection;
 import com.vvts.projection.BuyerRequestProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
@@ -62,5 +63,12 @@ public interface OwnershipTransferRepo extends JpaRepository<OwnershipTransfer, 
             "where ot.buyer_id = ?1", nativeQuery = true)
     List<BuyerRequestProjection> getBuyRequestByLoginUser(Integer loginUserId);
 
+    @Modifying
+    @Query(value = "update ownership_transfer set is_approve_by_owner = ?1 where id = ?2", nativeQuery = true)
+    void updateOwnerActionOnOwnershipRequest(boolean status, Integer id);
+
+    @Modifying
+    @Query(value = "update ownership_transfer set is_approve_by_admin = ?1 where id = ?2", nativeQuery = true)
+    void updateAdminActionOnOwnershipRequest(boolean status, Integer id);
 
 }

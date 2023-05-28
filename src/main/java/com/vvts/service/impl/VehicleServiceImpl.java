@@ -246,6 +246,40 @@ public class VehicleServiceImpl implements VehicleService {
         return ownershipTransferRepo.getBuyRequestByLoginUser(loginUserId);
     }
 
+    @Override
+    @Transactional
+    public boolean takeActionOnSellRequest(SellRequestActionPojo sellRequestActionPojo) {
+        //check action type valid or not
+        if (!(sellRequestActionPojo.getActionType().equalsIgnoreCase("accept") ||
+                sellRequestActionPojo.getActionType().equalsIgnoreCase("reject"))) {
+            throw new RuntimeException("Invalid action type: " + sellRequestActionPojo.getActionType());
+        }
+        // check action by is valid or not
+        if (!(sellRequestActionPojo.getActionBy().equalsIgnoreCase("admin")
+                || sellRequestActionPojo.getActionBy().equalsIgnoreCase("owner"))) {
+            throw new RuntimeException("Invalid action by : " + sellRequestActionPojo.getActionBy());
+        }
+        // accept the form
+        if (sellRequestActionPojo.getActionType().equalsIgnoreCase("accept")) {
+            // if accept by owner
+            if (sellRequestActionPojo.getActionBy().equalsIgnoreCase("owner")) {
+                ownershipTransferRepo.updateOwnerActionOnOwnershipRequest(true, sellRequestActionPojo.getId());
+            } else {
+//            if (sellRequestActionPojo.getActionBy().equalsIgnoreCase("admin")) {
+                ownershipTransferRepo.updateAdminActionOnOwnershipRequest(true, sellRequestActionPojo.getId());
+            }
+        } else {
+            // if accept by owner
+            if (sellRequestActionPojo.getActionBy().equalsIgnoreCase("owner")) {
+                ownershipTransferRepo.updateOwnerActionOnOwnershipRequest(false, sellRequestActionPojo.getId());
+            } else {
+//            if (sellRequestActionPojo.getActionBy().equalsIgnoreCase("admin")) {
+                ownershipTransferRepo.updateAdminActionOnOwnershipRequest(false, sellRequestActionPojo.getId());
+            }
+        }
+        return false;
+    }
+
 
     private String saveAndScanImage(MultipartFile scanImage, String languageCode) throws
             IOException, TesseractException {

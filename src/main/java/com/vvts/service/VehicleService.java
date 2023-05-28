@@ -1,9 +1,6 @@
 package com.vvts.service;
 
-import com.vvts.dto.BuyRequestPojo;
-import com.vvts.dto.BuyRequestResponseDto;
-import com.vvts.dto.NumberPlateScannerResponsePojo;
-import com.vvts.dto.VehicleDto;
+import com.vvts.dto.*;
 import com.vvts.projection.BuyRequestProjection;
 import com.vvts.projection.BuyerRequestProjection;
 import net.sourceforge.tess4j.TesseractException;
@@ -32,5 +29,6 @@ public interface VehicleService {
     Boolean validatePincode(String pinCode, Integer loginUserId);
     List<BuyerRequestProjection> getBuyRequestOfLoginUser(Integer loginUserId);
 
+    boolean takeActionOnSellRequest(SellRequestActionPojo sellRequestActionPojo);
 
 }
