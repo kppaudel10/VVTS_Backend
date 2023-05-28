@@ -34,10 +34,10 @@ public class OwnershipTransfer {
     private Date transferApproveDate;
 
     @Column(name = "is_approve_by_owner")
-    private Boolean isApproveByOwner = false;
+    private boolean isApproveByOwner = false;
 
     @Column(name = "is_approve_by_admin")
-    private Boolean isApproveByAdmin = false;
+    private boolean isApproveByAdmin = false;
 
     @ManyToOne
     @JoinColumn(name = "vehicle_id", referencedColumnName = "id")
@@ -51,6 +51,6 @@ public class OwnershipTransfer {
     @JoinColumn(name = "seller_id", referencedColumnName = "id")
     private Users seller;
 
-    private Integer status = 1;
+    private int status = 1;
 
 }

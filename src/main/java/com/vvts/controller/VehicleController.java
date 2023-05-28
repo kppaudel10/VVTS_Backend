@@ -39,21 +39,29 @@ public class VehicleController {
     }
 
     @PostMapping("/buy-request")
-    public GlobalApiResponse vehicleBuyRequest(@Valid @RequestBody BuyRequestPojo buyRequestPojo, Authentication authentication) throws MessagingException, EmailException {
+    public GlobalApiResponse vehicleBuyRequest(@Valid @RequestBody BuyRequestPojo buyRequestPojo, Authentication authentication)
+            throws MessagingException, EmailException {
         return new GlobalApiResponse(messageSource.getMessage("buy.request", null, null), true,
                 vehicleService.saveVehicleBuyRequest(buyRequestPojo, userDataConfig.getLoggedInUserId(authentication)));
     }
 
+    @GetMapping("/buy-request/list")
+    public GlobalApiResponse getVehicleBuyRequestList(Authentication authentication) {
+        return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true,
+                vehicleService.getBuyRequestOfLoginUser(userDataConfig.getLoggedInUserId(authentication)));
+    }
+
     @GetMapping("/sell-request")
-    public GlobalApiResponse vehicleBuyRequestList(Authentication authentication) throws MessagingException, EmailException {
+    public GlobalApiResponse vehicleBuyRequestList(Authentication authentication) {
         return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true,
                 vehicleService.getBuyRequestList(userDataConfig.getLoggedInUserId(authentication)));
     }
 
     @PostMapping("/number-plate/scan")
-    public GlobalApiResponse getScanNumberPlate(@ModelAttribute MultipartFile numberPlateImage, @RequestParam String LanguageCode) throws TesseractException, IOException {
+    public GlobalApiResponse getScanNumberPlate(@ModelAttribute MultipartFile numberPlateImage, @RequestParam String LanguageCode)
+            throws TesseractException, IOException {
         return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true,
-                vehicleService.getScanNumberPlate(numberPlateImage,LanguageCode));
+                vehicleService.getScanNumberPlate(numberPlateImage, LanguageCode));
     }
 
 

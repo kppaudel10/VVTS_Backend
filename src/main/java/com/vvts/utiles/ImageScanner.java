@@ -154,4 +154,8 @@ public class ImageScanner {
             return null;
         }
     }
+
+    public static void main(String[] args) {
+//        System.loadLibrary();
+    }
 }

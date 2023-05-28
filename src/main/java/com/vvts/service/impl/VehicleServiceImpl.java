@@ -10,6 +10,7 @@ import com.vvts.entity.Users;
 import com.vvts.entity.VehicleDetail;
 import com.vvts.enums.VehicleType;
 import com.vvts.projection.BuyRequestProjection;
+import com.vvts.projection.BuyerRequestProjection;
 import com.vvts.projection.NumberPlateScannerProjection;
 import com.vvts.repo.OwnershipTransferRepo;
 import com.vvts.repo.PinCodeRepo;
@@ -100,6 +101,9 @@ public class VehicleServiceImpl implements VehicleService {
         OwnershipTransfer ownershipTransfer = OwnershipTransfer.builder()
                 .transferRequestDate(new Date())
                 .vehicleDetail(vehicleDetail)
+                .isApproveByAdmin(false)
+                .isApproveByOwner(false)
+                .status(1)
                 .seller(users)
                 .buyer(buyer).build();
         ownershipTransferRepo.save(ownershipTransfer);
@@ -218,6 +222,11 @@ public class VehicleServiceImpl implements VehicleService {
         // delete that token after success message
         pinCodeRepo.deleteById(actualToken.getId());
         return true;
+    }
+
+    @Override
+    public List<BuyerRequestProjection> getBuyRequestOfLoginUser(Integer loginUserId) {
+        return ownershipTransferRepo.getBuyRequestByLoginUser(loginUserId);
     }
 
 

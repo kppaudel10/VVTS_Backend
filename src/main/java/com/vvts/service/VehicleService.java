@@ -4,6 +4,7 @@ import com.vvts.dto.BuyRequestPojo;
 import com.vvts.dto.NumberPlateScannerResponsePojo;
 import com.vvts.dto.VehicleDto;
 import com.vvts.projection.BuyRequestProjection;
+import com.vvts.projection.BuyerRequestProjection;
 import net.sourceforge.tess4j.TesseractException;
 import org.apache.commons.mail.EmailException;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,8 +26,10 @@ public interface VehicleService {
 
     NumberPlateScannerResponsePojo getScanNumberPlate(MultipartFile scanImage, String destinationLanguage) throws IOException, TesseractException;
 
-    boolean generateValidationToken(BuyRequestPojo buyRequestPojo ,Integer loginUserId) throws EmailException;
+    boolean generateValidationToken(BuyRequestPojo buyRequestPojo, Integer loginUserId) throws EmailException;
+
     Boolean validatePincode(String pinCode, Integer loginUserId);
+    List<BuyerRequestProjection> getBuyRequestOfLoginUser(Integer loginUserId);
 
 
 }

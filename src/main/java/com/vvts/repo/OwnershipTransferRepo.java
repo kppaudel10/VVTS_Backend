@@ -2,6 +2,7 @@ package com.vvts.repo;
 
 import com.vvts.entity.OwnershipTransfer;
 import com.vvts.projection.BuyRequestProjection;
+import com.vvts.projection.BuyerRequestProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -42,4 +43,23 @@ public interface OwnershipTransferRepo extends JpaRepository<OwnershipTransfer, 
             "  and ot.buyer_id = ?2\n" +
             "  and ot.buyer_id = ?3", nativeQuery = true)
     Integer getCountBuyRequest(String vehicleNo, Integer buyerId, Integer sellerId);
+
+
+    @Query(value = "select u.name               as \"ownerName\",\n" +
+            "       u.mobile_number      as \"ownerMobileNo\",\n" +
+            "       vd.identification_no as \"identificationNo\",\n" +
+            "       vd.vehicle_type      as \"vehicleType\",\n" +
+            "       ot.request_date      as \"requestDate\",\n" +
+            "       case\n" +
+            "           when ot.is_approve_by_owner = false and status = 1 then 'Pending on Owner'\n" +
+            "           when ot.is_approve_by_admin = false and ot.is_approve_by_owner = true and status = 1 then 'Pending on Owner'\n" +
+            "           when status = 0 then 'Rejected'\n" +
+            "           end              as \"requestStatus\"\n" +
+            "from ownership_transfer ot\n" +
+            "         inner join vehicle_detail vd on ot.vehicle_id = vd.id\n" +
+            "         inner join users u on ot.seller_id = u.id\n" +
+            "where ot.buyer_id = ?1", nativeQuery = true)
+    List<BuyerRequestProjection> getBuyRequestByLoginUser(Integer loginUserId);
+
+
 }
