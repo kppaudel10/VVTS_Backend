@@ -16,8 +16,8 @@ VALUES (1, true, 'A-Dashboard'),
        (6, true, 'OwnerShip Request'),
        (7, true, 'U-Dashboard'),
        (8, true, 'Sell Vehicle'),
-       (9, true, 'Buy Request'),;
-    (10, true, 'Add Vehicle');
+       (9, true, 'Buy Request'),
+    (10, true, 'Add New Vehicle');
 
 /*
  insert role mapping
