@@ -30,6 +30,8 @@ public interface BuyRequestProjection {
 
     String getBuyerAddress();
 
+    String getBuyerEmail();
+
     String getBuyerProfileUrl();
 
     String getBuyerCitizenshipNo();
