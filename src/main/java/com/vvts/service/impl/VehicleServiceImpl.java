@@ -164,6 +164,7 @@ public class VehicleServiceImpl implements VehicleService {
                     .buyerAddress(brp.getBuyerAddress())
                     .vehicleIdentificationNo(brp.getVehicleIdentificationNo())
                     .vehicleType(brp.getVehicleType())
+                    .buyerEmail(brp.getBuyerEmail())
                     .buyerProfilePictureUrl(imageAccessBaseUrl.concat("/profile/").concat(brp.getBuyerProfileUrl().split("/")
                             [brp.getBuyerProfileUrl().split("/").length - 1])).build();
             //add to list

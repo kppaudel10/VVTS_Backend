@@ -25,6 +25,7 @@ public interface OwnershipTransferRepo extends JpaRepository<OwnershipTransfer, 
             "                vd.manufacture_year    as \"manufactureYear\",\n" +
             "                vd.vehicle_type        as \"vehicleType\",\n" +
             "                u.name                 as \"buyerName\",\n" +
+            "                u.email                as \"buyerEmail\",\n" +
             "                u.mobile_number        as \"buyerMobileNumber\",\n" +
             "                u.address              as \"buyerAddress\",\n" +
             "                u.profile_image_url    as \"buyerProfileUrl\",\n" +

@@ -36,4 +36,6 @@ public class BuyRequestResponseDto {
 
     private String buyerProfilePictureUrl;
 
+    private String buyerEmail;
+
 }
