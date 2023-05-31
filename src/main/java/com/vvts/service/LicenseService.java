@@ -1,6 +1,7 @@
 package com.vvts.service;
 
 import com.vvts.dto.LicenseDto;
+import com.vvts.dto.LicenseResponseDto;
 import com.vvts.projection.LicenseProjection;
 import org.springframework.data.domain.Pageable;
 
@@ -17,6 +18,6 @@ public interface LicenseService {
 
     Boolean deleteLicense(Integer id);
 
-    List<LicenseProjection> getAllLicenseList(String searchValue, Pageable pageable);
+    List<LicenseResponseDto> getAllLicenseList(String searchValue, Pageable pageable);
 
 }

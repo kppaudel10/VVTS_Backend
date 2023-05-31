@@ -1,9 +1,11 @@
 package com.vvts.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.repository.query.parser.Part;
 
 import javax.validation.constraints.NotNull;
 
@@ -32,6 +34,8 @@ public class LicenseDto {
     private String district;
 
     @NotNull(message = "vehicleType must be required.")
-    private Integer vehicleType;
+    private Integer licenseCategory;
+
+    private String LicenseCategoryName;
 
 }

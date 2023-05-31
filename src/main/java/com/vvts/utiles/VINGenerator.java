@@ -31,7 +31,7 @@ public class VINGenerator {
             // create new VIN
             return companyCode.concat("-"+vehicleTypeName).concat("-"+ vinSeries);
         } else {
-            return companyCode.concat("-"+ vehicleTypeName).concat("-"+ manufactureYear).concat("00000");
+            return companyCode.concat("-"+ vehicleTypeName).concat("-"+ manufactureYear).concat("00");
         }
     }
 

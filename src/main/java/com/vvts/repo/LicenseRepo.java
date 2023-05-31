@@ -19,8 +19,8 @@ public interface LicenseRepo extends JpaRepository<License, Integer> {
     @Query(value = "select count(id) from license where license_no = ?1", nativeQuery = true)
     Integer getCountOfLicenseByLicenseNumber(String licenseNumber);
 
-    @Query(value = "select count(id) from license where citizenship_no = ?1  and vehicle_type = ?2", nativeQuery = true)
-    Integer getCitizenshipNumberCount(String citizenshipNo, Integer vehicleType);
+    @Query(value = "select count(id) from license where citizenship_no = ?1  and license_category = ?2", nativeQuery = true)
+    Integer getCitizenshipNumberCount(String citizenshipNo, Integer licenseCategory);
 
     @Query(value = "select id, citizenship_no as \"citizenshipNo\", district, license_no as \"licenseNo\", valid_date as \"validDate\"\n" +
             "from license\n" +
@@ -33,7 +33,7 @@ public interface LicenseRepo extends JpaRepository<License, Integer> {
             "       l.license_no     as \"licenseNo\",\n" +
             "       l.valid_date     as \"validDate\",\n" +
             "       u.name           as \"licensedUserName\",\n" +
-            "       l.vehicle_type   as \"vehicleType\"\n" +
+            "       l.license_category   as \"licenseCategory\"\n" +
             "from license l\n" +
             "         inner join users u on l.citizenship_no = u.citizenship_no\n" +
             "where l.license_no like ?1\n" +
