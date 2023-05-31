@@ -1,7 +1,9 @@
 package com.vvts.service.impl;
 
 import com.vvts.dto.LicenseDto;
+import com.vvts.dto.LicenseResponseDto;
 import com.vvts.entity.License;
+import com.vvts.enums.LicenseCategory;
 import com.vvts.enums.VehicleType;
 import com.vvts.projection.LicenseProjection;
 import com.vvts.repo.LicenseRepo;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -36,16 +39,16 @@ public class LicenseServiceImpl implements LicenseService {
         }
 
         // check citizenship number already exits or not
-        if (licenseRepo.getCitizenshipNumberCount(licenseDto.getCitizenshipNo(), licenseDto.getVehicleType()) > 0) {
+        if (licenseRepo.getCitizenshipNumberCount(licenseDto.getCitizenshipNo(), licenseDto.getLicenseCategory()) > 0) {
             throw new RuntimeException("User with Citizenship number : " + licenseDto.getCitizenshipNo() +
-                    " already has license of " + VehicleType.getVehicleTypeKey(licenseDto.getVehicleType()).name());
+                    " already has license of " + VehicleType.getVehicleTypeKey(licenseDto.getLicenseCategory()).name());
         }
         // build entity
         License license = License.builder()
                 .id(licenseDto.getId())
                 .citizenshipNo(licenseDto.getCitizenshipNo())
                 .district(licenseDto.getDistrict())
-                .vehicleType(VehicleType.getVehicleTypeKey(licenseDto.getVehicleType()))
+                .licenseCategory(LicenseCategory.getLicenseCategoryByKey(licenseDto.getLicenseCategory()))
                 .validDate(new SimpleDateFormat("yyyy-MM-dd").parse(licenseDto.getValidDate())).build();
         if (licenseDto.getId() == null) {
             license.setLicenseNo(generateLicenseNumber());
@@ -72,14 +75,22 @@ public class LicenseServiceImpl implements LicenseService {
     }
 
     @Override
-    public List<LicenseProjection> getAllLicenseList(String searchValue, Pageable pageable) {
+    public List<LicenseResponseDto> getAllLicenseList(String searchValue, Pageable pageable) {
+        List<LicenseProjection> licenseProjectionList;
         if (searchValue != null) {
             String concatWithLike = "%".concat(searchValue).concat("%");
-            return licenseRepo.filterLicenseDetails(concatWithLike, pageable);
+            licenseProjectionList = licenseRepo.filterLicenseDetails(concatWithLike, pageable);
+
         } else {
             String concatWithLike = "%".concat("--1").concat("%");
-            return licenseRepo.filterLicenseDetails(concatWithLike, pageable);
+            licenseProjectionList = licenseRepo.filterLicenseDetails(concatWithLike, pageable);
         }
+        List<LicenseResponseDto> licenseResponseList = new ArrayList<>();
+        for (LicenseProjection licenseProjection : licenseProjectionList) {
+            licenseResponseList.add(convertLicenseProjectionToDto(licenseProjection));
+        }
+
+        return licenseResponseList;
     }
 
     private String generateLicenseNumber() {
@@ -95,5 +106,17 @@ public class LicenseServiceImpl implements LicenseService {
             generateLicenseNumber();
         }
         return value;
+    }
+
+    private LicenseResponseDto convertLicenseProjectionToDto(LicenseProjection licenseProjection) {
+        return LicenseResponseDto.builder()
+                .id(licenseProjection.getId())
+                .licenseNo(licenseProjection.getLicenseNo())
+                .validDate(licenseProjection.getValidDate())
+                .LicenseCategoryName(LicenseCategory.getLicenseCategoryValueByKey(licenseProjection.getLicenseCategory()))
+                .district(licenseProjection.getDistrict())
+                .licensedOwnUserName(licenseProjection.getLicensedUserName())
+                .citizenshipNo(licenseProjection.getCitizenshipNo())
+                .build();
     }
 }

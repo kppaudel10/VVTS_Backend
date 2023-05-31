@@ -2,6 +2,7 @@ package com.vvts.entity;
 
 import javax.persistence.*;
 
+import com.vvts.enums.LicenseCategory;
 import com.vvts.enums.VehicleType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,6 +41,6 @@ public class License {
     @Column(name = "district")
     private String district;
 
-    @Column(name = "vehicle_type",nullable = false)
-    private VehicleType vehicleType;
+    @Column(name = "license_category",nullable = false)
+    private LicenseCategory licenseCategory;
 }

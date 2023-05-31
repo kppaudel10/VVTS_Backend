@@ -20,5 +20,7 @@ public interface LicenseProjection {
 
     Integer getVehicleType();
 
+    Integer getLicenseCategory();
+
 
 }
