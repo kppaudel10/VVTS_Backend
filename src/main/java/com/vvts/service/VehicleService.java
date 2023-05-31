@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.mail.MessagingException;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @auther kul.paudel
@@ -30,5 +31,7 @@ public interface VehicleService {
     List<BuyerRequestProjection> getBuyRequestOfLoginUser(Integer loginUserId);
 
     boolean takeActionOnSellRequest(SellRequestActionPojo sellRequestActionPojo);
+
+    List<Map<String,Object>> getVehicleByVendorId(Integer venderId);
 
 }

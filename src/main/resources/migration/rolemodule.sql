@@ -28,8 +28,8 @@ VALUES (1, true, 2, 1),
        (3, true, 2, 3),
        (4, true, 2, 4),
        (5, true, 2, 5),
-       (6, true, 2, 6),
-       (7, true, 2, 7);
+       (6, true, 2, 6);
+
 
 INSERT INTO role_module_mapping(id, is_active, role_id, role_module_id)
 VALUES (1, true, 1, 1),

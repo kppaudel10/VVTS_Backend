@@ -280,6 +280,11 @@ public class VehicleServiceImpl implements VehicleService {
         return false;
     }
 
+    @Override
+    public List<Map<String, Object>> getVehicleByVendorId(Integer venderId) {
+        return vehicleRepo.getVehicleList(venderId);
+    }
+
 
     private String saveAndScanImage(MultipartFile scanImage, String languageCode) throws
             IOException, TesseractException {

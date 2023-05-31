@@ -5,6 +5,9 @@ import com.vvts.projection.NumberPlateScannerProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * @auther kul.paudel
  * @created at 2023-04-25
@@ -43,5 +46,12 @@ public interface VehicleRepo extends JpaRepository<VehicleDetail, Integer> {
 
     VehicleDetail getVehicleDetailByVehicleIdentificationNo(String vehicleIdentificationNo);
 
-
+    @Query(value = "select company_code,\n" +
+            "       company_name,\n" +
+            "       manufacture_year,\n" +
+            "       vehicle_type,\n" +
+            "       identification_no\n" +
+            "from vehicle_detail\n" +
+            "where vendor_id = ?1",nativeQuery = true)
+    List<Map<String,Object>> getVehicleList(int vendorId);
 }
