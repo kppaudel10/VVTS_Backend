@@ -70,9 +70,16 @@ public class VehicleController {
         return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true,
                 vehicleService.getScanNumberPlate(numberPlateImage, LanguageCode));
     }
+
     @GetMapping("/list")
-    public GlobalApiResponse getVehicleByVendorId(Authentication authentication){
-        return new GlobalApiResponse(messageSource.getMessage("data.fetch",null,null),true,
+    public GlobalApiResponse getVehicleByVendorId(Authentication authentication) {
+        return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true,
                 vehicleService.getVehicleByVendorId(userDataConfig.getLoggedInUserId(authentication)));
+    }
+
+    @GetMapping("/ownership-request/list")
+    public GlobalApiResponse getOwnershipRequestList() {
+        return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true,
+                vehicleService.getOwnershipRequestList());
     }
 }

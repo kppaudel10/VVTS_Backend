@@ -9,6 +9,7 @@ import com.vvts.enums.VehicleType;
 import com.vvts.projection.BuyRequestProjection;
 import com.vvts.projection.BuyerRequestProjection;
 import com.vvts.projection.NumberPlateScannerProjection;
+import com.vvts.projection.OwnershipRequestProjection;
 import com.vvts.repo.OwnershipTransferRepo;
 import com.vvts.repo.PinCodeRepo;
 import com.vvts.repo.UsersRepo;
@@ -249,7 +250,8 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Override
     @Transactional
-    public boolean takeActionOnSellRequest(SellRequestActionPojo sellRequestActionPojo) {
+    public String takeActionOnSellRequest(SellRequestActionPojo sellRequestActionPojo) {
+        String message = null;
         //check action type valid or not
         if (!(sellRequestActionPojo.getActionType().equalsIgnoreCase("accept") ||
                 sellRequestActionPojo.getActionType().equalsIgnoreCase("reject"))) {
@@ -264,26 +266,69 @@ public class VehicleServiceImpl implements VehicleService {
         if (sellRequestActionPojo.getActionType().equalsIgnoreCase("accept")) {
             // if accept by owner
             if (sellRequestActionPojo.getActionBy().equalsIgnoreCase("owner")) {
-                ownershipTransferRepo.updateOwnerActionOnOwnershipRequest(true, sellRequestActionPojo.getId());
+                ownershipTransferRepo.updateOwnerActionOnOwnershipRequest(1, true, sellRequestActionPojo.getId());
+                message = "Vehicle Sell request accept successfully. Further process will be done by admin";
             } else {
 //            if (sellRequestActionPojo.getActionBy().equalsIgnoreCase("admin")) {
-                ownershipTransferRepo.updateAdminActionOnOwnershipRequest(true, sellRequestActionPojo.getId());
+                ownershipTransferRepo.updateAdminActionOnOwnershipRequest(1, true, sellRequestActionPojo.getId());
+                message = "Vehicle Sell request accept successfully";
             }
         } else {
             // if accept by owner
             if (sellRequestActionPojo.getActionBy().equalsIgnoreCase("owner")) {
-                ownershipTransferRepo.updateOwnerActionOnOwnershipRequest(false, sellRequestActionPojo.getId());
+                ownershipTransferRepo.updateOwnerActionOnOwnershipRequest(0, false, sellRequestActionPojo.getId());
+                message = "Vehicle Sell request rejected successfully";
             } else {
 //            if (sellRequestActionPojo.getActionBy().equalsIgnoreCase("admin")) {
-                ownershipTransferRepo.updateAdminActionOnOwnershipRequest(false, sellRequestActionPojo.getId());
+                ownershipTransferRepo.updateAdminActionOnOwnershipRequest(0, false, sellRequestActionPojo.getId());
+                message = "Vehicle Sell request rejected successfully";
             }
         }
-        return false;
+        return message;
     }
 
     @Override
-    public List<Map<String, Object>> getVehicleByVendorId(Integer venderId) {
-        return vehicleRepo.getVehicleList(venderId);
+    public List<Map<String, Object>> getVehicleByVendorId(Integer vendorId) {
+        return vehicleRepo.getVehicleList(vendorId);
+    }
+
+    @Override
+    public List<OwnershipResponseDto> getOwnershipRequestList() {
+        List<OwnershipRequestProjection> requestProjectionList = ownershipTransferRepo.getOwnershipTransferList();
+        List<OwnershipResponseDto> ownershipResponseDtoList = new ArrayList<>();
+        for (OwnershipRequestProjection ownershipRequest : requestProjectionList) {
+            OwnershipResponseDto ownershipResponseDto = OwnershipResponseDto.builder()
+                    .id(ownershipRequest.getId())
+                    .vehicleType(ownershipRequest.getVehicleType())
+                    .manufactureYear(ownershipRequest.getManufactureYear())
+                    .companyCode(ownershipRequest.getCompanyCode())
+                    .requestDate(ownershipRequest.getRequestDate())
+                    .vehicleIdentificationNo(ownershipRequest.getVehicleIdentificationNo())
+                    .buyerName(ownershipRequest.getBuyerName())
+                    .buyerMobileNumber(ownershipRequest.getBuyerMobileNumber())
+                    .buyerEmail(ownershipRequest.getBuyerEmail())
+                    .buyerAddress(ownershipRequest.getBuyerAddress())
+                    .buyerProfileUrl(imageAccessBaseUrl.concat("/profile/").concat(getImageNameBuyUrl(ownershipRequest.
+                            getBuyerProfileUrl())))
+                    .buyerCitizenshipNo(ownershipRequest.getBuyerCitizenshipNo())
+                    .buyerCitizenshipFontUrl(imageAccessBaseUrl.concat("/citizen/").concat(getImageNameBuyUrl
+                            (ownershipRequest.getBuyerCitizenshipFontUrl())))
+                    .buyerCitizenshipBackUrl(imageAccessBaseUrl.concat("/citizen/").concat(getImageNameBuyUrl
+                            (ownershipRequest.getBuyerCitizenshipBackUrl())))
+                    .sellerName(ownershipRequest.getSellerName())
+                    .sellerMobileNumber(ownershipRequest.getSellerMobileNumber())
+                    .sellerEmail(ownershipRequest.getSellerEmail())
+                    .sellerAddress(ownershipRequest.getSellerAddress())
+                    .sellerCitizenshipNo(ownershipRequest.getSellerCitizenshipNo())
+                    .sellerProfileUrl(imageAccessBaseUrl.concat("/profile/").concat(getImageNameBuyUrl(ownershipRequest.
+                            getSellerProfileUrl())))
+                    .sellerCitizenshipFontUrl(imageAccessBaseUrl.concat("/citizen/").concat(getImageNameBuyUrl(ownershipRequest.
+                            getSellerCitizenshipFontUrl())))
+                    .sellerCitizenshipBackUrl(imageAccessBaseUrl.concat("/citizen/").concat(getImageNameBuyUrl(ownershipRequest.
+                            getSellerCitizenshipBackUrl()))).build();
+            ownershipResponseDtoList.add(ownershipResponseDto);
+        }
+        return ownershipResponseDtoList;
     }
 
 
@@ -314,5 +359,9 @@ public class VehicleServiceImpl implements VehicleService {
             return scanOutput;
         }
         return null;
+    }
+
+    private String getImageNameBuyUrl(String imageUrl) {
+        return imageUrl.split("/")[imageUrl.split("/").length - 1];
     }
 }

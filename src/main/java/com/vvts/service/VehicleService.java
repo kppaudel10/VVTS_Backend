@@ -30,8 +30,9 @@ public interface VehicleService {
     Boolean validatePincode(String pinCode, Integer loginUserId);
     List<BuyerRequestProjection> getBuyRequestOfLoginUser(Integer loginUserId);
 
-    boolean takeActionOnSellRequest(SellRequestActionPojo sellRequestActionPojo);
+    String takeActionOnSellRequest(SellRequestActionPojo sellRequestActionPojo);
 
-    List<Map<String,Object>> getVehicleByVendorId(Integer venderId);
+    List<Map<String,Object>> getVehicleByVendorId(Integer vendorId);
+    List<OwnershipResponseDto> getOwnershipRequestList();
 
 }

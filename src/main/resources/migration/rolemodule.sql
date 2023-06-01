@@ -17,7 +17,7 @@ VALUES (1, true, 'A-Dashboard'),
        (7, true, 'U-Dashboard'),
        (8, true, 'Sell Vehicle'),
        (9, true, 'Buy Request'),
-    (10, true, 'Add New Vehicle');
+       (10, true, 'Add New Vehicle');
 
 /*
  insert role mapping

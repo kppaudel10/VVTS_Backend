@@ -3,6 +3,7 @@ package com.vvts.repo;
 import com.vvts.entity.OwnershipTransfer;
 import com.vvts.projection.BuyRequestProjection;
 import com.vvts.projection.BuyerRequestProjection;
+import com.vvts.projection.OwnershipRequestProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -33,9 +34,11 @@ public interface OwnershipTransferRepo extends JpaRepository<OwnershipTransfer, 
             "                u.citizenship_font_url as \"buyerCitizenshipFontUrl\",\n" +
             "                u.citizenship_back_url as \"buyerCitizenshipBackUrl\"\n" +
             "from ownership_transfer ot\n" +
-            "         inner join users u on ot.seller_id = u.id\n" +
+            "         inner join users u on ot.buyer_id = u.id\n" +
             "         inner join vehicle_detail vd on vd.id = ot.vehicle_id\n" +
-            "where ot.seller_id = ?1", nativeQuery = true)
+            "where ot.seller_id = ?1\n" +
+            "  and ot.is_approve_by_owner = false\n" +
+            "  and ot.status = 1", nativeQuery = true)
     List<BuyRequestProjection> getOwnershipTransferByOwnerId(Integer ownerId);
 
 
@@ -61,15 +64,51 @@ public interface OwnershipTransferRepo extends JpaRepository<OwnershipTransfer, 
             "from ownership_transfer ot\n" +
             "         inner join vehicle_detail vd on ot.vehicle_id = vd.id\n" +
             "         inner join users u on ot.seller_id = u.id\n" +
-            "where ot.buyer_id = ?1", nativeQuery = true)
+            "where ot.buyer_id = ?1 and status = 1", nativeQuery = true)
     List<BuyerRequestProjection> getBuyRequestByLoginUser(Integer loginUserId);
 
     @Modifying
-    @Query(value = "update ownership_transfer set is_approve_by_owner = ?1 where id = ?2", nativeQuery = true)
-    void updateOwnerActionOnOwnershipRequest(boolean status, Integer id);
+    @Query(value = "update ownership_transfer set status = ?1 , is_approve_by_owner = ?2 where id = ?3", nativeQuery = true)
+    void updateOwnerActionOnOwnershipRequest(Integer activeStatus, boolean status, Integer id);
 
     @Modifying
-    @Query(value = "update ownership_transfer set is_approve_by_admin = ?1 where id = ?2", nativeQuery = true)
-    void updateAdminActionOnOwnershipRequest(boolean status, Integer id);
+    @Query(value = "update ownership_transfer set status = ?1, is_approve_by_admin = ?2 where id = ?3", nativeQuery = true)
+    void updateAdminActionOnOwnershipRequest(Integer activeStatus, boolean status, Integer id);
 
+
+    @Query(nativeQuery = true, value = "with buyerDetail as (select distinct ot.id,\n" +
+            "                                     ot.request_date        as \"requestDate\",\n" +
+            "                                     vd.identification_no   as \"vehicleIdentificationNo\",\n" +
+            "                                     vd.company_code        as \"companyCode\",\n" +
+            "                                     vd.manufacture_year    as \"manufactureYear\",\n" +
+            "                                     vd.vehicle_type        as \"vehicleType\",\n" +
+            "                                     u.name                 as \"buyerName\",\n" +
+            "                                     u.email                as \"buyerEmail\",\n" +
+            "                                     u.mobile_number        as \"buyerMobileNumber\",\n" +
+            "                                     u.address              as \"buyerAddress\",\n" +
+            "                                     u.profile_image_url    as \"buyerProfileUrl\",\n" +
+            "                                     u.citizenship_no       as \"buyerCitizenshipNo\",\n" +
+            "                                     u.citizenship_font_url as \"buyerCitizenshipFontUrl\",\n" +
+            "                                     u.citizenship_back_url as \"buyerCitizenshipBackUrl\"\n" +
+            "                     from ownership_transfer ot\n" +
+            "                              inner join users u on ot.buyer_id = u.id\n" +
+            "                              inner join vehicle_detail vd on vd.id = ot.vehicle_id\n" +
+            "                         and ot.is_approve_by_owner = true\n" +
+            "                         and ot.status = 1),\n" +
+            "     sellerDetail as (select distinct ot.id as otId,\n" +
+            "                                      u.name                 as \"sellerName\",\n" +
+            "                                      u.email                as \"sellerEmail\",\n" +
+            "                                      u.mobile_number        as \"sellerMobileNumber\",\n" +
+            "                                      u.address              as \"sellerAddress\",\n" +
+            "                                      u.profile_image_url    as \"sellerProfileUrl\",\n" +
+            "                                      u.citizenship_no       as \"sellerCitizenshipNo\",\n" +
+            "                                      u.citizenship_font_url as \"sellerCitizenshipFontUrl\",\n" +
+            "                                      u.citizenship_back_url as \"sellerCitizenshipBackUrl\"\n" +
+            "                      from ownership_transfer ot\n" +
+            "                               inner join users u on ot.seller_id = u.id\n" +
+            "                          and ot.is_approve_by_owner = true\n" +
+            "                          and ot.status = 1)\n" +
+            "select * from buyerDetail bd\n" +
+            "inner join sellerDetail sd on bd.id = sd.otId")
+    List<OwnershipRequestProjection> getOwnershipTransferList();
 }
