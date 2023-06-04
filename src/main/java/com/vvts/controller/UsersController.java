@@ -56,6 +56,12 @@ public class UsersController {
                 usersService.getNewKycRequest());
     }
 
+    @GetMapping("/active/list")
+    public GlobalApiResponse getActiveUserList() throws IOException {
+        return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true,
+                usersService.getActiveUserList());
+    }
+
     @GetMapping("/basic-detail")
     public GlobalApiResponse getUserBasicDetail(Authentication authentication) {
         return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true,

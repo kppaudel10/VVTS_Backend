@@ -93,9 +93,9 @@ public interface OwnershipTransferRepo extends JpaRepository<OwnershipTransfer, 
             "                     from ownership_transfer ot\n" +
             "                              inner join users u on ot.buyer_id = u.id\n" +
             "                              inner join vehicle_detail vd on vd.id = ot.vehicle_id\n" +
-            "                         and ot.is_approve_by_owner = true\n" +
+            "                         and ot.is_approve_by_owner = true and ot.is_approve_by_admin = false\n" +
             "                         and ot.status = 1),\n" +
-            "     sellerDetail as (select distinct ot.id as otId,\n" +
+            "     sellerDetail as (select distinct ot.id                  as otId,\n" +
             "                                      u.name                 as \"sellerName\",\n" +
             "                                      u.email                as \"sellerEmail\",\n" +
             "                                      u.mobile_number        as \"sellerMobileNumber\",\n" +
@@ -106,9 +106,10 @@ public interface OwnershipTransferRepo extends JpaRepository<OwnershipTransfer, 
             "                                      u.citizenship_back_url as \"sellerCitizenshipBackUrl\"\n" +
             "                      from ownership_transfer ot\n" +
             "                               inner join users u on ot.seller_id = u.id\n" +
-            "                          and ot.is_approve_by_owner = true\n" +
+            "                          and ot.is_approve_by_owner = true and ot.is_approve_by_admin = false\n" +
             "                          and ot.status = 1)\n" +
-            "select * from buyerDetail bd\n" +
-            "inner join sellerDetail sd on bd.id = sd.otId")
+            "select *\n" +
+            "from buyerDetail bd\n" +
+            "         inner join sellerDetail sd on bd.id = sd.otId")
     List<OwnershipRequestProjection> getOwnershipTransferList();
 }

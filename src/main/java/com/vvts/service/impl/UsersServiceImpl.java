@@ -232,6 +232,31 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
+    public List<UserKycDetailDto> getActiveUserList() throws IOException {
+        List<UserDetailProjection> userDetailList = usersRepo.getActiveUserList();
+        List<UserKycDetailDto> userKycDetailDtoList = new ArrayList<>();
+        for (UserDetailProjection user : userDetailList) {
+            UserKycDetailDto userKycDetailDto = UserKycDetailDto.builder()
+                    .userId(user.getUserId())
+                    .name(user.getName())
+                    .address(user.getAddress())
+                    .email(user.getEmail())
+                    .contact(user.getContact())
+                    .citizenshipNo(user.getCitizenshipNo())
+                    .profilePictureUrl(imageAccessBaseUrl.concat("/profile/").concat(user.getProfilePictureUrl().split("/")
+                            [user.getProfilePictureUrl().split("/").length - 1]))
+                    .citizenshipFontUrl(imageAccessBaseUrl.concat("/citizen/").concat(user.getCitizenshipFontUrl().split("/")
+                            [user.getCitizenshipFontUrl().split("/").length - 1]))
+                    .citizenshipBackUrl(imageAccessBaseUrl.concat("/citizen/").concat(user.getCitizenshipBackUrl().split("/")
+                            [user.getCitizenshipBackUrl().split("/").length - 1]))
+                    .build();
+            userKycDetailDtoList.add(userKycDetailDto);
+
+        }
+        return userKycDetailDtoList;
+    }
+
+    @Override
     public List<InitProjection> getRoleModuleMappingDetail(Integer roleId) {
         return roleRepo.getUserModuleAccess(roleId);
     }

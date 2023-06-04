@@ -26,6 +26,7 @@ public interface UsersService {
     KycUpdateResponseDto updateUserKyc(UserKycUpdateDto userKycUpdateDto) throws IOException;
 
     List<UserKycDetailDto> getNewKycRequest() throws IOException;
+    List<UserKycDetailDto> getActiveUserList() throws IOException;
 
     List<InitProjection> getRoleModuleMappingDetail(Integer roleId);
 

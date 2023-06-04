@@ -17,7 +17,8 @@ VALUES (1, true, 'A-Dashboard'),
        (7, true, 'U-Dashboard'),
        (8, true, 'Sell Vehicle'),
        (9, true, 'Buy Request'),
-       (10, true, 'Add New Vehicle');
+       (10, true, 'Add New Vehicle'),
+       (11, true, 'User List');
 
 /*
  insert role mapping
@@ -41,7 +42,8 @@ VALUES (1, true, 1, 1),
        (7, true, 1, 7),
        (8, true, 1, 8),
        (9, true, 1, 9),
-       (10, true, 1, 10);
+       (10, true, 1, 10),
+       (11, true, 1, 11);
 /*
  basic module insert
  */

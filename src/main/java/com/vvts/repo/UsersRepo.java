@@ -39,6 +39,19 @@ public interface UsersRepo extends JpaRepository<Users, Integer> {
             "  and is_new_kyc_request = true", nativeQuery = true)
     List<UserDetailProjection> getNewKycRequestUserData();
 
+    @Query(value = "select id                   as \"userId\",\n" +
+            "       address,\n" +
+            "       email,\n" +
+            "       mobile_number        as contact,\n" +
+            "       name,\n" +
+            "       citizenship_no       as \"citizenshipNo\",\n" +
+            "       profile_image_url    as \"profilePictureUrl\",\n" +
+            "       citizenship_font_url as \"citizenshipFontUrl\",\n" +
+            "       citizenship_back_url as \"citizenshipBackUrl\"\n" +
+            "from users\n" +
+            "where is_enable = true", nativeQuery = true)
+    List<UserDetailProjection> getActiveUserList();
+
     @Query(value = "select count(id) from users where citizenship_no = ?1 and is_enable = true", nativeQuery = true)
     Integer getVerifiedCitizenshipCount(String citizenshipNo);
 
