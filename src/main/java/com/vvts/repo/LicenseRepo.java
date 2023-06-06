@@ -43,4 +43,16 @@ public interface LicenseRepo extends JpaRepository<License, Integer> {
             "order by l.id desc", nativeQuery = true)
     List<LicenseProjection> filterLicenseDetails(String searchValue, Pageable pageable);
 
+    @Query(value = "select l.id,\n" +
+            "       l.citizenship_no   as \"citizenshipNo\",\n" +
+            "       l.district,\n" +
+            "       l.license_no       as \"licenseNo\",\n" +
+            "       l.valid_date       as \"validDate\",\n" +
+            "       u.name             as \"licensedUserName\",\n" +
+            "       l.license_category as \"licenseCategory\"\n" +
+            "from license l\n" +
+            "         inner join users u on l.citizenship_no = u.citizenship_no\n" +
+            "where u.id = ?1",nativeQuery = true)
+    List<LicenseProjection> getLoginUserLicense(Integer loginUser);
+
 }

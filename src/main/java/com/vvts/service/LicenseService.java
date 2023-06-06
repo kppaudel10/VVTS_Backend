@@ -20,4 +20,6 @@ public interface LicenseService {
 
     List<LicenseResponseDto> getAllLicenseList(String searchValue, Pageable pageable);
 
+    List<LicenseResponseDto> getLoginUserLicense(Integer loginUser);
+
 }

@@ -175,12 +175,13 @@ public class VehicleServiceImpl implements VehicleService {
     }
 
     @Override
-    public NumberPlateScannerResponsePojo getScanNumberPlate(MultipartFile scanImage, String destinationLanguage) throws IOException {
+    public NumberPlateScannerResponsePojo getScanNumberPlate(MultipartFile scanImage, String destinationLanguage) throws IOException, TesseractException {
         //check language
         if (!(destinationLanguage.equals("eng") || destinationLanguage.equals("nep"))) {
             throw new RuntimeException("Invalid Language Code : " + destinationLanguage);
         }
-        String scanOutput = imageScanner.doOCR(scanImage, destinationLanguage);
+//        String scanOutput = imageScanner.doOCR(scanImage, destinationLanguage);
+        String scanOutput = saveAndScanImage(scanImage,destinationLanguage);
         System.out.println(scanOutput);
         if (scanOutput != null) {
             char[] scanOutputChars = scanOutput.toCharArray();

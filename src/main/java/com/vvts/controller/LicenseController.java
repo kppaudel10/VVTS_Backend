@@ -1,11 +1,13 @@
 package com.vvts.controller;
 
+import com.vvts.config.jwt.UserDataConfig;
 import com.vvts.dto.LicenseDto;
 import com.vvts.service.LicenseService;
 import com.vvts.utiles.GlobalApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
@@ -22,6 +24,8 @@ public class LicenseController {
     private final LicenseService licenseService;
 
     private final MessageSource messageSource;
+
+    private final UserDataConfig userDataConfig;
 
     @PostMapping("/save")
     private GlobalApiResponse saveLicenseDetail(@RequestBody LicenseDto licenseDto) throws ParseException {
@@ -40,6 +44,12 @@ public class LicenseController {
                                                        String searchValue, Pageable pageable) {
         return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null),
                 true, licenseService.getAllLicenseList(searchValue, pageable));
+    }
+
+    @GetMapping("/login-user")
+    private GlobalApiResponse getLicenseDetailsOfLoginUser(Authentication authentication) {
+        return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null),
+                true, licenseService.getLoginUserLicense(userDataConfig.getLoggedInUserId(authentication)));
     }
 
 

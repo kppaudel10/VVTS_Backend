@@ -218,17 +218,20 @@ public class UsersServiceImpl implements UsersService {
                     .email(user.getEmail())
                     .contact(user.getContact())
                     .citizenshipNo(user.getCitizenshipNo())
-                    .profilePictureUrl(imageAccessBaseUrl.concat("/profile/").concat(user.getProfilePictureUrl().split("/")
-                            [user.getProfilePictureUrl().split("/").length - 1]))
-                    .citizenshipFontUrl(imageAccessBaseUrl.concat("/citizen/").concat(user.getCitizenshipFontUrl().split("/")
-                            [user.getCitizenshipFontUrl().split("/").length - 1]))
-                    .citizenshipBackUrl(imageAccessBaseUrl.concat("/citizen/").concat(user.getCitizenshipBackUrl().split("/")
-                            [user.getCitizenshipBackUrl().split("/").length - 1]))
+                    .profilePictureUrl(imageAccessBaseUrl.concat("/profile/").concat(getFileNameFormPath(user.getProfilePictureUrl())))
+                    .citizenshipFontUrl(imageAccessBaseUrl.concat("/citizen/").concat(getFileNameFormPath(user.getCitizenshipFontUrl())))
+                    .citizenshipBackUrl(imageAccessBaseUrl.concat("/citizen/").concat(getFileNameFormPath(user.getCitizenshipBackUrl())))
                     .build();
             userKycDetailDtoList.add(userKycDetailDto);
 
         }
         return userKycDetailDtoList;
+    }
+
+    private String getFileNameFormPath(String filePath) {
+        Path path = Paths.get(filePath);
+        String fileName = path.getFileName().toString();
+        return fileName;
     }
 
     @Override
@@ -243,12 +246,9 @@ public class UsersServiceImpl implements UsersService {
                     .email(user.getEmail())
                     .contact(user.getContact())
                     .citizenshipNo(user.getCitizenshipNo())
-                    .profilePictureUrl(imageAccessBaseUrl.concat("/profile/").concat(user.getProfilePictureUrl().split("/")
-                            [user.getProfilePictureUrl().split("/").length - 1]))
-                    .citizenshipFontUrl(imageAccessBaseUrl.concat("/citizen/").concat(user.getCitizenshipFontUrl().split("/")
-                            [user.getCitizenshipFontUrl().split("/").length - 1]))
-                    .citizenshipBackUrl(imageAccessBaseUrl.concat("/citizen/").concat(user.getCitizenshipBackUrl().split("/")
-                            [user.getCitizenshipBackUrl().split("/").length - 1]))
+                    .profilePictureUrl(imageAccessBaseUrl.concat("/profile/").concat(getFileNameFormPath(user.getProfilePictureUrl())))
+                    .citizenshipFontUrl(imageAccessBaseUrl.concat("/citizen/").concat(getFileNameFormPath(user.getCitizenshipFontUrl())))
+                    .citizenshipBackUrl(imageAccessBaseUrl.concat("/citizen/").concat(getFileNameFormPath(user.getCitizenshipBackUrl())))
                     .build();
             userKycDetailDtoList.add(userKycDetailDto);
 

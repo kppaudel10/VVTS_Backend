@@ -93,6 +93,15 @@ public class LicenseServiceImpl implements LicenseService {
         return licenseResponseList;
     }
 
+    @Override
+    public List<LicenseResponseDto> getLoginUserLicense(Integer loginUser) {
+        List<LicenseResponseDto> licenseResponseList = new ArrayList<>();
+        for (LicenseProjection licenseProjection : licenseRepo.getLoginUserLicense(loginUser)) {
+            licenseResponseList.add(convertLicenseProjectionToDto(licenseProjection));
+        }
+        return licenseResponseList;
+    }
+
     private String generateLicenseNumber() {
         Random random = new Random();
         int num1 = random.nextInt(100);
