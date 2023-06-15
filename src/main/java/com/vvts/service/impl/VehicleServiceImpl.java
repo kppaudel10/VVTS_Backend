@@ -21,8 +21,13 @@ import lombok.RequiredArgsConstructor;
 import net.sourceforge.tess4j.TesseractException;
 import org.apache.commons.mail.EmailException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -181,7 +186,7 @@ public class VehicleServiceImpl implements VehicleService {
             throw new RuntimeException("Invalid Language Code : " + destinationLanguage);
         }
 //        String scanOutput = imageScanner.doOCR(scanImage, destinationLanguage);
-        String scanOutput = saveAndScanImage(scanImage,destinationLanguage);
+        String scanOutput = saveAndScanImage(scanImage, destinationLanguage);
         System.out.println(scanOutput);
         if (scanOutput != null) {
             char[] scanOutputChars = scanOutput.toCharArray();
@@ -364,5 +369,21 @@ public class VehicleServiceImpl implements VehicleService {
 
     private String getImageNameBuyUrl(String imageUrl) {
         return imageUrl.split("/")[imageUrl.split("/").length - 1];
+    }
+
+    private void numberPlateScannerTest(String imageFilePath) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        headers.set("Authorization", "Basic " + Base64.getEncoder().encodeToString("9bad4672-0acb-11ee-b832-627a75b3435d:".getBytes()));
+
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        body.add("file", new FileSystemResource(imageFilePath));
+
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+        String url = "https://app.nanonets.com/api/v2/OCR/Model/62bbf466-bb22-4778-91b1-a5fbfa789568/LabelFile/?async=false";
+
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
+
     }
 }

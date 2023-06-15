@@ -110,7 +110,7 @@ public class ImageScanner {
         } else if (d >= -1 && d < 2) {
             output = processImg(ipimage, 1f, 0.35f);
         }
-        return output.replace("\n", "");
+        return output;
     }
 
     public String doOCR(MultipartFile multipartFile, String LanguageCode) {
