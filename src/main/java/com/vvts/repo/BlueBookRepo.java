@@ -25,7 +25,8 @@ public interface BlueBookRepo extends JpaRepository<BlueBook, Integer> {
             "       bb.vehicle_identification_no as \"vehicleIdentificationNo\",\n" +
             "       bb.vehicle_type              as \"vehicleType\",\n" +
             "       u.name                       as \"currentBlueBookOwnUserName\",\n" +
-            "       u.mobile_number              as \"contact\"\n" +
+            "       u.mobile_number              as \"contact\",\n" +
+            "       bb.number_plate              as \"numberPlate\"\n" +
             "from blue_book bb\n" +
             "         inner join users u on bb.citizenship_no = u.citizenship_no\n" +
             "where bb.citizenship_no like ?1\n" +

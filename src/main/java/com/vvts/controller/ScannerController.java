@@ -1,8 +1,9 @@
 package com.vvts.controller;
 
-import lombok.RequiredArgsConstructor;
 import com.vvts.service.ScannerService;
-import org.springframework.http.ResponseEntity;
+import com.vvts.utiles.GlobalApiResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,8 +21,11 @@ public class ScannerController {
 
     private final ScannerService scannerService;
 
+    private final MessageSource messageSource;
+
     @PostMapping("/scan")
-    public ResponseEntity<?> sacnNumberPlate(@ModelAttribute MultipartFile scanImage) throws Exception {
-        return scannerService.sacnNumberPlate(scanImage);
+    public GlobalApiResponse sacnNumberPlate(@ModelAttribute MultipartFile scanImage) throws Exception {
+        return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true,
+                scannerService.sacnNumberPlate(scanImage));
     }
 }

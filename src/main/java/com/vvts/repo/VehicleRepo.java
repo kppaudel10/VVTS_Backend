@@ -34,14 +34,17 @@ public interface VehicleRepo extends JpaRepository<VehicleDetail, Integer> {
 
 
     @Query(value = "select u.id                as \"userId\",\n" +
-            "       u.name              as \"name\",\n" +
-            "       u.mobile_number     as \"contact\",\n" +
-            "       u.email             as \"email\",\n" +
+            "       u.name              as name,\n" +
+            "       u.mobile_number     as contact,\n" +
+            "       u.email             as email,\n" +
             "       u.citizenship_no    as \"citizenshipNo\",\n" +
-            "       u.profile_image_url as \"profileImageUrl\"\n" +
+            "       u.profile_image_url as \"profileImageUrl\",\n" +
+            "       l.license_no        as \"licenseNo\",\n" +
+            "       l.valid_date        as \"licenseValidDate\"\n" +
             "from blue_book bb\n" +
             "         inner join users u on bb.citizenship_no = u.citizenship_no\n" +
-            "where bb.number_plate similar to ?1", nativeQuery = true)
+            "         left join license l on l.citizenship_no = u.citizenship_no\n" +
+            "where bb.number_plate = ?1 limit 1", nativeQuery = true)
     NumberPlateScannerProjection getUserAndVehicleDetailByNumberPlate(String scanOutput);
 
     VehicleDetail getVehicleDetailByVehicleIdentificationNo(String vehicleIdentificationNo);
@@ -52,6 +55,6 @@ public interface VehicleRepo extends JpaRepository<VehicleDetail, Integer> {
             "       vehicle_type,\n" +
             "       identification_no\n" +
             "from vehicle_detail\n" +
-            "where vendor_id = ?1",nativeQuery = true)
-    List<Map<String,Object>> getVehicleList(int vendorId);
+            "where vendor_id = ?1", nativeQuery = true)
+    List<Map<String, Object>> getVehicleList(int vendorId);
 }

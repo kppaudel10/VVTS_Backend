@@ -190,7 +190,7 @@ public class VehicleServiceImpl implements VehicleService {
         System.out.println(scanOutput);
         if (scanOutput != null) {
             char[] scanOutputChars = scanOutput.toCharArray();
-            String modifiedOutput = scanOutput.replaceAll("\n", "");
+            String modifiedOutput = scanOutput.replaceAll("\n", " ");
             NumberPlateScannerProjection npcp = vehicleRepo.getUserAndVehicleDetailByNumberPlate(modifiedOutput);
             if (npcp != null) {
                 NumberPlateScannerResponsePojo scannerResponsePojo = new NumberPlateScannerResponsePojo();

@@ -49,7 +49,7 @@ public interface UsersRepo extends JpaRepository<Users, Integer> {
             "       citizenship_font_url as \"citizenshipFontUrl\",\n" +
             "       citizenship_back_url as \"citizenshipBackUrl\"\n" +
             "from users\n" +
-            "where is_enable = true", nativeQuery = true)
+            "where is_enable = true and role_id = 1", nativeQuery = true)
     List<UserDetailProjection> getActiveUserList();
 
     @Query(value = "select count(id) from users where citizenship_no = ?1 and is_enable = true", nativeQuery = true)

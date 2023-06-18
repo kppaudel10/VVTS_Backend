@@ -60,7 +60,7 @@ public class BlueBookServiceImpl implements BlueBookService {
                     .id(blueBookDto.getId())
                     .citizenshipNo(blueBookDto.getCitizenshipNo())
                     .effectiveDate(new Date())
-                    .numberPlate(blueBookDto.getNumberPlate())
+                    .numberPlate(removeUnWantCharAndGetNewOnce(blueBookDto.getNumberPlate()))
                     .vehicleType(VehicleType.getVehicleTypeKey(blueBookDto.getVehicleType()))
                     .vehicleIdentificationNo(blueBookDto.getVehicleIdentificationNo())
                     .build();
@@ -94,6 +94,23 @@ public class BlueBookServiceImpl implements BlueBookService {
             throw new RuntimeException("Unable to find company code");
         }
     }
+
+    private String removeUnWantCharAndGetNewOnce(String string) {
+        // remove space
+        string = string.replaceAll("\\s", "");
+        // remove \n if it contain
+        String finalString = "";
+        for (String spr : string.split("n")) {
+            if (String.valueOf(spr.charAt(spr.length() - 1)).equals("\\")) {
+                finalString = finalString.concat(spr.substring(0, spr.length() - 1));
+            } else {
+                finalString = finalString.concat(spr);
+            }
+        }
+
+        return finalString;
+    }
+
 
 }
 

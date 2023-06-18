@@ -14,6 +14,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class NumberPlateScannerResponsePojo {
+
+    private String ocrText;
+
     private String name;
 
     private String address;

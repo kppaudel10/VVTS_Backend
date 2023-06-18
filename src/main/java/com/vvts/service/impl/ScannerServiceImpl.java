@@ -1,13 +1,20 @@
 package com.vvts.service.impl;
 
+import com.vvts.dto.NumberPlateScannerResponsePojo;
 import com.vvts.entity.ScanImage;
+import com.vvts.projection.NumberPlateScannerProjection;
 import com.vvts.repo.ScanImageRepo;
+import com.vvts.repo.VehicleRepo;
 import com.vvts.service.ScannerService;
 import com.vvts.utiles.ImageUtils;
 import com.vvts.utiles.ImageValidation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -39,8 +46,12 @@ public class ScannerServiceImpl implements ScannerService {
     private static final String HASH_ALGORITHM = "MD5";
     private final ImageValidation imageValidation;
     private final ImageUtils imageUtils;
-
     private final ScanImageRepo scanImageRepo;
+    private final VehicleRepo vehicleRepo;
+
+    @Value("${image.fetch.api}")
+    private String imageAccessBaseUrl;
+
 
     private static String calculateImageHash(BufferedImage image) {
         try {
@@ -83,12 +94,14 @@ public class ScannerServiceImpl implements ScannerService {
     }
 
     @Override
-    public ResponseEntity<?> sacnNumberPlate(MultipartFile multipartFile) throws Exception {
+    public NumberPlateScannerResponsePojo sacnNumberPlate(MultipartFile multipartFile) throws Exception {
         List<String> scanImageDetail = saveAndScanImage(multipartFile);
 //        return new OcrProcessor().doOcr(filePathName);
         if (scanImageDetail != null) {
-            ResponseEntity<?> response = numberPlateScannerTest(scanImageDetail.get(0), scanImageDetail.get(1));
-            return response;
+            String numberPlateOcrText = numberPlateScannerTest(scanImageDetail.get(0), scanImageDetail.get(1));
+            if (numberPlateOcrText != null) {
+                return getScannerResponse(numberPlateOcrText);
+            }
         }
         return null;
     }
@@ -136,7 +149,7 @@ public class ScannerServiceImpl implements ScannerService {
         }
     }
 
-    private ResponseEntity<?> numberPlateScannerTest(String scanImageName, String imageFilePath) throws IOException {
+    private String numberPlateScannerTest(String scanImageName, String imageFilePath) throws IOException {
         /* check already scan image or not if already exists then fetch data from database
          first find the current input image hash value and compare hash value to old once
          */
@@ -146,7 +159,9 @@ public class ScannerServiceImpl implements ScannerService {
         // search hashValue on database
         ScanImage scanImage = scanImageRepo.getScanImageByScanImageHasValue(newImageHash);
         if (scanImage != null) {
-            return new ResponseEntity<>(scanImage.getScanResult(), HttpStatus.OK);
+            System.out.println("------------------OCR OUTPUT --------------------------");
+            System.out.println(scanImage.getScanResult());
+            return scanImage.getScanResult();
         } else {
             // then scan new scan image into database
             RestTemplate restTemplate = new RestTemplate();
@@ -169,11 +184,13 @@ public class ScannerServiceImpl implements ScannerService {
             scanImage.setScanImageName(scanImageName);
             scanImage.setScanImageURl(imageFilePath);
             scanImage.setScanImageHasValue(calculateImageHash(loadImageFromFile(imageFilePath)));
-            scanImage.setScanResult(ocrText);
+            scanImage.setScanResult(removeUnWantCharAndGetNewOnce(ocrText));
 
             scanImageRepo.save(scanImage);
 
-            return ResponseEntity.ok(scanImage);
+            System.out.println("------------------OCR OUTPUT --------------------------");
+            System.out.println(scanImage.getScanResult());
+            return scanImage.getScanResult();
         }
     }
 
@@ -187,6 +204,51 @@ public class ScannerServiceImpl implements ScannerService {
             }
         }
         return null;
+    }
+
+    private NumberPlateScannerResponsePojo getScannerResponse(String scanOutput) {
+        if (scanOutput != null) {
+//            char[] scanOutputChars = scanOutput.toCharArray();
+            String modifiedOutput = removeUnWantCharAndGetNewOnce(scanOutput);
+            NumberPlateScannerProjection npcp = vehicleRepo.getUserAndVehicleDetailByNumberPlate(modifiedOutput);
+            if (npcp != null) {
+                NumberPlateScannerResponsePojo scannerResponsePojo = new NumberPlateScannerResponsePojo();
+                scannerResponsePojo.setName(npcp.getName());
+                scannerResponsePojo.setOcrText(removeUnWantCharAndGetNewOnce(scanOutput));
+                scannerResponsePojo.setUserId(npcp.getUserId());
+                scannerResponsePojo.setAddress(npcp.getAddress());
+                scannerResponsePojo.setContact(npcp.getContact());
+                scannerResponsePojo.setEmail(npcp.getEmail());
+                scannerResponsePojo.setProfileImageUrl(imageAccessBaseUrl.concat("/profile/")
+                        .concat(getFileNameFormPath(npcp.getProfileImageUrl())));
+                scannerResponsePojo.setLicenseValidDate(npcp.getLicenseValidDate());
+
+                return scannerResponsePojo;
+            }
+        }
+        return null;
+    }
+
+    private String removeUnWantCharAndGetNewOnce(String string) {
+        // remove space
+        string = string.replaceAll("\\s", "");
+        // remove \n if it contain
+        String finalString = "";
+        for (String spr : string.split("n")) {
+            if (String.valueOf(spr.charAt(spr.length() - 1)).equals("\\")) {
+                finalString = finalString.concat(spr.substring(0, spr.length() - 1));
+            } else {
+                finalString = finalString.concat(spr);
+            }
+        }
+
+        return finalString;
+    }
+
+    private String getFileNameFormPath(String filePath) {
+        Path path = Paths.get(filePath);
+        String fileName = path.getFileName().toString();
+        return fileName;
     }
 
 }

@@ -20,6 +20,12 @@ public interface NumberPlateScannerProjection {
 
     String getProfileImageUrl();
 
+    String getLicenseNo();
+
     String getLicenseValidDate();
+
+    String getBlueBookNo();
+
+    String getBlueBookValidDate();
 
 }

@@ -20,5 +20,7 @@ public interface BlueBookProjection {
 
     String getContact();
 
+    String getNumberPlate();
+
 
 }

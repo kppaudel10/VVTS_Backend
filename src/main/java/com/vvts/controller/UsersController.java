@@ -93,7 +93,11 @@ public class UsersController {
     @GetMapping("/profile-picture")
     public ResponseEntity<byte[]> getProfilePictureOfLoginUser(Authentication authentication) throws IOException {
         String imagePath = usersService.getProfileImagePathOfLoginUser(userDataConfig.getLoggedInUserId(authentication));
-        return getResponseByImagePath(imagePath);
+        if (imagePath != null) {
+            return getResponseByImagePath(imagePath);
+        } else {
+            return null;
+        }
     }
 
     private ResponseEntity<byte[]> getResponseByImagePath(String imagePath) throws IOException {

@@ -1,8 +1,7 @@
 /* basic role insert */
 INSERT INTO role
 VALUES (1, true, 'Public User'),
-       (2, true, 'DOTM Admin'),
-       (3, true, 'Vendor Admin');
+       (2, true, 'Administrative User');
 
 /*
  Insert Role Module
@@ -21,33 +20,34 @@ VALUES (1, true, 'A-Dashboard'),
        (11, true, 'User List');
 
 /*
- insert role mapping
+ insert role mapping public user
  */
 INSERT INTO role_module_mapping(id, is_active, role_id, role_module_id)
-VALUES (1, true, 2, 1),
-       (2, true, 2, 2),
-       (3, true, 2, 3),
-       (4, true, 2, 4),
-       (5, true, 2, 5),
-       (6, true, 2, 6);
+VALUES (1, true, 1, 7),
+       (2, true, 1, 8),
+       (3, true, 1, 9);
 
 
 INSERT INTO role_module_mapping(id, is_active, role_id, role_module_id)
-VALUES (1, true, 1, 1),
-       (2, true, 1, 2),
-       (3, true, 1, 3),
-       (4, true, 1, 4),
-       (5, true, 1, 5),
-       (6, true, 1, 6),
-       (7, true, 1, 7),
-       (8, true, 1, 8),
-       (9, true, 1, 9),
-       (10, true, 1, 10),
-       (11, true, 1, 11);
+VALUES (6, true, 2, 1),
+       (7, true, 2, 2),
+       (8, true, 2, 3),
+       (9, true, 2, 4),
+       (10, true, 2, 5),
+       (11, true, 2, 6),
+       (12, true, 2, 10),
+       (13, true, 2, 11);
 /*
  basic module insert
  */
 
 --  insert into administrative_user
---  values (1,'Kathmandu','DOTM Admin','$2a$10$yrVs0HnMxWhAc7IzFNtg5e9dG.LTThV69Apym6hZj6BCVkOFGPOpK','admin-dotm',2);
---  values (2,'Kathmandu','Vendor Admin','$2a$10$yrVs0HnMxWhAc7IzFNtg5e9dG.LTThV69Apym6hZj6BCVkOFGPOpK','admin-vendor',3);
+
+-- INSERT INTO public.users (id, address, citizenship_back_url, citizenship_font_url, citizenship_no, email, is_enable, is_new_kyc_request, mobile_number, name, password, profile_image_url, role_id)
+-- VALUES (1, null, null, null, null, 'nepalwheels@gmail.com', true, null, '01-4004100', 'Nepal Wheels Pvt. Ltd', '$2a$10$NQiQnDT/6rv6.5rhciH4o.03KV/ZwN1X0cyov5YKIYVZVSJY4s79G', null, 3);
+
+
+INSERT INTO public.users (id, address, citizenship_back_url, citizenship_font_url, citizenship_no, email, is_enable,
+                          is_new_kyc_request, mobile_number, name, password, profile_image_url, role_id)
+VALUES (1, null, null, null, null, 'dotm@gmail.com', true, null, '09234322034', 'Department of Transportation',
+        '$2a$10$nW3NeXp7oxjxasMiym4zJOaJbZOeUIBNYRXOIOp2EKl9sMTaSBc9e', null, 2);
