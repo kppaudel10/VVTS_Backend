@@ -1,8 +1,10 @@
 package com.vvts.service.impl;
 
 import com.vvts.dto.NumberPlateScannerResponsePojo;
+import com.vvts.entity.BlueBook;
 import com.vvts.entity.ScanImage;
 import com.vvts.projection.NumberPlateScannerProjection;
+import com.vvts.repo.BlueBookRepo;
 import com.vvts.repo.ScanImageRepo;
 import com.vvts.repo.VehicleRepo;
 import com.vvts.service.ScannerService;
@@ -35,6 +37,8 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
+import static jdk.vm.ci.meta.JavaKind.Char;
+
 /**
  * @auther kul.paudel
  * @created at 2023-06-03
@@ -48,6 +52,7 @@ public class ScannerServiceImpl implements ScannerService {
     private final ImageUtils imageUtils;
     private final ScanImageRepo scanImageRepo;
     private final VehicleRepo vehicleRepo;
+    private final BlueBookRepo blueBookRepo;
 
     @Value("${image.fetch.api}")
     private String imageAccessBaseUrl;
@@ -167,13 +172,15 @@ public class ScannerServiceImpl implements ScannerService {
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+            // english
             headers.set("Authorization", "Basic " + Base64.getEncoder().encodeToString("9bad4672-0acb-11ee-b832-627a75b3435d:".getBytes()));
 
             MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
             body.add("file", new FileSystemResource(imageFilePath));
 
             HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
-            String url = "https://app.nanonets.com/api/v2/OCR/Model/62bbf466-bb22-4778-91b1-a5fbfa789568/LabelFile/?async=false";
+            //english
+            String url = "https://app.nanonets.com/api/v2/OCR/Model/31870eb5-8884-4fed-84a6-e92bc1b0859a/LabelFile/?async=false";
 
             String apiResponse = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class).getBody();
 
@@ -211,23 +218,102 @@ public class ScannerServiceImpl implements ScannerService {
 //            char[] scanOutputChars = scanOutput.toCharArray();
             String modifiedOutput = removeUnWantCharAndGetNewOnce(scanOutput);
             NumberPlateScannerProjection npcp = vehicleRepo.getUserAndVehicleDetailByNumberPlate(modifiedOutput);
+            NumberPlateScannerResponsePojo scannerResponsePojo = new NumberPlateScannerResponsePojo();
             if (npcp != null) {
-                NumberPlateScannerResponsePojo scannerResponsePojo = new NumberPlateScannerResponsePojo();
-                scannerResponsePojo.setName(npcp.getName());
+                scannerResponsePojo = getPojoByProjection(npcp);
                 scannerResponsePojo.setOcrText(removeUnWantCharAndGetNewOnce(scanOutput));
-                scannerResponsePojo.setUserId(npcp.getUserId());
-                scannerResponsePojo.setAddress(npcp.getAddress());
-                scannerResponsePojo.setContact(npcp.getContact());
-                scannerResponsePojo.setEmail(npcp.getEmail());
-                scannerResponsePojo.setProfileImageUrl(imageAccessBaseUrl.concat("/profile/")
-                        .concat(getFileNameFormPath(npcp.getProfileImageUrl())));
-                scannerResponsePojo.setLicenseValidDate(npcp.getLicenseValidDate());
-
                 return scannerResponsePojo;
+            } else {
+                // check by matching the 75% char
+                String ocrByMoreMatch = findClosedMatchNumberPlate(scanOutput);
+                if (ocrByMoreMatch != null) {
+                    npcp = vehicleRepo.getUserAndVehicleDetailByNumberPlate(modifiedOutput);
+                    if (npcp != null) {
+                        scannerResponsePojo = getPojoByProjection(npcp);
+                        scannerResponsePojo.setOcrText(removeUnWantCharAndGetNewOnce(scanOutput));
+                        return scannerResponsePojo;
+                    } else {
+                        scannerResponsePojo.setOcrText(scanOutput);
+                        scannerResponsePojo.setName("Unknown");
+                        return scannerResponsePojo;
+                    }
+
+                } else {
+                    scannerResponsePojo.setOcrText(scanOutput);
+                    scannerResponsePojo.setName("Unknown");
+                    return scannerResponsePojo;
+                }
             }
         }
         return null;
     }
+
+    private NumberPlateScannerResponsePojo getPojoByProjection(NumberPlateScannerProjection npcp) {
+        NumberPlateScannerResponsePojo scannerResponsePojo = new NumberPlateScannerResponsePojo();
+        scannerResponsePojo.setName(npcp.getName());
+        scannerResponsePojo.setUserId(npcp.getUserId());
+        scannerResponsePojo.setAddress(npcp.getAddress());
+        scannerResponsePojo.setContact(npcp.getContact());
+        scannerResponsePojo.setEmail(npcp.getEmail());
+        scannerResponsePojo.setProfileImageUrl(imageAccessBaseUrl.concat("/profile/")
+                .concat(getFileNameFormPath(npcp.getProfileImageUrl())));
+        scannerResponsePojo.setLicenseValidDate(npcp.getLicenseValidDate());
+        return scannerResponsePojo;
+    }
+
+
+    private String findClosedMatchNumberPlate(String scanOutput) {
+        String numberPlate = null;
+        List<BlueBook> blueBookList = blueBookRepo.findAll();
+        List<Integer> countList = new ArrayList<>();
+        for (BlueBook blueBook : blueBookList) {
+            Integer count = 0;
+            if (blueBook.getNumberPlate() != null && blueBook.getNumberPlate().equals("")) {
+                for (char blueBookChar : blueBook.getNumberPlate().toCharArray()) {
+                    char[] chars = scanOutput.toCharArray();
+                    for (char scanChar : chars) {
+                        if (blueBookChar == scanChar) {
+                            count++;
+                            break;
+                        }
+                    }
+                }
+            }
+            countList.add(count);
+        }
+        Result result = findMaxValueAndIndex(countList);
+        // get blue book details by result index
+        if (result != null && result.getIndex() != 0) {
+            BlueBook blueBook = blueBookList.get(result.getIndex());
+            // check how much number plate char match
+            Integer matchPercentage = (Math.abs(blueBook.getNumberPlate().length() - result.getMaxValue()) * 100) /
+                    blueBook.getNumberPlate().length();
+            if (matchPercentage >= 75) {
+                numberPlate = blueBook.getNumberPlate();
+            }
+        }
+        return numberPlate;
+    }
+
+    public static Result findMaxValueAndIndex(List<Integer> list) {
+        if (list == null || list.isEmpty()) {
+            throw new IllegalArgumentException("The list is null or empty.");
+        }
+
+        int max = Integer.MIN_VALUE;
+        int index = -1;
+
+        for (int i = 0; i < list.size(); i++) {
+            int current = list.get(i);
+            if (current > max) {
+                max = current;
+                index = i;
+            }
+        }
+
+        return new Result(index, max);
+    }
+
 
     private String removeUnWantCharAndGetNewOnce(String string) {
         // remove space
@@ -251,5 +337,23 @@ public class ScannerServiceImpl implements ScannerService {
         return fileName;
     }
 
+}
+
+class Result {
+    Integer index;
+    Integer maxValue;
+
+    public Result(Integer index, Integer maxValue) {
+        this.index = index;
+        this.maxValue = maxValue;
+    }
+
+    public Integer getIndex() {
+        return index;
+    }
+
+    public Integer getMaxValue() {
+        return maxValue;
+    }
 }
 
