@@ -33,4 +33,13 @@ public class NumberPlateScannerResponsePojo {
 
     private String contact;
 
+    private String blueBookEffectiveDate;
+
+    private String vehicleIdentificationNo;
+
+    private String manufactureYear;
+
+    private String vehicleCompanyName;
+
+
 }

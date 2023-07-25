@@ -28,4 +28,13 @@ public interface NumberPlateScannerProjection {
 
     String getBlueBookValidDate();
 
+    Boolean getIsLicenseValid();
+
+    String getBlueBookEffectiveDate();
+    String getVehicleIdentificationNo();
+
+    String getManufactureYear();
+
+    String getVehicleCompanyName();
+
 }

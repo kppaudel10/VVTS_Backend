@@ -37,8 +37,6 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
-import static jdk.vm.ci.meta.JavaKind.Char;
-
 /**
  * @auther kul.paudel
  * @created at 2023-06-03
@@ -258,6 +256,11 @@ public class ScannerServiceImpl implements ScannerService {
         scannerResponsePojo.setProfileImageUrl(imageAccessBaseUrl.concat("/profile/")
                 .concat(getFileNameFormPath(npcp.getProfileImageUrl())));
         scannerResponsePojo.setLicenseValidDate(npcp.getLicenseValidDate());
+        scannerResponsePojo.setIsLicenseValid(npcp.getIsLicenseValid());
+        scannerResponsePojo.setVehicleIdentificationNo(npcp.getVehicleIdentificationNo());
+        scannerResponsePojo.setVehicleCompanyName(npcp.getVehicleCompanyName());
+        scannerResponsePojo.setManufactureYear(npcp.getManufactureYear());
+        scannerResponsePojo.setBlueBookEffectiveDate(npcp.getBlueBookEffectiveDate());
         return scannerResponsePojo;
     }
 
