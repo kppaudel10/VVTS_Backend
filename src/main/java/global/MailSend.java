@@ -40,7 +40,11 @@ public class MailSend {
         email1.setSubject("Verification");
         email1.setMsg("Hey "+mailSendDto.getUserName()+",\n"+mailSendDto.getMessage()+"\nPinCode: "+pinCode);
         email1.addTo(mailSendDto.getEmail());
-        email1.send();
+        try {
+            email1.send();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         System.out.println("Mail send successfully");
         return Integer.valueOf(pinCode);
     }

@@ -210,27 +210,34 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Override
     public boolean generateValidationToken(BuyRequestPojo buyRequestPojo, Integer loginUserId) throws EmailException {
-        Users users = validateUser(buyRequestPojo, loginUserId);
-        if (users.getIsEnable() == false || users.getIsEnable() == null) {
+        // first check request user is valid or not
+        Users buyerUser = usersRepo.getUsersById(loginUserId);
+        if (buyerUser.getIsEnable() == null || !buyerUser.getIsEnable()) {
             throw new RuntimeException("Only verified user can buy and sell their vehicle." +
                     " Please apply for your Kyc verification");
         }
-        String token = new RandomCodeGenerator().generateRandomCode(6);
+        // then validate seller information
+        Users users = validateUser(buyRequestPojo, loginUserId);
+        if (users.getIsEnable() == null || !users.getIsEnable()) {
+            throw new RuntimeException("Only verified user can buy and sell their vehicle !");
+        }
+        // we have to sent mail to buyer and then need to validate then buyer
         MailSendDto mailSendDto = new MailSendDto();
-        mailSendDto.setEmail(users.getEmail());
-        mailSendDto.setUserName(users.getName());
-        mailSendDto.setMessage(token);
-        new MailSend().sendMail(mailSendDto);
+        mailSendDto.setEmail(buyerUser.getEmail());
+        mailSendDto.setUserName(buyerUser.getName());
+        String message = "Please used below code for you conformation.";
+        mailSendDto.setMessage(message);
+        Integer token = new MailSend().sendMail(mailSendDto);
         // check pinCode already exists or not
         PinCode existPinCode = pinCodeRepo.getPinCodeByUserId(loginUserId);
         if (existPinCode == null) {
             // save pin code
             existPinCode = PinCode.builder()
-                    .pinCode(token)
+                    .pinCode(String.valueOf(token))
                     .users(Users.builder().id(loginUserId).build())
                     .expiredDate(getAddMinOnDate(3)).build();
         } else {
-            existPinCode.setPinCode(token);
+            existPinCode.setPinCode(String.valueOf(token));
             existPinCode.setExpiredDate(getAddMinOnDate(3));
         }
         pinCodeRepo.save(existPinCode);

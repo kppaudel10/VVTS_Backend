@@ -90,4 +90,6 @@ public interface UsersRepo extends JpaRepository<Users, Integer> {
             "where id = ?1", nativeQuery = true)
     void getRejectUserKyc(Integer userId);
 
+    Users getUsersById(Integer loginUserId);
+
 }
