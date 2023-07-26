@@ -51,6 +51,8 @@ public class ScannerServiceImpl implements ScannerService {
     private final ScanImageRepo scanImageRepo;
     private final VehicleRepo vehicleRepo;
 
+    private final BlueBookRepo blueBookRepo;
+
     @Value("${image.fetch.api}")
     private String imageAccessBaseUrl;
 
