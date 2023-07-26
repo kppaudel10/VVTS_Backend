@@ -16,12 +16,6 @@ import java.util.Random;
 public class MailSend {
 
     public Integer sendMail(MailSendDto mailSendDto) throws EmailException {
-        //generate 6 digit pincode
-        Random random = new Random();
-
-        Integer pc = random.nextInt(999999);
-        //get only 6 digit
-        String pinCode = String.format("%06d",pc);
 
         //mail send process
         String username = "onlineassistance400@gmail.com";
@@ -38,7 +32,7 @@ public class MailSend {
 //        email1.setFrom("vvtssystem100@gmail.com");
         email1.setFrom("onlineassistance400@gmail.com");
         email1.setSubject("Verification");
-        email1.setMsg("Hey "+mailSendDto.getUserName()+",\n"+mailSendDto.getMessage()+"\nPinCode: "+pinCode);
+        email1.setMsg("Hey "+mailSendDto.getUserName()+",\n"+mailSendDto.getMessage()+"\nPinCode: "+mailSendDto.getPinCode());
         email1.addTo(mailSendDto.getEmail());
         try {
             email1.send();
@@ -46,7 +40,7 @@ public class MailSend {
             e.printStackTrace();
         }
         System.out.println("Mail send successfully");
-        return Integer.valueOf(pinCode);
+        return Integer.valueOf(mailSendDto.getPinCode());
     }
 
     public void sendConfirmMail(MailSendDto mailSendDto) throws EmailException {

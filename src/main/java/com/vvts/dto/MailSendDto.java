@@ -17,5 +17,6 @@ public class MailSendDto {
     private String userName;
     private String email;
     private String message;
+    private String pinCode;
 
 }

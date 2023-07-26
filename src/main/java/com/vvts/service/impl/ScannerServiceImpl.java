@@ -172,14 +172,20 @@ public class ScannerServiceImpl implements ScannerService {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.MULTIPART_FORM_DATA);
             // english
-            headers.set("Authorization", "Basic " + Base64.getEncoder().encodeToString("9bad4672-0acb-11ee-b832-627a75b3435d:".getBytes()));
+//            headers.set("Authorization", "Basic " + Base64.getEncoder().encodeToString("9bad4672-0acb-11ee-b832-627a75b3435d:".getBytes()));
+
+            // mix up
+            headers.set("Authorization", "Basic " + Base64.getEncoder().encodeToString("e872f3ca-0c00-11ee-93eb-7ac8f71b476b:".getBytes()));
 
             MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
             body.add("file", new FileSystemResource(imageFilePath));
 
             HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
             //english
-            String url = "https://app.nanonets.com/api/v2/OCR/Model/31870eb5-8884-4fed-84a6-e92bc1b0859a/LabelFile/?async=false";
+//            String url = "https://app.nanonets.com/api/v2/OCR/Model/31870eb5-8884-4fed-84a6-e92bc1b0859a/LabelFile/?async=false";
+
+            // mix up
+            String url = "https://app.nanonets.com/api/v2/OCR/Model/72099705-4fac-4ca6-94f6-ab3986e3c929/LabelFile/?async=false";
 
             String apiResponse = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class).getBody();
 
@@ -318,20 +324,20 @@ public class ScannerServiceImpl implements ScannerService {
         return new Result(index, max);
     }
 
-
     private String removeUnWantCharAndGetNewOnce(String string) {
-        // remove space
-        string = string.replaceAll("\\s", "");
         // remove \n if it contain
         String finalString = "";
-        for (String spr : string.split("n")) {
-            if (String.valueOf(spr.charAt(spr.length() - 1)).equals("\\")) {
-                finalString = finalString.concat(spr.substring(0, spr.length() - 1));
-            } else {
-                finalString = finalString.concat(spr);
+        if (string != null & !string.equals("")) {
+            // remove space
+            string = string.replaceAll("\\s", "");
+            for (String spr : string.split("n")) {
+                if (String.valueOf(spr.charAt(spr.length() - 1)).equals("\\")) {
+                    finalString = finalString.concat(spr.substring(0, spr.length() - 1));
+                } else {
+                    finalString = finalString.concat(spr);
+                }
             }
         }
-
         return finalString;
     }
 

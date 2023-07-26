@@ -60,11 +60,13 @@ public interface OwnershipTransferRepo extends JpaRepository<OwnershipTransfer, 
             "           when ot.is_approve_by_owner = false and status = 1 then 'Pending on Owner'\n" +
             "           when ot.is_approve_by_admin = false and ot.is_approve_by_owner = true and status = 1 then 'Pending on Owner'\n" +
             "           when status = 0 then 'Rejected'\n" +
-            "           end              as \"requestStatus\"\n" +
+            "           when status = 1 and ot.is_approve_by_admin = true then 'Approved By Admin'\n" +
+            "           end              as requestStatus\n" +
             "from ownership_transfer ot\n" +
             "         inner join vehicle_detail vd on ot.vehicle_id = vd.id\n" +
             "         inner join users u on ot.seller_id = u.id\n" +
-            "where ot.buyer_id = ?1 and status = 1", nativeQuery = true)
+            "where ot.buyer_id = ?1\n" +
+            "  and status = 1", nativeQuery = true)
     List<BuyerRequestProjection> getBuyRequestByLoginUser(Integer loginUserId);
 
     @Modifying
@@ -112,4 +114,10 @@ public interface OwnershipTransferRepo extends JpaRepository<OwnershipTransfer, 
             "from buyerDetail bd\n" +
             "         inner join sellerDetail sd on bd.id = sd.otId")
     List<OwnershipRequestProjection> getOwnershipTransferList();
+
+    @Modifying
+    @Query(value = "update ownership_transfer set status = 1, approve_date = now(), is_approve_by_admin = true where id = ?1",
+            nativeQuery = true)
+    void updateAdminActionOnOwnershipRequestFinalApprove(Integer id);
+
 }

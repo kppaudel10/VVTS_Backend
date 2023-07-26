@@ -68,6 +68,6 @@ public interface VehicleRepo extends JpaRepository<VehicleDetail, Integer> {
             "       vehicle_type,\n" +
             "       identification_no\n" +
             "from vehicle_detail\n" +
-            "where vendor_id = ?1", nativeQuery = true)
+            "where vendor_id = ?1 order by id desc", nativeQuery = true)
     List<Map<String, Object>> getVehicleList(int vendorId);
 }

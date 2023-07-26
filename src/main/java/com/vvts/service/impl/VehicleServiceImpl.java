@@ -1,19 +1,13 @@
 package com.vvts.service.impl;
 
 import com.vvts.dto.*;
-import com.vvts.entity.OwnershipTransfer;
-import com.vvts.entity.PinCode;
-import com.vvts.entity.Users;
-import com.vvts.entity.VehicleDetail;
+import com.vvts.entity.*;
 import com.vvts.enums.VehicleType;
 import com.vvts.projection.BuyRequestProjection;
 import com.vvts.projection.BuyerRequestProjection;
 import com.vvts.projection.NumberPlateScannerProjection;
 import com.vvts.projection.OwnershipRequestProjection;
-import com.vvts.repo.OwnershipTransferRepo;
-import com.vvts.repo.PinCodeRepo;
-import com.vvts.repo.UsersRepo;
-import com.vvts.repo.VehicleRepo;
+import com.vvts.repo.*;
 import com.vvts.service.VehicleService;
 import com.vvts.utiles.*;
 import global.MailSend;
@@ -59,6 +53,8 @@ public class VehicleServiceImpl implements VehicleService {
     private final ImageScanner imageScanner;
 
     private final PinCodeRepo pinCodeRepo;
+
+    private final BlueBookRepo blueBookRepo;
 
     @Value("${image.fetch.api}")
     private String imageAccessBaseUrl;
@@ -227,9 +223,22 @@ public class VehicleServiceImpl implements VehicleService {
         mailSendDto.setUserName(buyerUser.getName());
         String message = "Please used below code for you conformation.";
         mailSendDto.setMessage(message);
-        Integer token = new MailSend().sendMail(mailSendDto);
         // check pinCode already exists or not
         PinCode existPinCode = pinCodeRepo.getPinCodeByUserId(loginUserId);
+        String token;
+        if (existPinCode != null) {
+            token = existPinCode.getPinCode();
+        } else {
+            //generate 6 digit pincode
+            Random random = new Random();
+
+            Integer pc = random.nextInt(999999);
+            //get only 6 digit
+            token = String.format("%06d", pc);
+        }
+        mailSendDto.setPinCode(token);
+        new MailSend().sendMail(mailSendDto);
+
         if (existPinCode == null) {
             // save pin code
             existPinCode = PinCode.builder()
@@ -249,7 +258,7 @@ public class VehicleServiceImpl implements VehicleService {
     public Boolean validatePincode(String pinCode, Integer loginUserId) {
         PinCode actualToken = pinCodeRepo.getPinCodeByUserId(loginUserId);
         if (actualToken == null || !actualToken.getPinCode().equals(pinCode)) {
-            throw new RuntimeException("Invalid PinCode.");
+            throw new RuntimeException("Invalid PinCode (".concat(pinCode).concat(")."));
         }
         // delete that token after success message
         pinCodeRepo.deleteById(actualToken.getId());
@@ -283,11 +292,30 @@ public class VehicleServiceImpl implements VehicleService {
                 message = "Vehicle Sell request accept successfully. Further process will be done by admin";
             } else {
 //            if (sellRequestActionPojo.getActionBy().equalsIgnoreCase("admin")) {
-                ownershipTransferRepo.updateAdminActionOnOwnershipRequest(1, true, sellRequestActionPojo.getId());
+                ownershipTransferRepo.updateAdminActionOnOwnershipRequestFinalApprove(sellRequestActionPojo.getId());
+                // after accept by the admin then we need to save the blue book information
+                Optional<OwnershipTransfer> optionalOwnershipTransfer = ownershipTransferRepo.findById(sellRequestActionPojo.getId());
+                if (optionalOwnershipTransfer.isPresent()) {
+                    OwnershipTransfer ownershipTransfer = optionalOwnershipTransfer.get();
+                    BlueBook blueBook = BlueBook.builder()
+                            .citizenshipNo(ownershipTransfer.getBuyer().getCitizenshipNo())
+                            .effectiveDate(new Date())
+                            .vehicleIdentificationNo(ownershipTransfer.getVehicleDetail().getVehicleIdentificationNo())
+                            .vehicleType(ownershipTransfer.getVehicleDetail().getVehicleType())
+                            .build();
+                    // fetch number plate
+                    BlueBook numberPlateBluebook = blueBookRepo.getBlueBookByVehicleIdentificationNo(ownershipTransfer.
+                            getVehicleDetail().getVehicleIdentificationNo());
+                    if (numberPlateBluebook != null) {
+                        blueBook.setNumberPlate(numberPlateBluebook.getNumberPlate());
+                    }
+                    blueBookRepo.save(blueBook);
+
+                }
                 message = "Vehicle Sell request accept successfully";
             }
         } else {
-            // if accept by owner
+            // if rejected by owner
             if (sellRequestActionPojo.getActionBy().equalsIgnoreCase("owner")) {
                 ownershipTransferRepo.updateOwnerActionOnOwnershipRequest(0, false, sellRequestActionPojo.getId());
                 message = "Vehicle Sell request rejected successfully";

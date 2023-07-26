@@ -31,11 +31,13 @@ public interface BlueBookRepo extends JpaRepository<BlueBook, Integer> {
             "         inner join users u on bb.citizenship_no = u.citizenship_no\n" +
             "where bb.citizenship_no like ?1\n" +
             "   or lower(bb.vehicle_identification_no) like lower(?1)\n" +
-            "   or ('--1' like ?1)", nativeQuery = true)
+            "   or ('--1' like ?1) order by bb.id desc", nativeQuery = true)
     List<BlueBookProjection> getBlueBookData(String searchData);
 
     @Query(value = "select count(id) from blue_book where number_plate = ?1", nativeQuery = true)
     Integer getCountNumberPlateExits(String numberPlate);
+
+    BlueBook getBlueBookByVehicleIdentificationNo(String identificationNo);
 
 
 }
