@@ -41,6 +41,7 @@ public class BlueBookServiceImpl implements BlueBookService {
 
     @Override
     public BlueBookDto saveBlueBook(BlueBookDto blueBookDto) {
+
         //check identification number is valid or not
         if (vehicleRepo.getCountByVIN(blueBookDto.getVehicleIdentificationNo()).equals(0)) {
             throw new RuntimeException("Vehicle not found with provided identification number: " + blueBookDto.getVehicleIdentificationNo());

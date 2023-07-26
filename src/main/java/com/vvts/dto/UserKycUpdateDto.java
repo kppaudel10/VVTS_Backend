@@ -1,8 +1,6 @@
 package com.vvts.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
@@ -12,7 +10,8 @@ import javax.validation.constraints.NotNull;
  * @created at 2023-04-25
  */
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserKycUpdateDto {

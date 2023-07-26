@@ -224,6 +224,10 @@ public class ScannerServiceImpl implements ScannerService {
                 scannerResponsePojo.setLicenseValidDate(npcp.getLicenseValidDate());
 
                 return scannerResponsePojo;
+            } else {
+                NumberPlateScannerResponsePojo scannerResponsePojo = new NumberPlateScannerResponsePojo();
+                scannerResponsePojo.setOcrText(scanOutput);
+                return scannerResponsePojo;
             }
         }
         return null;
