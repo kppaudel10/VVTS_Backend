@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -128,5 +129,11 @@ public class UsersController {
     @GetMapping("/qr-code/download")
     public ResponseEntity<Resource> downloadQrCode(Authentication authentication) {
         return usersService.downloadImage(userDataConfig.getLoggedInUserId(authentication));
+    }
+
+    @GetMapping("/detail/{id}")
+    public GlobalApiResponse getPublicUserDetailById(@PathVariable("id")Integer id)  {
+        return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true,
+                usersService.getUserById(id));
     }
 }

@@ -39,5 +39,19 @@ public interface BlueBookRepo extends JpaRepository<BlueBook, Integer> {
 
     BlueBook getBlueBookByVehicleIdentificationNo(String identificationNo);
 
+    @Query(value = "select bb.id,\n" +
+            "       bb.citizenship_no            as \"citizenshipNo\",\n" +
+            "       bb.effective_date            as \"effectiveDate\",\n" +
+            "       bb.vehicle_identification_no as \"vehicleIdentificationNo\",\n" +
+            "       bb.vehicle_type              as \"vehicleType\",\n" +
+            "       u.name                       as \"currentBlueBookOwnUserName\",\n" +
+            "       u.mobile_number              as \"contact\",\n" +
+            "       bb.number_plate              as \"numberPlate\"\n" +
+            "from blue_book bb\n" +
+            "         inner join users u on bb.citizenship_no = u.citizenship_no\n" +
+            "where u.id = ?1 order by bb.id desc", nativeQuery = true)
+    List<BlueBookProjection> getBlueBookDataByUserId(Integer userId);
+
+
 
 }

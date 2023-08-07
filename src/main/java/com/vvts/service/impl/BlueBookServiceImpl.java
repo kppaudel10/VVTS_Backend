@@ -87,6 +87,11 @@ public class BlueBookServiceImpl implements BlueBookService {
         }
     }
 
+    @Override
+    public List<BlueBookProjection> getBlueBookByUserId(Integer userId) {
+        return blueBookRepo.getBlueBookDataByUserId(userId);
+    }
+
     private String getCompanyCode(String vehicleIdentificationNo) {
         String[] strings = vehicleIdentificationNo.split("-");
         if (strings.length >= 1) {

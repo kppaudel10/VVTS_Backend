@@ -46,7 +46,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests().antMatchers("/login",
                         "/api/public-user/save",
-                        "/api/public-user/getUserImage/*","/api/vehicle/number-plate/*").permitAll()
+                        "/api/public-user/getUserImage/*",
+                        "/api/vehicle/number-plate/*",
+                        "/api/public-user/detail/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)

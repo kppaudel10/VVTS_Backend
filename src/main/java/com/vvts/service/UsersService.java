@@ -1,9 +1,6 @@
 package com.vvts.service;
 
-import com.vvts.dto.KycUpdateResponseDto;
-import com.vvts.dto.PublicUserBasicDataDto;
-import com.vvts.dto.UserKycDetailDto;
-import com.vvts.dto.UserKycUpdateDto;
+import com.vvts.dto.*;
 import com.vvts.projection.InitProjection;
 import com.vvts.projection.UserBasicProjection;
 import org.springframework.core.io.Resource;
@@ -39,5 +36,9 @@ public interface UsersService {
     String getGenerateQrCode(Integer loginUserId) throws IOException;
 
     ResponseEntity<Resource> downloadImage(Integer loginUserId);
+
+    NumberPlateScannerResponsePojo getUserById(Integer userId);
+
+
 
 }

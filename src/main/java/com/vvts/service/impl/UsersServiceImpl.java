@@ -1,17 +1,16 @@
 package com.vvts.service.impl;
 
-import com.vvts.dto.KycUpdateResponseDto;
-import com.vvts.dto.PublicUserBasicDataDto;
-import com.vvts.dto.UserKycDetailDto;
-import com.vvts.dto.UserKycUpdateDto;
+import com.vvts.dto.*;
 import com.vvts.entity.Role;
 import com.vvts.entity.Users;
 import com.vvts.projection.InitProjection;
+import com.vvts.projection.NumberPlateScannerProjection;
 import com.vvts.projection.UserBasicProjection;
 import com.vvts.projection.UserDetailProjection;
 import com.vvts.repo.AccessTokenRepo;
 import com.vvts.repo.RoleRepo;
 import com.vvts.repo.UsersRepo;
+import com.vvts.repo.VehicleRepo;
 import com.vvts.service.UsersService;
 import com.vvts.utiles.ImageUtils;
 import com.vvts.utiles.ImageValidation;
@@ -57,6 +56,8 @@ public class UsersServiceImpl implements UsersService {
     private final ImageUtils imageUtils;
 
     private final ResourceLoader resourceLoader;
+
+    private final VehicleRepo vehicleRepo;
 
     @Value("${server.port}")
     private String serverPort;
@@ -293,7 +294,7 @@ public class UsersServiceImpl implements UsersService {
     @Override
     public String getGenerateQrCode(Integer loginUserId) throws IOException {
         String qrCodeImageName = getQrcodeNameByLoginUser(loginUserId);
-        String imageFilePath = QRCodeGenerator.getQrCode("", qrCodeImageName);
+        String imageFilePath = QRCodeGenerator.getQrCode("", qrCodeImageName,loginUserId);
         return imageFilePath;
     }
 
@@ -315,6 +316,29 @@ public class UsersServiceImpl implements UsersService {
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(imageResource);
+    }
+
+    @Override
+    public NumberPlateScannerResponsePojo getUserById(Integer userId) {
+        NumberPlateScannerProjection npcp = vehicleRepo.getUserAndVehicleDetailByUserId(userId);
+        if (npcp != null){
+            NumberPlateScannerResponsePojo scannerResponsePojo = new NumberPlateScannerResponsePojo();
+            scannerResponsePojo.setName(npcp.getName());
+            scannerResponsePojo.setUserId(npcp.getUserId());
+            scannerResponsePojo.setAddress(npcp.getAddress());
+            scannerResponsePojo.setContact(npcp.getContact());
+            scannerResponsePojo.setEmail(npcp.getEmail());
+            scannerResponsePojo.setProfileImageUrl(imageAccessBaseUrl.concat("/profile/")
+                    .concat(getFileNameFormPath(npcp.getProfileImageUrl())));
+            scannerResponsePojo.setLicenseValidDate(npcp.getLicenseValidDate());
+            scannerResponsePojo.setIsLicenseValid(npcp.getIsLicenseValid());
+            scannerResponsePojo.setVehicleIdentificationNo(npcp.getVehicleIdentificationNo());
+            scannerResponsePojo.setVehicleCompanyName(npcp.getVehicleCompanyName());
+            scannerResponsePojo.setManufactureYear(npcp.getManufactureYear());
+            scannerResponsePojo.setBlueBookEffectiveDate(npcp.getBlueBookEffectiveDate());
+            return scannerResponsePojo;
+        }
+        return null;
     }
 
     private String getQrcodeNameByLoginUser(Integer loginUserId) {

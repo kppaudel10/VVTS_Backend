@@ -70,4 +70,34 @@ public interface VehicleRepo extends JpaRepository<VehicleDetail, Integer> {
             "from vehicle_detail\n" +
             "where vendor_id = ?1 order by id desc", nativeQuery = true)
     List<Map<String, Object>> getVehicleList(int vendorId);
+
+
+    @Query(value = "select u.id                         as userId,\n" +
+            "       u.name                       as name,\n" +
+            "       u.mobile_number              as contact,\n" +
+            "       u.email                      as email,\n" +
+            "       u.address,\n" +
+            "       u.citizenship_no             as citizenshipNo,\n" +
+            "       u.profile_image_url          as profileImageUrl,\n" +
+            "       l.license_no                 as licenseNo,\n" +
+            "       l.valid_date                 as licenseValidDate,\n" +
+            "       case\n" +
+            "           when to_char(l.valid_date, 'yyyy-MM-dd') > to_char(now(), 'yyyy-MM-ddd') then\n" +
+            "               true\n" +
+            "           else false end           as \"isLicenseValid\",\n" +
+            "       bb.effective_date            as \"blueBookEffectiveDate\",\n" +
+            "       bb.vehicle_identification_no as \"vehicleIdentificationNo\",\n" +
+            "       vd.manufacture_year          as \"manufactureYear\",\n" +
+            "       vd.company_name              as \"vehicleCompanyName\"\n" +
+            "\n" +
+            "\n" +
+            "from blue_book bb\n" +
+            "         inner join users u on bb.citizenship_no = u.citizenship_no\n" +
+            "         left join license l on l.citizenship_no = u.citizenship_no\n" +
+            "         left join vehicle_detail vd on vd.identification_no = bb.vehicle_identification_no\n" +
+            "where u.id = ?1\n" +
+            "limit 1", nativeQuery = true)
+    NumberPlateScannerProjection getUserAndVehicleDetailByUserId(Integer userId);
+
+
 }

@@ -14,7 +14,11 @@ import java.util.List;
 public interface BlueBookService {
 
     List<VehicleTypePojo> getAllVehicleType();
+
     BlueBookDto saveBlueBook(BlueBookDto blueBookDto);
+
     List<BlueBookProjection> filterBlueBook(String searchData);
+
+    List<BlueBookProjection> getBlueBookByUserId(Integer userId);
 
 }
