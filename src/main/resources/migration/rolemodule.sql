@@ -6,7 +6,7 @@ VALUES (1, true, 'Public User'),
 /*
  Insert Role Module
  */
-INSERT INTO role_module(id, is_active, module_name)
+/*INSERT INTO role_module(id, is_active, module_name)
 VALUES (1, true, 'A-Dashboard'),
        (2, true, 'License'),
        (3, true, 'Blue Book'),
@@ -17,15 +17,26 @@ VALUES (1, true, 'A-Dashboard'),
        (8, true, 'Sell Vehicle'),
        (9, true, 'Buy Request'),
        (10, true, 'Add New Vehicle'),
-       (11, true, 'User List');
+       (11, true, 'User List');*/
+
+INSERT INTO role_module(id, is_active, module_name)
+VALUES (1, true, 'A-Dashboard'),
+       (2, true, 'License'),
+       (3, true, 'Blue Book'),
+       (4, true, 'User Request'),
+       (5, true, 'Number Plate Scan'),
+       (6, true, 'Tax Clearance Request'),
+       (7, true, 'U-Dashboard'),
+       (8, true, 'Process Tax'),
+       (9, true, 'Add New Vehicle'),
+       (10, true, 'User List');
 
 /*
  insert role mapping public user
  */
-INSERT INTO role_module_mapping(id, is_active, role_id, role_module_id)
-VALUES (1, true, 1, 7),
-       (2, true, 1, 8),
-       (3, true, 1, 9);
+    INSERT
+INTO role_module_mapping(id, is_active, role_id, role_module_id)
+VALUES (1, true, 1, 7), (2, true, 1, 8);
 
 
 INSERT INTO role_module_mapping(id, is_active, role_id, role_module_id)
@@ -35,8 +46,7 @@ VALUES (6, true, 2, 1),
        (9, true, 2, 4),
        (10, true, 2, 5),
        (11, true, 2, 6),
-       (12, true, 2, 10),
-       (13, true, 2, 11);
+       (12, true, 2, 10);
 /*
  basic module insert
  */
