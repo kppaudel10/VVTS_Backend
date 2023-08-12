@@ -100,4 +100,5 @@ public interface VehicleRepo extends JpaRepository<VehicleDetail, Integer> {
     NumberPlateScannerProjection getUserAndVehicleDetailByUserId(Integer userId);
 
 
+
 }

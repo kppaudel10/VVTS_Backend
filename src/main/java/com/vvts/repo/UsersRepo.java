@@ -91,5 +91,6 @@ public interface UsersRepo extends JpaRepository<Users, Integer> {
     void getRejectUserKyc(Integer userId);
 
     Users getUsersById(Integer loginUserId);
+    Users getUsersByCitizenshipNo(String citizenshipNo);
 
 }

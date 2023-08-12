@@ -31,5 +31,6 @@ public class VehicleDto {
     @NotNull(message = "Company code must required")
     private String companyCode;
 
+    private Integer cc;
 
 }

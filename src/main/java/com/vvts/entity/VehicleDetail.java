@@ -41,6 +41,8 @@ public class VehicleDetail {
     @Column(name = "company_code", nullable = false)
     private String companyCode;
 
+    private Integer cc;
+
     @ManyToOne
     @JoinColumn(name = "vendor_id", referencedColumnName = "id")
     private Users vendor;

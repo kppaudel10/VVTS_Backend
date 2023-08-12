@@ -75,6 +75,7 @@ public class VehicleServiceImpl implements VehicleService {
                 .vehicleType(VehicleType.getVehicleTypeKey(vehicleDto.getVehicleType()))
                 .vehicleIdentificationNo(vinGenerator.generateVIN(vehicleDto.getCompanyCode(),
                         vehicleDto.getVehicleType(), vehicleDto.getManufactureYear()))
+                .cc(vehicleDto.getCc())
                 .companyCode(vehicleDto.getCompanyCode())
                 .companyName(vehicleDto.getCompanyName())
                 .vendor(users).build();
