@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Date;
 
 /**
  * @auther kul.paudel
@@ -50,17 +51,17 @@ public class TaxClearanceServiceImpl implements TaxClearanceService {
             throw new RuntimeException("Invalid vehicle identification no : " + taxClearanceDto.getVehicleIdentificationNo());
         }
         // check paid amount validation
-        checkTaxAboutValidity(taxClearanceDto.getAmountPaid(), vehicleDetail);
+        checkTaxAboutValidity(taxClearanceDto.getPaidAmount(), vehicleDetail);
         // save the tax clearance bill doc
         // validate image
-        String extension = imageValidation.validateImage(taxClearanceDto.getPaidBill());
+        String extension = imageValidation.validateImage(taxClearanceDto.getAmountPaidSheet());
         // get name
         String profilePictureName = imageUtils.generateUniqueImageName(users.getName(), users.getId(), "taxClearance", extension);
         String uploadDir = "";
         Path uploadPath = null;
         Path taxClearanceImagePath = null;
 
-        if (taxClearanceDto.getPaidBill() != null) {
+        if (taxClearanceDto.getAmountPaidSheet() != null) {
             // create folder if not already not exists
             uploadDir = System.getProperty("user.home").concat("/vvts/tax-clearance");
             uploadPath = Paths.get(uploadDir);
@@ -70,18 +71,21 @@ public class TaxClearanceServiceImpl implements TaxClearanceService {
             }
             // create full url
             taxClearanceImagePath = uploadPath.resolve(profilePictureName);
-            taxClearanceDto.getPaidBill().transferTo(taxClearanceImagePath);
+            taxClearanceDto.getAmountPaidSheet().transferTo(taxClearanceImagePath);
         }
 
         // save tax clearance
         TaxClearance taxClearance = TaxClearance.builder()
                 .id(taxClearanceDto.getId())
                 .paidUser(users)
+                .isVerified(false)
+                .processDate(new Date())
                 .vehicleDetail(vehicleDetail)
-                .paidAmount(taxClearanceDto.getAmountPaid())
+                .paidAmount(taxClearanceDto.getPaidAmount())
                 .paidBillDocUrl(String.valueOf(taxClearanceImagePath))
                 .build();
         taxClearanceRepo.save(taxClearance);
+        taxClearanceDto.setAmountPaidSheet(null);
         return taxClearanceDto;
     }
 
@@ -89,7 +93,7 @@ public class TaxClearanceServiceImpl implements TaxClearanceService {
         if (vehicleDetail.getVehicleType().equals(VehicleType.SCOOTER)
                 || vehicleDetail.getVehicleType().equals(VehicleType.BIKE)) {
             Double amountNeedToPaid = getBikeScooterTaxAmount(vehicleDetail.getCc());
-            if (amount != amountNeedToPaid) {
+            if (!amount.equals(amountNeedToPaid)) {
                 throw new RuntimeException("You should have paid Rs: " + amountNeedToPaid);
             }
         } else {

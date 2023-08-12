@@ -34,9 +34,9 @@ public class TaxClearanceDto {
     private String numberPlate;
 
     @NotNull(message = "Paid amount must required !")
-    private Double amountPaid;
+    private Double paidAmount;
 
     @NotNull(message = "Amount paid bill doc must required !")
-    private MultipartFile paidBill;
+    private MultipartFile amountPaidSheet;
 
 }

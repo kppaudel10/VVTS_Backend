@@ -42,4 +42,7 @@ public class TaxClearance {
     @Column(name = "valid_date")
     private Date validDate;
 
+    @Column(name = "process_date")
+    private Date processDate;
+
 }
