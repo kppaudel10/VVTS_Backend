@@ -15,6 +15,7 @@ import com.vvts.utiles.ImageValidation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -81,6 +82,7 @@ public class TaxClearanceServiceImpl implements TaxClearanceService {
                 .id(taxClearanceDto.getId())
                 .paidUser(users)
                 .isVerified(false)
+                .isRejected(false)
                 .processDate(new Date())
                 .vehicleDetail(vehicleDetail)
                 .paidAmount(taxClearanceDto.getPaidAmount())
@@ -92,8 +94,27 @@ public class TaxClearanceServiceImpl implements TaxClearanceService {
     }
 
     @Override
-    public List<TaxClearanceProjection> getTaxClearanceListByUserId(Integer loginUserId) {
+    public List<TaxClearanceProjection> getTaxClearanceListByUserId(Integer loginUserId, Boolean isAll) {
+        if (isAll != null && isAll) {
+            return taxClearanceRepo.getTaxClearanceRequestForAdmin();
+        }
         return taxClearanceRepo.getTaxClearanceByLoginUserId(loginUserId);
+    }
+
+    @Transactional
+    @Override
+    public String actionTaxClearanceRequest(String action, Integer taxClearanceId) {
+        if (action != null) {
+            if (action.equalsIgnoreCase("Accept")) {
+                taxClearanceRepo.acceptTaxClearanceRequest(taxClearanceId);
+                return "Tax Clearance Request accepted successfully !";
+            }
+            if (action.equalsIgnoreCase("Reject")) {
+                taxClearanceRepo.rejectTaxClearanceRequest(taxClearanceId);
+                return "Tax Clearance request rejected successfully !";
+            }
+        }
+        return null;
     }
 
     private void checkTaxAboutValidity(Double amount, VehicleDetail vehicleDetail) {
@@ -141,6 +162,12 @@ public class TaxClearanceServiceImpl implements TaxClearanceService {
         } else {
             return 30000D;
         }
+    }
+
+    private String getFileNameFormPath(String filePath) {
+        Path path = Paths.get(filePath);
+        String fileName = path.getFileName().toString();
+        return fileName;
     }
 
 }

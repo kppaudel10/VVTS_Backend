@@ -2,6 +2,8 @@ package com.vvts.projection;
 
 public interface TaxClearanceProjection {
 
+    Integer getId();
+
     String getProcessDate();
 
     String getCitizenshipNo();
@@ -14,8 +16,10 @@ public interface TaxClearanceProjection {
 
     Double getPaidAmount();
 
-    String getValidDate();
+    String getValidYear();
 
     Boolean getIsVerified();
+
+    String getTaxPaidBillImageName();
 
 }

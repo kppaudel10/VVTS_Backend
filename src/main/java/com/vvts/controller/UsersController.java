@@ -13,7 +13,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -84,6 +83,8 @@ public class UsersController {
             imagePath = System.getProperty("user.home").concat("/vvts/profile/").concat(imageName);
         } else if (imageType.equalsIgnoreCase("citizen")) {
             imagePath = System.getProperty("user.home").concat("/vvts/citizen/").concat(imageName);
+        } else if (imageType.equalsIgnoreCase("taxClearance")) {
+            imagePath = System.getProperty("user.home").concat("/vvts/tax-clearance/").concat(imageName);
         }
         return getResponseByImagePath(imagePath);
     }
@@ -132,7 +133,7 @@ public class UsersController {
     }
 
     @GetMapping("/detail/{id}")
-    public GlobalApiResponse getPublicUserDetailById(@PathVariable("id")Integer id)  {
+    public GlobalApiResponse getPublicUserDetailById(@PathVariable("id") Integer id) {
         return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true,
                 usersService.getUserById(id));
     }

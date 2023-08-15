@@ -39,8 +39,11 @@ public class TaxClearance {
     @Column(name = "is_verified")
     private Boolean isVerified = false;
 
-    @Column(name = "valid_date")
-    private Date validDate;
+    @Column(name = "is_rejected")
+    private Boolean isRejected = false;
+
+    @Column(name = "valid_year")
+    private String validYear;
 
     @Column(name = "process_date")
     private Date processDate;

@@ -32,9 +32,16 @@ public class TaxClearanceController {
                 taxClearanceService.saveTaxClearance(taxClearanceDto));
     }
 
-    @GetMapping("/List/loginUser")
-    public GlobalApiResponse getTaxClearanceList(Authentication authentication) {
+    @GetMapping(value = {"/List/loginUser", "/List/all/{isAll}"})
+    public GlobalApiResponse getTaxClearanceList(Authentication authentication, @PathVariable(value = "isAll", required = false) Boolean isAll) {
         return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true,
-                taxClearanceService.getTaxClearanceListByUserId(userDataConfig.getLoggedInUserId(authentication)));
+                taxClearanceService.getTaxClearanceListByUserId(userDataConfig.getLoggedInUserId(authentication), isAll));
+    }
+
+    @GetMapping(value = {"/request/action/{actionType}/{id}"})
+    public GlobalApiResponse actionOnTaxClearanceRequest(@PathVariable("actionType") String actionType,
+                                                         @PathVariable("id") Integer id) {
+        String message = taxClearanceService.actionTaxClearanceRequest(actionType, id);
+        return new GlobalApiResponse(message, true, true);
     }
 }
