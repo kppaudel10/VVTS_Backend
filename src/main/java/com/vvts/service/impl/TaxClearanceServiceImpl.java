@@ -5,6 +5,7 @@ import com.vvts.entity.TaxClearance;
 import com.vvts.entity.Users;
 import com.vvts.entity.VehicleDetail;
 import com.vvts.enums.VehicleType;
+import com.vvts.projection.TaxClearanceProjection;
 import com.vvts.repo.TaxClearanceRepo;
 import com.vvts.repo.UsersRepo;
 import com.vvts.repo.VehicleRepo;
@@ -19,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @auther kul.paudel
@@ -87,6 +89,11 @@ public class TaxClearanceServiceImpl implements TaxClearanceService {
         taxClearanceRepo.save(taxClearance);
         taxClearanceDto.setAmountPaidSheet(null);
         return taxClearanceDto;
+    }
+
+    @Override
+    public List<TaxClearanceProjection> getTaxClearanceListByUserId(Integer loginUserId) {
+        return taxClearanceRepo.getTaxClearanceByLoginUserId(loginUserId);
     }
 
     private void checkTaxAboutValidity(Double amount, VehicleDetail vehicleDetail) {
