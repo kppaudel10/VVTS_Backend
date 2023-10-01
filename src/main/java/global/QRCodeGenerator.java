@@ -6,9 +6,6 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
-import com.vvts.service.UsersService;
-import com.vvts.service.impl.UsersServiceImpl;
-import org.apache.catalina.User;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -28,11 +25,11 @@ import java.util.Map;
  * @created at 2023-05-24
  */
 public class QRCodeGenerator {
-    
-    public static String getQrCode(String qrBody, String imageName,Integer loginUseId) throws IOException {
+
+    public static String getQrCode(String qrBody, String imageName, Integer loginUseId) throws IOException {
         String text = "Hello, World!";// The content of the QR code
         String ipAddress = getIPAddress();
-        if (ipAddress != null){
+        if (ipAddress != null) {
             text = ipAddress.concat(":8848/api/public-user/".concat(String.valueOf(loginUseId)));
         }
 
@@ -86,7 +83,7 @@ public class QRCodeGenerator {
         return filePath;
     }
 
-    private static String getIPAddress(){
+    private static String getIPAddress() {
         String ipAddress = null;
         try {
             Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();

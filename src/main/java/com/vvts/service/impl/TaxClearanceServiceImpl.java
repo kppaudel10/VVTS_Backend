@@ -129,6 +129,7 @@ public class TaxClearanceServiceImpl implements TaxClearanceService {
         return null;
     }
 
+
     private void checkTaxAboutValidity(Double amount, VehicleDetail vehicleDetail) {
         if (vehicleDetail.getVehicleType().equals(VehicleType.SCOOTER)
                 || vehicleDetail.getVehicleType().equals(VehicleType.BIKE)) {

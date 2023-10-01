@@ -3,6 +3,7 @@ package com.vvts.service;
 import com.vvts.dto.*;
 import com.vvts.projection.InitProjection;
 import com.vvts.projection.UserBasicProjection;
+import com.vvts.projection.UserCommonDetailProjection;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 
@@ -39,6 +40,7 @@ public interface UsersService {
 
     NumberPlateScannerResponsePojo getUserById(Integer userId);
 
+    UserCommonDetailDto getUserDetail(Integer userId);
 
 
 }

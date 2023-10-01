@@ -2,6 +2,8 @@ package com.vvts.repo;
 
 import com.vvts.entity.TaxClearance;
 import com.vvts.projection.TaxClearanceProjection;
+import com.vvts.projection.UserCommonDetailProjection;
+import com.vvts.projection.UserDetailProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -70,5 +72,16 @@ public interface TaxClearanceRepo extends JpaRepository<TaxClearance, Integer> {
             "  and vd.id = ?2\n" +
             "  and is_verified = true", nativeQuery = true)
     Integer getValidYear(Integer loginUserId, Integer vehicleId);
+
+    @Query(value = "select u.citizenship_no                      as \"citizenshipNo\",\n" +
+            "       string_agg(vd.identification_no, ',') as \"vehicleIdentificationNo\",\n" +
+            "       string_agg(bb.number_plate, ',')      as \"numberPlate\"\n" +
+            "from tax_clearance tc\n" +
+            "         inner join users u on tc.paid_user_id = u.id\n" +
+            "         left join vehicle_detail vd on tc.vehicle_id = vd.id\n" +
+            "         left join blue_book bb on bb.vehicle_identification_no = vd.identification_no\n" +
+            "where u.id = ?1\n" +
+            "group by u.citizenship_no", nativeQuery = true)
+    UserCommonDetailProjection getUserDetail(Integer userId);
 
 }

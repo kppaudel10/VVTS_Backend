@@ -3,14 +3,8 @@ package com.vvts.service.impl;
 import com.vvts.dto.*;
 import com.vvts.entity.Role;
 import com.vvts.entity.Users;
-import com.vvts.projection.InitProjection;
-import com.vvts.projection.NumberPlateScannerProjection;
-import com.vvts.projection.UserBasicProjection;
-import com.vvts.projection.UserDetailProjection;
-import com.vvts.repo.AccessTokenRepo;
-import com.vvts.repo.RoleRepo;
-import com.vvts.repo.UsersRepo;
-import com.vvts.repo.VehicleRepo;
+import com.vvts.projection.*;
+import com.vvts.repo.*;
 import com.vvts.service.UsersService;
 import com.vvts.utiles.ImageUtils;
 import com.vvts.utiles.ImageValidation;
@@ -32,9 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @auther kul.paudel
@@ -58,6 +50,8 @@ public class UsersServiceImpl implements UsersService {
     private final ResourceLoader resourceLoader;
 
     private final VehicleRepo vehicleRepo;
+
+    private final TaxClearanceRepo taxClearanceRepo;
 
     @Value("${server.port}")
     private String serverPort;
@@ -294,7 +288,7 @@ public class UsersServiceImpl implements UsersService {
     @Override
     public String getGenerateQrCode(Integer loginUserId) throws IOException {
         String qrCodeImageName = getQrcodeNameByLoginUser(loginUserId);
-        String imageFilePath = QRCodeGenerator.getQrCode("", qrCodeImageName,loginUserId);
+        String imageFilePath = QRCodeGenerator.getQrCode("", qrCodeImageName, loginUserId);
         return imageFilePath;
     }
 
@@ -321,7 +315,7 @@ public class UsersServiceImpl implements UsersService {
     @Override
     public NumberPlateScannerResponsePojo getUserById(Integer userId) {
         NumberPlateScannerProjection npcp = vehicleRepo.getUserAndVehicleDetailByUserId(userId);
-        if (npcp != null){
+        if (npcp != null) {
             NumberPlateScannerResponsePojo scannerResponsePojo = new NumberPlateScannerResponsePojo();
             scannerResponsePojo.setName(npcp.getName());
             scannerResponsePojo.setUserId(npcp.getUserId());
@@ -349,6 +343,22 @@ public class UsersServiceImpl implements UsersService {
         Users users = optionalUsers.get();
         String qrCodeImageName = imageUtils.generateUniqueImageName(users.getName(), users.getId(), "qrcode", "png");
         return qrCodeImageName;
+    }
+
+    @Override
+    public UserCommonDetailDto getUserDetail(Integer userId) {
+        UserCommonDetailProjection userDetail = taxClearanceRepo.getUserDetail(userId);
+        UserCommonDetailDto userCommonDetailDto = new UserCommonDetailDto();
+        if (userDetail != null) {
+            userCommonDetailDto.setCitizenshipNo(userDetail.getCitizenshipNo());
+            String[] identificationNo = userDetail.getVehicleIdentificationNo().split(",");
+            String[] numberPlate = userDetail.getNumberPlate().split(",");
+            Set<String> numberPlateSet = new HashSet<>(Arrays.asList(numberPlate));
+            Set<String> identificationNoSet = new HashSet<>(Arrays.asList(identificationNo));
+            userCommonDetailDto.setVehicleIdentificationNo(identificationNoSet);
+            userCommonDetailDto.setNumberPlate(numberPlateSet);
+        }
+        return userCommonDetailDto;
     }
 
 }

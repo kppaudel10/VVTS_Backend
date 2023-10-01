@@ -137,4 +137,11 @@ public class UsersController {
         return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true,
                 usersService.getUserById(id));
     }
+
+    @GetMapping("/common-detail")
+    public GlobalApiResponse getLoginUserCommonDetail(Authentication authentication) {
+        return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true,
+                usersService.getUserDetail(userDataConfig.getLoggedInUserId(authentication)));
+    }
 }
+

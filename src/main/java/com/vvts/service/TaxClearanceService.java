@@ -2,6 +2,7 @@ package com.vvts.service;
 
 import com.vvts.dto.TaxClearanceDto;
 import com.vvts.projection.TaxClearanceProjection;
+import com.vvts.projection.UserCommonDetailProjection;
 
 import java.io.IOException;
 import java.util.List;
