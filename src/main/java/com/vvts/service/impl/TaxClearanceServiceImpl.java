@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -52,6 +53,15 @@ public class TaxClearanceServiceImpl implements TaxClearanceService {
         VehicleDetail vehicleDetail = vehicleRepo.getVehicleDetailByVehicleIdentificationNo(taxClearanceDto.getVehicleIdentificationNo());
         if (vehicleDetail == null) {
             throw new RuntimeException("Invalid vehicle identification no : " + taxClearanceDto.getVehicleIdentificationNo());
+        }
+        // check already verified for current year or not
+        Integer validYear = taxClearanceRepo.getValidYear(users.getId(), vehicleDetail.getId());
+        if (validYear != null) {
+            Calendar calendar = Calendar.getInstance();
+            int year = calendar.get(Calendar.YEAR);
+            if (year == validYear) {
+                throw new RuntimeException("Your tax has been clear for the year(" + year + ").");
+            }
         }
         // check paid amount validation
         checkTaxAboutValidity(taxClearanceDto.getPaidAmount(), vehicleDetail);
@@ -106,7 +116,9 @@ public class TaxClearanceServiceImpl implements TaxClearanceService {
     public String actionTaxClearanceRequest(String action, Integer taxClearanceId) {
         if (action != null) {
             if (action.equalsIgnoreCase("Accept")) {
-                taxClearanceRepo.acceptTaxClearanceRequest(taxClearanceId);
+                Calendar calendar = Calendar.getInstance();
+                int year = calendar.get(Calendar.YEAR);
+                taxClearanceRepo.acceptTaxClearanceRequest(taxClearanceId, new Date(), String.valueOf(year));
                 return "Tax Clearance Request accepted successfully !";
             }
             if (action.equalsIgnoreCase("Reject")) {

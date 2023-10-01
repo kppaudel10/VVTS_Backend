@@ -19,6 +19,8 @@ public interface TaxClearanceProjection {
     String getValidYear();
 
     Boolean getIsVerified();
+    Boolean getIsRejected();
+    String getStatus();
 
     String getTaxPaidBillImageName();
 

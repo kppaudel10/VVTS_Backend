@@ -45,6 +45,9 @@ public class TaxClearance {
     @Column(name = "valid_year")
     private String validYear;
 
+    @Column(name = "verified_date")
+    private Date verifiedDate;
+
     @Column(name = "process_date")
     private Date processDate;
 

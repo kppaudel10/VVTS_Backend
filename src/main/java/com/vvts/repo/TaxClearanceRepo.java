@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -14,15 +15,21 @@ import java.util.List;
  */
 public interface TaxClearanceRepo extends JpaRepository<TaxClearance, Integer> {
 
-    @Query(value = "select distinct tc.id, to_char(tc.process_date, 'yyyy-MM-dd')                as \"processDate\",\n" +
-            "                u.citizenship_no                                      as \"citizenshipNo\",\n" +
-            "                vd.vehicle_type                                       as \"vehicleType\",\n" +
-            "                vd.identification_no                                  as \"identificationNo\",\n" +
-            "                bb.number_plate                                       as \"numberPlate\",\n" +
-            "                tc.paid_amount                                        as \"paidAmount\",\n" +
-            "                tc.valid_year                                         as \"validYear\",\n" +
-            "                tc.is_verified                                        as \"isVerified\",\n" +
-            "                SUBSTRING(tc.paid_bill_doc_url FROM '.*/([^/]+)$') AS \"taxPaidBillImageName\"\n" +
+    @Query(value = "select distinct tc.id,\n" +
+            "                to_char(tc.process_date, 'yyyy-MM-dd')             as \"processDate\",\n" +
+            "                u.citizenship_no                                   as \"citizenshipNo\",\n" +
+            "                vd.vehicle_type                                    as \"vehicleType\",\n" +
+            "                vd.identification_no                               as \"identificationNo\",\n" +
+            "                bb.number_plate                                    as \"numberPlate\",\n" +
+            "                tc.paid_amount                                     as \"paidAmount\",\n" +
+            "                tc.valid_year                                      as \"validYear\",\n" +
+            "                tc.is_verified                                     as \"isVerified\",\n" +
+            "                tc.is_rejected                                     as \"isRejected\",\n" +
+            "                SUBSTRING(tc.paid_bill_doc_url FROM '.*/([^/]+)$') AS \"taxPaidBillImageName\",\n" +
+            "                case\n" +
+            "                    when tc.is_verified is true then 'Verified'\n" +
+            "                    when tc.is_rejected is true then 'Rejected'\n" +
+            "                    else 'Pending' end                             as status\n" +
             "from tax_clearance tc\n" +
             "         inner join users u on tc.paid_user_id = u.id\n" +
             "         inner join vehicle_detail vd on tc.vehicle_id = vd.id\n" +
@@ -31,8 +38,8 @@ public interface TaxClearanceRepo extends JpaRepository<TaxClearance, Integer> {
     List<TaxClearanceProjection> getTaxClearanceByLoginUserId(Integer userId);
 
     @Modifying
-    @Query(value = "update tax_clearance set is_verified = true where id = ?1", nativeQuery = true)
-    void acceptTaxClearanceRequest(Integer taxClearanceId);
+    @Query(value = "update tax_clearance set is_verified = true , verified_date = ?2 , valid_year = ?3 where id = ?1", nativeQuery = true)
+    void acceptTaxClearanceRequest(Integer taxClearanceId, Date verifiedDate, String validYear);
 
     @Modifying
     @Query(value = "update tax_clearance set is_verified = true where id = ?1", nativeQuery = true)
@@ -53,4 +60,15 @@ public interface TaxClearanceRepo extends JpaRepository<TaxClearance, Integer> {
             "         left join blue_book bb on bb.vehicle_identification_no = vd.identification_no\n" +
             "where tc.is_verified = false and tc.is_rejected = false", nativeQuery = true)
     List<TaxClearanceProjection> getTaxClearanceRequestForAdmin();
+
+    @Query(value = "select tc.valid_year\n" +
+            "from tax_clearance tc\n" +
+            "         inner join users u on tc.paid_user_id = u.id\n" +
+            "         inner join vehicle_detail vd on tc.vehicle_id = vd.id\n" +
+            "         left join blue_book bb on bb.vehicle_identification_no = vd.identification_no\n" +
+            "where tc.paid_user_id = ?1\n" +
+            "  and vd.id = ?2\n" +
+            "  and is_verified = true", nativeQuery = true)
+    Integer getValidYear(Integer loginUserId, Integer vehicleId);
+
 }
