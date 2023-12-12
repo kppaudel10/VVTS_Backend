@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface TaxClearanceService {
 
-    TaxClearanceDto saveTaxClearance(TaxClearanceDto taxClearanceDto) throws IOException;
+    TaxClearanceDto saveTaxClearance(TaxClearanceDto taxClearanceDto,Integer userId) throws IOException;
 
     List<TaxClearanceProjection> getTaxClearanceListByUserId(Integer loginUserId,Boolean isAll);
 

@@ -12,7 +12,7 @@ public interface ScanImageRepo extends JpaRepository<ScanImage, Integer> {
 
     @Query(value = "select count(id) from scan_image where scan_image_name = ?1", nativeQuery = true)
     Integer countScanImageName(String scanImageName);
-    @Query(value = "select * from scan_image where scan_image_hash_value = ?1", nativeQuery = true)
+    @Query(value = "select * from scan_image where scan_image_hash_value = ?1 order by id desc limit 1", nativeQuery = true)
     ScanImage getScanImageByScanImageHasValue(String imageHashValue);
 
 }

@@ -27,9 +27,9 @@ public class TaxClearanceController {
     private final UserDataConfig userDataConfig;
 
     @PostMapping("/save")
-    public GlobalApiResponse saveTaxClearance(@ModelAttribute TaxClearanceDto taxClearanceDto) throws IOException {
+    public GlobalApiResponse saveTaxClearance(@ModelAttribute TaxClearanceDto taxClearanceDto,Authentication authentication) throws IOException {
         return new GlobalApiResponse(messageSource.getMessage("data.save", null, null), true,
-                taxClearanceService.saveTaxClearance(taxClearanceDto));
+                taxClearanceService.saveTaxClearance(taxClearanceDto,userDataConfig.getLoggedInUserId(authentication)));
     }
 
     @GetMapping(value = {"/List/loginUser", "/List/all/{isAll}"})

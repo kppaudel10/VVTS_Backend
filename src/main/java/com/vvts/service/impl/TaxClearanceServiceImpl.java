@@ -23,6 +23,7 @@ import java.nio.file.Paths;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @auther kul.paudel
@@ -43,11 +44,16 @@ public class TaxClearanceServiceImpl implements TaxClearanceService {
     private final ImageUtils imageUtils;
 
     @Override
-    public TaxClearanceDto saveTaxClearance(TaxClearanceDto taxClearanceDto) throws IOException {
+    public TaxClearanceDto saveTaxClearance(TaxClearanceDto taxClearanceDto, Integer userId) throws IOException {
         // check user details is valid or not
         Users users = usersRepo.getUsersByCitizenshipNo(taxClearanceDto.getCitizenshipNo());
         if (users == null) {
-            throw new RuntimeException("Invalid citizenship no: " + taxClearanceDto.getCitizenshipNo());
+            Optional<Users> usersOptional = usersRepo.findById(userId);
+            if (!usersOptional.isPresent()) {
+                throw new RuntimeException("Invalid citizenship no: " + taxClearanceDto.getCitizenshipNo());
+            } else {
+                users = usersOptional.get();
+            }
         }
         // check vehicle details is valid or not
         VehicleDetail vehicleDetail = vehicleRepo.getVehicleDetailByVehicleIdentificationNo(taxClearanceDto.getVehicleIdentificationNo());
