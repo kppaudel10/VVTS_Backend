@@ -29,8 +29,8 @@ public class TaxClearanceDto {
     @NotEmpty(message = "Vehicle IdentificationNo must required !")
     private String vehicleIdentificationNo;
 
-    @NotNull(message = "Numberplate must required !")
-    @NotEmpty(message = "Numberplate must required !")
+//    @NotNull(message = "Numberplate must required !")
+//    @NotEmpty(message = "Numberplate must required !")
     private String numberPlate;
 
     @NotNull(message = "Paid amount must required !")

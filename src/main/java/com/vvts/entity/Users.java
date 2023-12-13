@@ -59,6 +59,9 @@ public class Users {
     @Column(name = "is_new_kyc_request")
     private Boolean isNewKycRequest = true;
 
+    @Column(name = "is_new_user_request")
+    private Boolean isNewUserRequest = true;
+
     @ManyToOne
     @JoinColumn(name = "role_id", referencedColumnName = "id")
     private Role role;

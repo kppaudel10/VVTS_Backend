@@ -121,17 +121,18 @@ public class ScannerServiceImpl implements ScannerService {
     public NumberPlateScannerResponsePojo sacnNumberPlate(MultipartFile multipartFile) throws Exception {
         List<String> scanImageDetail = saveAndScanImage(multipartFile);
         try {
-            new OcrProcessor().doOcr(scanImageDetail.get(1));
+//            new OcrProcessor().doOcr(scanImageDetail.get(1));
         } catch (Exception e) {
             System.out.println();
         }
         if (!scanImageDetail.isEmpty()) {
-           /* String numberPlateOcrText = numberPlateScanner(scanImageDetail.get(0), scanImageDetail.get(1));
+            process();
+            String numberPlateOcrText = numberPlateScanner(scanImageDetail.get(0), scanImageDetail.get(1));
             if (numberPlateOcrText != null) {
-                return getScannerResponse("numberPlateOcrText");
+                return getScannerResponse(numberPlateOcrText);
             } else {
                 throw new RuntimeException("Please use appropriate image for detection");
-            }*/
+            }
         }
         return null;
     }
@@ -199,8 +200,10 @@ public class ScannerServiceImpl implements ScannerService {
             headers.setContentType(MediaType.MULTIPART_FORM_DATA);
             // english
 //            headers.set("Authorization", "Basic " + Base64.getEncoder().encodeToString("9bad4672-0acb-11ee-b832-627a75b3435d:".getBytes()));
-
             // mix up
+//            headers.set("Authorization", "Basic " + Base64.getEncoder().encodeToString("e872f3ca-0c00-11ee-93eb-7ac8f71b476b:".getBytes()));
+
+            // new
             headers.set("Authorization", "Basic " + Base64.getEncoder().encodeToString("e872f3ca-0c00-11ee-93eb-7ac8f71b476b:".getBytes()));
 
             MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
@@ -211,7 +214,10 @@ public class ScannerServiceImpl implements ScannerService {
 //            String url = "https://app.nanonets.com/api/v2/OCR/Model/31870eb5-8884-4fed-84a6-e92bc1b0859a/LabelFile/?async=false";
 
             // mix up
-            String url = "https://app.nanonets.com/api/v2/OCR/Model/72099705-4fac-4ca6-94f6-ab3986e3c929/LabelFile/?async=false";
+//            String url = "https://app.nanonets.com/api/v2/OCR/Model/72099705-4fac-4ca6-94f6-ab3986e3c929/LabelFile/?async=false";
+
+            // new
+            String url = "https://app.nanonets.com/api/v2/OCR/Model/1ead711d-b8bc-44a7-b165-38f8809dc384/LabelUrls/?async=false";
 
             String apiResponse = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class).getBody();
 
@@ -351,6 +357,15 @@ public class ScannerServiceImpl implements ScannerService {
         Path path = Paths.get(filePath);
         String fileName = path.getFileName().toString();
         return fileName;
+    }
+
+    private void process(){
+        try {
+            // Sleep for 3 seconds (3000 milliseconds)
+            Thread.sleep(4000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 }

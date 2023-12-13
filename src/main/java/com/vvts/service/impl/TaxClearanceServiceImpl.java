@@ -60,8 +60,13 @@ public class TaxClearanceServiceImpl implements TaxClearanceService {
         if (vehicleDetail == null) {
             throw new RuntimeException("Invalid vehicle identification no : " + taxClearanceDto.getVehicleIdentificationNo());
         }
+        TaxClearance taxClearance = taxClearanceRepo.getTaxClearanceByVehicleId(vehicleDetail.getId());
+        if (taxClearance != null && (taxClearance.getIsRejected() == null || !taxClearance.getIsRejected()) &&
+                (taxClearance.getIsVerified() == null || !taxClearance.getIsVerified())) {
+            throw new RuntimeException("Your tax clearance request already in pending !");
+        }
         // check already verified for current year or not
-        Integer validYear = taxClearanceRepo.getValidYear(users.getId(), vehicleDetail.getId());
+        Integer validYear = taxClearanceRepo.getValidYear(vehicleDetail.getId());
         if (validYear != null) {
             Calendar calendar = Calendar.getInstance();
             int year = calendar.get(Calendar.YEAR);
@@ -94,7 +99,7 @@ public class TaxClearanceServiceImpl implements TaxClearanceService {
         }
 
         // save tax clearance
-        TaxClearance taxClearance = TaxClearance.builder()
+        taxClearance = TaxClearance.builder()
                 .id(taxClearanceDto.getId())
                 .paidUser(users)
                 .isVerified(false)

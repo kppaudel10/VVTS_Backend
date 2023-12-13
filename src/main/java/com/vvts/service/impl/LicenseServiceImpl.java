@@ -34,7 +34,7 @@ public class LicenseServiceImpl implements LicenseService {
     @Override
     public LicenseDto saveLicense(LicenseDto licenseDto) throws ParseException {
         // check citizenship number is valid or not
-        if (usersRepo.getVerifiedCitizenshipCount(licenseDto.getCitizenshipNo()) == 0) {
+        if (usersRepo.getVerifiedCitizenshipCount(licenseDto.getCitizenshipNo().trim()) == 0) {
             throw new RuntimeException("User not found with provided Citizenship number: " + licenseDto.getCitizenshipNo());
         }
 
