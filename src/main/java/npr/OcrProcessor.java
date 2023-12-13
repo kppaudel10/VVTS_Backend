@@ -31,14 +31,11 @@ public class OcrProcessor {
         tesseract.setDatapath(getFolderAbsolutePath("tessdata")); // Set the path for Tesseract
         // so that it can use the training data that is created.
 
-        String output
-                = tesseract.doOCR(new File(filePathName)); // Using the doOCR method and setting path
-        // for the file.
+        String output = tesseract.doOCR(new File(filePathName));
 
-        output = output.replaceAll("\\s", ""); // Removing any whitespaces from the extracted output
+        // Removing any whitespaces from the extracted output
+        output = output.replaceAll("\\s", "");
 
-        System.out.println("---------------------------output--------------------------");
-        System.out.println(output);
         return output;
     }
 

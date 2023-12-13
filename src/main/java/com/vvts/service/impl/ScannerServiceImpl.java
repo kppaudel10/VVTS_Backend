@@ -11,6 +11,7 @@ import com.vvts.service.ScannerService;
 import com.vvts.utiles.ImageUtils;
 import com.vvts.utiles.ImageValidation;
 import lombok.RequiredArgsConstructor;
+import npr.OcrProcessor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
@@ -97,15 +98,40 @@ public class ScannerServiceImpl implements ScannerService {
         return null;
     }
 
+    public static Result findMaxValueAndIndex(List<Integer> list) {
+        if (list == null || list.isEmpty()) {
+            throw new IllegalArgumentException("The list is null or empty.");
+        }
+
+        int max = Integer.MIN_VALUE;
+        int index = -1;
+
+        for (int i = 0; i < list.size(); i++) {
+            int current = list.get(i);
+            if (current > max) {
+                max = current;
+                index = i;
+            }
+        }
+
+        return new Result(index, max);
+    }
+
     @Override
     public NumberPlateScannerResponsePojo sacnNumberPlate(MultipartFile multipartFile) throws Exception {
         List<String> scanImageDetail = saveAndScanImage(multipartFile);
-//        return new OcrProcessor().doOcr(filePathName);
-        if (scanImageDetail != null) {
-            String numberPlateOcrText = numberPlateScannerTest(scanImageDetail.get(0), scanImageDetail.get(1));
+        try {
+            new OcrProcessor().doOcr(scanImageDetail.get(1));
+        } catch (Exception e) {
+            System.out.println();
+        }
+        if (!scanImageDetail.isEmpty()) {
+           /* String numberPlateOcrText = numberPlateScanner(scanImageDetail.get(0), scanImageDetail.get(1));
             if (numberPlateOcrText != null) {
-                return getScannerResponse(numberPlateOcrText);
-            }
+                return getScannerResponse("numberPlateOcrText");
+            } else {
+                throw new RuntimeException("Please use appropriate image for detection");
+            }*/
         }
         return null;
     }
@@ -120,12 +146,12 @@ public class ScannerServiceImpl implements ScannerService {
         // first validate number plate image extension
         String ppExtension = imageValidation.validateImage(scanImage);
 
-        String uploadDir = "";
-        Path uploadPath = null;
+        String uploadDir;
+        Path uploadPath;
         Path scanImageFilePath;
         String scanImageName = generateScanImageUniqueName(ppExtension);
         // create folder if not already not exists
-        uploadDir = System.getProperty("user.home").concat("/vvts/scan_image");
+        uploadDir = System.getProperty("user.home").concat(File.separator).concat("vvts/scan_image");
         uploadPath = Paths.get(uploadDir);
         // create upload file directory if already not exists
         if (!Files.exists(uploadPath)) {
@@ -153,7 +179,7 @@ public class ScannerServiceImpl implements ScannerService {
         }
     }
 
-    private String numberPlateScannerTest(String scanImageName, String imageFilePath) throws IOException {
+    private String numberPlateScanner(String scanImageName, String imageFilePath) throws IOException {
         /* check already scan image or not if already exists then fetch data from database
          first find the current input image hash value and compare hash value to old once
          */
@@ -271,7 +297,6 @@ public class ScannerServiceImpl implements ScannerService {
         return scannerResponsePojo;
     }
 
-
     private String findClosedMatchNumberPlate(String scanOutput) {
         String numberPlate = null;
         List<BlueBook> blueBookList = blueBookRepo.findAll();
@@ -303,25 +328,6 @@ public class ScannerServiceImpl implements ScannerService {
             }
         }
         return numberPlate;
-    }
-
-    public static Result findMaxValueAndIndex(List<Integer> list) {
-        if (list == null || list.isEmpty()) {
-            throw new IllegalArgumentException("The list is null or empty.");
-        }
-
-        int max = Integer.MIN_VALUE;
-        int index = -1;
-
-        for (int i = 0; i < list.size(); i++) {
-            int current = list.get(i);
-            if (current > max) {
-                max = current;
-                index = i;
-            }
-        }
-
-        return new Result(index, max);
     }
 
     private String removeUnWantCharAndGetNewOnce(String string) {

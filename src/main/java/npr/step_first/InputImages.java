@@ -29,11 +29,11 @@ public class InputImages {
         System.out.println("----------------------------------------------------");
         System.out.println("The size of the original image = " + src.size());
 
-        double width_original = src.size().width; // width
-        double height_original = src.size().height; // height
+        double widthOriginal = src.size().width; // width
+        double heightOriginal = src.size().height; // height
 
-        double downscaling_width_factor = 3;    // d_h_f must be less than d_w_f
-        double downscaling_height_factor = 2;
+        double downScalingWidthFactor = 3;    // d_h_f must be less than d_w_f
+        double downScalingHeightFactor = 2;
 
         /*
          * Value of downscaling_width_factor is larger due to 2 reasons :-
@@ -43,23 +43,23 @@ public class InputImages {
          * compact which help in later steps (feature extraction).
          */
 
-        double final_width = width_original / downscaling_width_factor;
-        double final_height = height_original / downscaling_height_factor;
+        double finalWidth = widthOriginal / downScalingWidthFactor;
+        double finalHeight = heightOriginal / downScalingHeightFactor;
         // final widths and heights for resizing.
 
         System.out.println("----------------------------------------------------");
-        System.out.println("Original Width = " + width_original + "\nOriginal Height = " + height_original);
+        System.out.println("Original Width = " + widthOriginal + "\nOriginal Height = " + heightOriginal);
         System.out.println("----------------------------------------------------");
-        System.out.println("Final Width = " + final_width + "\nFinal Height = " + final_height);
+        System.out.println("Final Width = " + finalWidth + "\nFinal Height = " + finalHeight);
         System.out.println("----------------------------------------------------");
 
 
-        Mat resizeimage = new Mat();
+        Mat resizeImage = new Mat();
         // New Mat object to store the downsampled image
-        Size scaleSize = new Size(final_width, final_height);
-        // Defining the size for the downsampled image in Size Object->(scaleSize)
+        Size scaleSize = new Size(finalWidth, finalHeight);
+        // Defining the size for the down sampled image in Size Object->(scaleSize)
 
-        Imgproc.resize(src, resizeimage, scaleSize, 0, 0, Imgproc.INTER_AREA);
+        Imgproc.resize(src, resizeImage, scaleSize, 0, 0, Imgproc.INTER_AREA);
         /*
          * Applying the resize function with the following parameters :-
          * SourceImage,
@@ -75,7 +75,7 @@ public class InputImages {
          *
          */
 
-        System.out.println("The size of the final image = " + resizeimage.size());
+        System.out.println("The size of the final image = " + resizeImage.size());
         System.out.println("---------------------------------------------------");
 
         System.out.println("\n____________________________________________________");
@@ -88,10 +88,10 @@ public class InputImages {
         System.out.println("____________________________________________________");
         System.out.println("	BEGINNING OF GRAYSCALE CONVERSION PHASE");
         System.out.println("____________________________________________________\n");
-        String store_downscaled_image = "/home/kul-java/vvts/scan_image/output.png";
-        Imgcodecs.imwrite(store_downscaled_image, resizeimage);
+        String storeDownScaledImage = "/home/kul-java/vvts/scan_image/output.png";
+        Imgcodecs.imwrite(storeDownScaledImage, resizeImage);
 
-        return resizeimage; // Returning the resizeimage so that further
+        return resizeImage; // Returning the resize image so that further
 
     }
 }
