@@ -45,20 +45,6 @@ public class AdaptiveThresholding {
         String storeThresholdImage = System.getProperty("user.home") + File.separator + "vvts/scan_image/threshold.png";
         Imgcodecs.imwrite(storeThresholdImage, featureExtractedImage);
 
-        System.out.println("---------------------------------------------------");
-        System.out.println("Adaptive Thresholding Filter is successfully applied\n");
-        System.out.println("---------------------------------------------------");
-
-        System.out.println("____________________________________________________");
-        System.out.println("	ADAPTIVE THRESHOLDING PHASE COMPLETED");
-        System.out.println("____________________________________________________\n");
-
-        System.out.println("*******************************************************");
-
-        System.out.println("____________________________________________________");
-        System.out.println("	BEGINNING OF BOUNDING BOX PHASE");
-        System.out.println("____________________________________________________\n");
-
         return featureExtractedImage;
     }
 

@@ -1,7 +1,6 @@
 package com.vvts.service;
 
 import com.vvts.dto.*;
-import com.vvts.projection.BuyRequestProjection;
 import com.vvts.projection.BuyerRequestProjection;
 import net.sourceforge.tess4j.TesseractException;
 import org.apache.commons.mail.EmailException;
@@ -28,11 +27,13 @@ public interface VehicleService {
     boolean generateValidationToken(BuyRequestPojo buyRequestPojo, Integer loginUserId) throws EmailException;
 
     Boolean validatePincode(String pinCode, Integer loginUserId);
+
     List<BuyerRequestProjection> getBuyRequestOfLoginUser(Integer loginUserId);
 
     String takeActionOnSellRequest(SellRequestActionPojo sellRequestActionPojo);
 
-    List<Map<String,Object>> getVehicleByVendorId(Integer vendorId);
+    List<Map<String, Object>> getVehicleByVendorId(Integer vendorId);
+
     List<OwnershipResponseDto> getOwnershipRequestList();
 
 }

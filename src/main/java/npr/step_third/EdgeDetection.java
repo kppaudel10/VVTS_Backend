@@ -53,8 +53,6 @@ public class EdgeDetection {
         double median = mean.get(0, 0)[0];
         //mean.get(0, 0) returns a double[], therefore, to get the first element we simply add [0].
 
-        System.out.println("---------------------------------------------------");
-        System.out.println("Median Value = " + median);
 
         double CannyThresholdValue = Imgproc.threshold(grayScaleImage, detectedEdgesImage, 120,
                 255, Imgproc.THRESH_BINARY + Imgproc.THRESH_OTSU);
@@ -72,26 +70,12 @@ public class EdgeDetection {
          * Binary Thresholding -> If pixel intensity is greater than the set threshold (that is 120), value set to 255, else set to 0 (black).
          */
 
-        System.out.println("---------------------------------------------------");
-        System.out.println("Canny Threshhold Factor = " + CannyThresholdValue);
-        System.out.println("---------------------------------------------------\n");
-
         Imgproc.Canny(grayScaleImage, grayScaleImage, CannyThresholdValue, CannyThresholdValue * 2, 3, false);
 
         Core.add(grayScaleImage, Scalar.all(0), detectedEdgesImage);
 
         String storeEdgeDetectedImage = System.getProperty("user.home") + File.separator + "vvts/scan_image/edge.png";
         Imgcodecs.imwrite(storeEdgeDetectedImage, detectedEdgesImage);
-
-        System.out.println("____________________________________________________");
-        System.out.println("	EDGE DETECTION PHASE COMPLETED");
-        System.out.println("____________________________________________________\n");
-
-        System.out.println("******************************************************s");
-
-        System.out.println("____________________________________________________");
-        System.out.println("	BEGINNING OF ADAPTIVE THRESHOLDING PHASE");
-        System.out.println("____________________________________________________\n");
 
         return detectedEdgesImage;
     }

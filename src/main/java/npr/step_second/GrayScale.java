@@ -16,18 +16,9 @@ public class GrayScale {
         InputImages image = new InputImages();
         Mat resizedImage = image.downSampling(inputImageFilePath);
 
-        System.out.println("---------------------------------------------------");
-        System.out.println("Resized Image Configuration : " + resizedImage);
-        System.out.println("---------------------------------------------------");
-
         Mat grayScaleImage = new Mat();
 
         Imgproc.cvtColor(resizedImage, grayScaleImage, Imgproc.COLOR_RGB2GRAY);
-
-        System.out.println("---------------------------------------------------");
-        System.out.println("Grayscale Image Configuration" + grayScaleImage);
-        System.out.println("---------------------------------------------------\n");
-
 
         /*
          * CV_8UC3 -> an 8 bit unsigned integer matrix with 3 channels. Suggesting
@@ -41,16 +32,6 @@ public class GrayScale {
          * Unsigned Integer -> It can hold a large positive value and no negative values. Ideal for intensity value that range
          * from 0 to 255.
          */
-
-        System.out.println("____________________________________________________");
-        System.out.println("	GRAYSCALE CONVERSION PHASE COMPLETED");
-        System.out.println("____________________________________________________\n");
-
-        System.out.println("*****************************************************");
-
-        System.out.println("____________________________________________________");
-        System.out.println("	BEGINNING OF EDGE DETECTION PHASE");
-        System.out.println("____________________________________________________\n");
 
         return grayScaleImage;
     }

@@ -15,20 +15,11 @@ public class OcrProcessor {
 
         BoundedBox boundedBox = new BoundedBox(filePathName);
 
-     /*   EdgeDetection image = new EdgeDetection(); // Creating object called image, of EdgeDetection class
-        Mat detected_edges_image = image.detectingEdges(fileName); // Creating a Mat object to store the output image from the the previous class
-
-        Mat feature_extracted_image = new Mat(); // Creating new Mat object to store the output after blurring and edge detection.
-
-        Imgproc.adaptiveThreshold(detected_edges_image, feature_extracted_image, 255, Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY, 15, 15);
-        String thresholdImage = "/home/kul-java/vvts/scan_image/threshold.png";
-        Imgcodecs.imwrite(thresholdImage, feature_extracted_image);
-
-*/
         Tesseract1 tesseract = new Tesseract1();
 
         tesseract.setLanguage("eng");
-        tesseract.setDatapath(getFolderAbsolutePath("tessdata")); // Set the path for Tesseract
+        tesseract.setDatapath(getFolderAbsolutePath("tessdata"));
+        // Set the path for Tesseract
         // so that it can use the training data that is created.
 
         String output = tesseract.doOCR(new File(filePathName));

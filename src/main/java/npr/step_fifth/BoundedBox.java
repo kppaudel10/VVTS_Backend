@@ -82,15 +82,6 @@ public class BoundedBox {
             }
         }
 
-        System.out.println("---------------------------------------------------");
-        System.out.println("A bounded box has been created around the license plate");
-        System.out.println("Output is stored at : " + outputAfterMarvin);
-        System.out.println("---------------------------------------------------\n");
-
-        System.out.println("____________________________________________________");
-        System.out.println("	BOUNDING BOX PHASE COMPLETED");
-        System.out.println("____________________________________________________\n");
-
         return boundedBoxImage;
     }
 
