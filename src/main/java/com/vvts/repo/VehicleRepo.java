@@ -33,30 +33,37 @@ public interface VehicleRepo extends JpaRepository<VehicleDetail, Integer> {
     Integer getVehicleDetailByVINAndNumber(String vin, String citizenshipNo);
 
 
-    @Query(value = "select u.id                         as userId,\n" +
+    @Query(value = "select u.id                         as \"userId\",\n" +
             "       u.name                       as name,\n" +
             "       u.mobile_number              as contact,\n" +
             "       u.email                      as email,\n" +
             "       u.address,\n" +
-            "       u.citizenship_no             as citizenshipNo,\n" +
-            "       u.profile_image_url          as profileImageUrl,\n" +
-            "       l.license_no                 as licenseNo,\n" +
-            "       l.valid_date                 as licenseValidDate,\n" +
+            "       u.citizenship_no             as \"citizenshipNo\",\n" +
+            "       u.profile_image_url          as \"profileImageUrl\",\n" +
+            "       l.license_no                 as \"licenseNo\",\n" +
+            "       l.valid_date                 as \"licenseValidDate\",\n" +
             "       case\n" +
-            "           when to_char(l.valid_date, 'yyyy-MM-dd') > to_char(now(), 'yyyy-MM-ddd') then\n" +
-            "               true\n" +
-            "           else false end           as \"isLicenseValid\",\n" +
+            "           when tcc.is_verified is not null and tcc.is_verified and tcc.valid_year is not null\n" +
+            "               then true\n" +
+            "           else false end           as \"isTaxClear\",\n" +
             "       bb.effective_date            as \"blueBookEffectiveDate\",\n" +
             "       bb.vehicle_identification_no as \"vehicleIdentificationNo\",\n" +
             "       vd.manufacture_year          as \"manufactureYear\",\n" +
             "       vd.company_name              as \"vehicleCompanyName\"\n" +
-            "\n" +
-            "\n" +
             "from blue_book bb\n" +
             "         inner join users u on bb.citizenship_no = u.citizenship_no\n" +
             "         left join license l on l.citizenship_no = u.citizenship_no\n" +
             "         left join vehicle_detail vd on vd.identification_no = bb.vehicle_identification_no\n" +
+            "         left join (select tc.*\n" +
+            "                    from blue_book bbb\n" +
+            "                             left join vehicle_detail vd on vd.identification_no = bbb.vehicle_identification_no\n" +
+            "                             left join tax_clearance tc on vd.id = tc.vehicle_id\n" +
+            "                    where bbb.number_plate = ?1\n" +
+            "                      and tc.id is not null\n" +
+            "                    order by tc.id desc\n" +
+            "                    limit 1) as tcc on tcc.vehicle_id = vd.id\n" +
             "where bb.number_plate = ?1\n" +
+            "order by bb.id desc\n" +
             "limit 1", nativeQuery = true)
     NumberPlateScannerProjection getUserAndVehicleDetailByNumberPlate(String scanOutput);
 

@@ -28,7 +28,7 @@ public interface NumberPlateScannerProjection {
 
     String getBlueBookValidDate();
 
-    Boolean getIsLicenseValid();
+    Boolean getIsTaxClear();
 
     String getBlueBookEffectiveDate();
     String getVehicleIdentificationNo();

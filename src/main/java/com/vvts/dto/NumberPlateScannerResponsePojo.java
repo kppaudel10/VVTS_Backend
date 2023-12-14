@@ -29,7 +29,7 @@ public class NumberPlateScannerResponsePojo {
 
     private String licenseValidDate;
 
-    private Boolean isLicenseValid;
+    private Boolean isTaxClear;
 
     private String contact;
 

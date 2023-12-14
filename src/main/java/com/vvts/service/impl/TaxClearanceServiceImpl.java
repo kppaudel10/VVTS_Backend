@@ -150,7 +150,7 @@ public class TaxClearanceServiceImpl implements TaxClearanceService {
             }
         } else {
             Double amountNeedToPaid = getCarTaxAmount(vehicleDetail.getCc());
-            if (amount != amountNeedToPaid) {
+            if (!amountNeedToPaid.equals(amount)) {
                 throw new RuntimeException("You should have paid Rs: " + amountNeedToPaid);
             }
         }

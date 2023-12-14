@@ -295,7 +295,7 @@ public class ScannerServiceImpl implements ScannerService {
         scannerResponsePojo.setProfileImageUrl(imageAccessBaseUrl.concat("/profile/")
                 .concat(getFileNameFormPath(npcp.getProfileImageUrl())));
         scannerResponsePojo.setLicenseValidDate(npcp.getLicenseValidDate());
-        scannerResponsePojo.setIsLicenseValid(npcp.getIsLicenseValid());
+        scannerResponsePojo.setIsTaxClear(npcp.getIsTaxClear());
         scannerResponsePojo.setVehicleIdentificationNo(npcp.getVehicleIdentificationNo());
         scannerResponsePojo.setVehicleCompanyName(npcp.getVehicleCompanyName());
         scannerResponsePojo.setManufactureYear(npcp.getManufactureYear());

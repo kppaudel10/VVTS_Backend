@@ -325,7 +325,7 @@ public class UsersServiceImpl implements UsersService {
             scannerResponsePojo.setProfileImageUrl(imageAccessBaseUrl.concat("/profile/")
                     .concat(getFileNameFormPath(npcp.getProfileImageUrl())));
             scannerResponsePojo.setLicenseValidDate(npcp.getLicenseValidDate());
-            scannerResponsePojo.setIsLicenseValid(npcp.getIsLicenseValid());
+            scannerResponsePojo.setIsTaxClear(npcp.getIsTaxClear());
             scannerResponsePojo.setVehicleIdentificationNo(npcp.getVehicleIdentificationNo());
             scannerResponsePojo.setVehicleCompanyName(npcp.getVehicleCompanyName());
             scannerResponsePojo.setManufactureYear(npcp.getManufactureYear());
@@ -351,12 +351,16 @@ public class UsersServiceImpl implements UsersService {
         UserCommonDetailDto userCommonDetailDto = new UserCommonDetailDto();
         if (userDetail != null) {
             userCommonDetailDto.setCitizenshipNo(userDetail.getCitizenshipNo());
-            String[] identificationNo = userDetail.getVehicleIdentificationNo().split(",");
-            String[] numberPlate = userDetail.getNumberPlate().split(",");
-            Set<String> numberPlateSet = new HashSet<>(Arrays.asList(numberPlate));
-            Set<String> identificationNoSet = new HashSet<>(Arrays.asList(identificationNo));
-            userCommonDetailDto.setVehicleIdentificationNo(identificationNoSet);
-            userCommonDetailDto.setNumberPlate(numberPlateSet);
+            if (userDetail.getVehicleIdentificationNo() != null) {
+                String[] identificationNo = userDetail.getVehicleIdentificationNo().split(",");
+                Set<String> identificationNoSet = new HashSet<>(Arrays.asList(identificationNo));
+                userCommonDetailDto.setVehicleIdentificationNo(identificationNoSet);
+            }
+            if (userDetail.getNumberPlate() != null) {
+                String[] numberPlate = userDetail.getNumberPlate().split(",");
+                Set<String> numberPlateSet = new HashSet<>(Arrays.asList(numberPlate));
+                userCommonDetailDto.setNumberPlate(numberPlateSet);
+            }
         }
         return userCommonDetailDto;
     }

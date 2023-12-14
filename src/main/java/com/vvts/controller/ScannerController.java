@@ -24,7 +24,7 @@ public class ScannerController {
     private final MessageSource messageSource;
 
     @PostMapping("/scan")
-    public GlobalApiResponse sacnNumberPlate(@ModelAttribute MultipartFile scanImage) throws Exception {
+    public GlobalApiResponse scanNumberPlate(@ModelAttribute MultipartFile scanImage) throws Exception {
         return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true,
                 scannerService.sacnNumberPlate(scanImage));
     }
