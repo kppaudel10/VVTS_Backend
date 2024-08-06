@@ -11,7 +11,6 @@ import com.vvts.service.ScannerService;
 import com.vvts.utiles.ImageUtils;
 import com.vvts.utiles.ImageValidation;
 import lombok.RequiredArgsConstructor;
-import npr.OcrProcessor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
@@ -359,7 +358,7 @@ public class ScannerServiceImpl implements ScannerService {
         return fileName;
     }
 
-    private void process(){
+    private void process() {
         try {
             // Sleep for 3 seconds (3000 milliseconds)
             Thread.sleep(4000);
