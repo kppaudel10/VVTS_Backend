@@ -2,6 +2,10 @@ package traffic_congestion;
 
 import java.sql.*;
 
+/**
+ * @auther kul.paudel
+ * @created at 2024-08-06
+ */
 public class DatabaseConnection {
     private static String jdbcDriver = "";
     private static String dbURL = "";
