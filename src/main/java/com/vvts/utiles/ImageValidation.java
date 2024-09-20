@@ -18,7 +18,7 @@ public class ImageValidation {
     This Class contain methods which are used to check the image extension
     is valid or not and size of selected images.
      */
-    private static final String[] ALLOWED_EXTENSIONS = {"jpg", "jpeg", "png"};
+    private static final String[] ALLOWED_EXTENSIONS = {"jpg", "jpeg", "png","txt"};
     private static final int MAX_FILE_SIZE = 500 * 1000; // 500 KB
 
     private static String getFileExtension(String fileName) {

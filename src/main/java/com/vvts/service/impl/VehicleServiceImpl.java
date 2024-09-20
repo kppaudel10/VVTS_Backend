@@ -2,6 +2,7 @@ package com.vvts.service.impl;
 
 import com.vvts.dto.*;
 import com.vvts.entity.*;
+import com.vvts.entity.Users;
 import com.vvts.enums.VehicleType;
 import com.vvts.projection.BuyRequestProjection;
 import com.vvts.projection.BuyerRequestProjection;

@@ -37,5 +37,13 @@ public class ImageUtils {
         Random random = new Random();
         return random.nextInt(9000) + 1000;
     }
+    public String getUniqueDataFileName(String imageName, String extension){
+        // Generate a random UUID
+        String updateName = generateUniqueImageName(generateRandomString(),generateRandomInt(),imageName,extension);
+        String uniqueName = "";
+        uniqueName = updateName.concat("_".concat(String.valueOf(generateRandomInt())))
+                .concat("_".concat(imageName)).concat(".".concat(extension));
+        return uniqueName;
+    }
 
 }

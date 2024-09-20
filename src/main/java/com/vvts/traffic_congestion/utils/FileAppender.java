@@ -1,4 +1,4 @@
-package traffic_congestion;
+package com.vvts.traffic_congestion.utils;
 
 import lombok.extern.slf4j.Slf4j;
 
