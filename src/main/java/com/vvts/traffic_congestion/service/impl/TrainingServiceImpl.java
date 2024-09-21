@@ -189,20 +189,20 @@ public class TrainingServiceImpl implements TrainingService {
     }
 
     @Override
-    public double predictTraffic(String loc, int day, int timeinterval) {
+    public double predictTraffic(String loc, int day, int timeInterval) {
         for (int i = 0; i < locationTrafficVector.size(); i++) {
             //writetolog("Mathching against location :" + vloctraffic.get(i).loc);
             if (locationTrafficVector.get(i).location.equals(loc)) {
                 System.out.println("Mathced in location :" + loc);
                 //prediction of traffic
                 //temporal traffic
-                double temp = locationTrafficVector.get(i).allDayTraffic[day].getTrafficRate()[timeinterval];
+                double temp = locationTrafficVector.get(i).allDayTraffic[day].getTrafficRate()[timeInterval];
                 System.out.println("Temporal traffic:" + temp);
                 double[] spatico = new double[locationTrafficVector.get(i).locationTraffics.size()];
                 double spattot = 0;
                 for (int j = 0; j < locationTrafficVector.get(i).locationTraffics.size(); j++) {
                     spatico[j] = locationTrafficVector.get(i).
-                            locationTraffics.get(j).allDayTraffic[day].getTrafficRate()[timeinterval];
+                            locationTraffics.get(j).allDayTraffic[day].getTrafficRate()[timeInterval];
                     spattot = spattot + spatico[j];
                 }
                 System.out.println("Spatial traffic:" + spattot);

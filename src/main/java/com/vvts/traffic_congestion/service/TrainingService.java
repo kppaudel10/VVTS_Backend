@@ -18,7 +18,7 @@ public interface TrainingService {
 
     void analyzeKNN(Integer kValue);
 
-    double predictTraffic(String loc, int day, int timeinterval);
+    double predictTraffic(String loc, int day, int timeInterval);
     List<TrafficForecastDataPojo> getTrafficForecastData(TrafficForecastRequestPojo trafficForecastRequestPojo) throws IOException;
 
 }

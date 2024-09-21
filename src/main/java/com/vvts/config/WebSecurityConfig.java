@@ -49,7 +49,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/api/public-user/getUserImage/*",
                         "/api/vehicle/number-plate/*",
                         "/api/public-user/detail/**",
-                        "/api/traffic-congestion/training/**").permitAll()
+                        "/api/traffic-congestion/training/**",
+                        "/api/shortest-route/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
