@@ -1,8 +1,11 @@
 package com.vvts.traffic_congestion.service;
 
+import com.vvts.dto.traffic_congestion.TrafficForecastDataPojo;
+import com.vvts.dto.traffic_congestion.TrafficForecastRequestPojo;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @auther kul.paudel
@@ -16,4 +19,6 @@ public interface TrainingService {
     void analyzeKNN(Integer kValue);
 
     double predictTraffic(String loc, int day, int timeinterval);
+    List<TrafficForecastDataPojo> getTrafficForecastData(TrafficForecastRequestPojo trafficForecastRequestPojo) throws IOException;
+
 }

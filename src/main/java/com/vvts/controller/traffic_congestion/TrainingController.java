@@ -1,13 +1,11 @@
 package com.vvts.controller.traffic_congestion;
 
+import com.vvts.dto.traffic_congestion.TrafficForecastRequestPojo;
 import com.vvts.dto.traffic_congestion.TrainingRequestPojo;
 import com.vvts.utiles.GlobalApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.vvts.traffic_congestion.service.TrainingService;
 
 import javax.validation.Valid;
@@ -28,9 +26,14 @@ public class TrainingController {
     private final MessageSource messageSource;
 
 
-    @GetMapping("/data")
-    public GlobalApiResponse getVehicleType(@Valid @ModelAttribute TrainingRequestPojo trainingRequestPojo) throws IOException {
+    @PostMapping("/data")
+    public GlobalApiResponse trainTrafficData(@Valid @ModelAttribute TrainingRequestPojo trainingRequestPojo) throws IOException {
         return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true,
                 trainingService.trainData(trainingRequestPojo.getTrainingDataFile(), trainingRequestPojo.getKValue()));
+    }
+    @PostMapping("/forecast/data")
+    public GlobalApiResponse getForecast(@Valid @ModelAttribute TrafficForecastRequestPojo trafficForecastRequestPojo) throws IOException {
+        return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true,
+                trainingService.getTrafficForecastData(trafficForecastRequestPojo));
     }
 }

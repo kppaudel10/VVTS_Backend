@@ -1,5 +1,7 @@
 package com.vvts.traffic_congestion.service.impl;
 
+import com.vvts.dto.traffic_congestion.TrafficForecastDataPojo;
+import com.vvts.dto.traffic_congestion.TrafficForecastRequestPojo;
 import com.vvts.traffic_congestion.service.TrainingService;
 import com.vvts.traffic_congestion.utils.LocationTraffic;
 import com.vvts.traffic_congestion.utils.MyDistanceSort;
@@ -7,7 +9,6 @@ import com.vvts.utiles.ImageUtils;
 import com.vvts.utiles.ImageValidation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,13 +25,27 @@ import java.util.*;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Component
 public class TrainingServiceImpl implements TrainingService {
 
     private final ImageUtils imageUtils;
     private final ImageValidation imageValidation;
     private HashMap allLocationTraffic = new HashMap();
     private Vector<LocationTraffic> locationTrafficVector = new Vector<>();
+
+    static int convertToDay(String date) {
+        // 04/02/2017
+        Calendar cal = Calendar.getInstance();
+        String[] pa = date.split("/");
+        int y = Integer.parseInt(pa[2]);
+        int m = Integer.parseInt(pa[1]);
+        int d = Integer.parseInt(pa[0]);
+
+        cal.set(y, m, d);
+        int val = cal.get(Calendar.DAY_OF_WEEK);
+
+        //System.out.println(val);
+        return val;
+    }
 
     @Override
     public Object trainData(MultipartFile dataFileMultipartFile, Integer kValue) throws IOException {
@@ -203,9 +218,75 @@ public class TrainingServiceImpl implements TrainingService {
     }
 
     @Override
+    public List<TrafficForecastDataPojo> getTrafficForecastData(TrafficForecastRequestPojo trafficForecastRequestPojo) {
+        String date = trafficForecastRequestPojo.getDate();
+        Integer timeInterval = trafficForecastRequestPojo.getTimeInterval();
+        int d = convertToDay(date);
+        String[] pa = date.split("/");
+        int y = Integer.parseInt(pa[2]);
+        int m = Integer.parseInt(pa[1]);
+        int da = Integer.parseInt(pa[0]);
+        String dastr = da + "-" + m + "-" + y;
+
+        writeTrainDataIntoLog("!!!!!!!!!! Forecasting called with "
+                + date + " and day=" + d + " time:" + timeInterval);
+        Vector<TrafficForecastDataPojo> trafficForecastDataList = new Vector<>();
+        try {
+            // get textFile
+            String directionFile = getFilePath(trafficForecastRequestPojo.getDirectionFile());
+            FileInputStream fstream = new FileInputStream(directionFile);
+
+            DataInputStream in = new DataInputStream(fstream);
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+
+            String strLine;
+            int count = 0;
+            //Read File Line By Line
+            while ((strLine = br.readLine()) != null) {
+                writeTrainDataIntoLog("Trying to predict for " + strLine);
+                String[] parts = strLine.split("#");
+
+                TrafficForecastDataPojo trafficForecastData = new TrafficForecastDataPojo();
+                trafficForecastData.setLatitude(parts[0]);
+                trafficForecastData.setLongitude(parts[1]);
+                double res = predictTraffic(strLine, d, timeInterval);
+                trafficForecastData.setTraffic((int) res);
+
+                trafficForecastDataList.add(trafficForecastData);
+                writeTrainDataIntoLog("Predicted traffic for loc:" + strLine + "=" + res);
+                try {
+          /*          Database db = new Database();
+                    String place = (String)locmap.get(strLine);
+                    String q = "delete from trafficinfo where loclatlong='" + place + "' and timeval='" +ti +"' and " +
+                            " dateval='" + dastr + "'";
+                    System.out.println(q);
+                    db.executeUpdate(q);
+                    q = "insert into trafficinfo values('" + place + "','" + ti + "'," + res + ",'" + dastr +"')";
+                    System.out.println(q);
+                    db.executeUpdate(q);
+                    db.close();*/
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+//            displayInMap(allres);
+            br.close();
+            in.close();
+            fstream.close();
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return trafficForecastDataList;
+    }
+
+    @Override
     public void writeTrainDataIntoLog(String content) {
         log.info("logs----------------:::::" + content);
     }
+
     private String getFilePath(MultipartFile file) throws IOException {
         if (file != null) {
             String fileExtension = imageValidation.validateImage(file);
