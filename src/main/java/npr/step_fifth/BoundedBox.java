@@ -1,3 +1,4 @@
+/*
 package npr.step_fifth;
 
 import marvin.image.MarvinImage;
@@ -13,10 +14,12 @@ import java.util.List;
 
 import static marvin.MarvinPluginCollection.findTextRegions;
 
+*/
 /**
  * @auther kul.paudel
  * @created at 2023-06-03
- */
+ *//*
+
 public class BoundedBox {
 
     public BoundedBox(String inputImageFilePath) throws Exception {
@@ -52,7 +55,8 @@ public class BoundedBox {
                                        int minTextWidth, int grayScaleThreshold, String outputAfterMarvin) {
         List<MarvinSegment> segments = findTextRegions(boundedBoxImage, maxWhiteSpace, maxFontLineWidth, minTextWidth, grayScaleThreshold);
 
-        /*
+        */
+/*
          * findTextRegions -> an inbuilt method used to draw bounding boxes around characters in an image.
          *
          * List<MarvinSegment> Finds instances of a given image in another image with perfect matching (exactly the same pixels value).
@@ -62,7 +66,8 @@ public class BoundedBox {
          * maxFontLineWidth -> max black pattern width,
          * minTextWidth -> min text width,
          * grayScaleThreshold -> grayscale image threshold for finding pattern
-         */
+         *//*
+
 
         for (MarvinSegment s : segments) { // for each loop
             if (s.height >= 10) {
@@ -72,13 +77,15 @@ public class BoundedBox {
                 boundedBoxImage.drawRect(s.x1 + 1, s.y1 + 1, (s.x2 - s.x1) - 2, (s.y2 - s.y1) - 2, Color.red);
                 boundedBoxImage.drawRect(s.x1 + 2, s.y1 + 2, (s.x2 - s.x1) - 4, (s.y2 - s.y1) - 4, Color.red);
 
-                /*
+                */
+/*
                  * drawRect -> draws the outline of a rectangle
                  * x1 -> x coordinate of rectangle that is to be drawn,
                  * y1 -> y coordinate of rectangle that is to be drawn,
                  * x2 -> width of rectangle to be drawn,
                  * y2 -> height of rectangle to be drawn
-                 */
+                 *//*
+
             }
         }
 
@@ -87,3 +94,4 @@ public class BoundedBox {
 
 
 }
+*/

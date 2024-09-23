@@ -3,6 +3,7 @@ package com.vvts.traffic_congestion.service.impl;
 import com.vvts.dto.traffic_congestion.TrafficForecastDataPojo;
 import com.vvts.dto.traffic_congestion.TrafficForecastRequestPojo;
 import com.vvts.traffic_congestion.service.TrainingService;
+import com.vvts.traffic_congestion.utils.FileAppender;
 import com.vvts.traffic_congestion.utils.LocationTraffic;
 import com.vvts.traffic_congestion.utils.MyDistanceSort;
 import com.vvts.utiles.ImageUtils;
@@ -31,6 +32,7 @@ public class TrainingServiceImpl implements TrainingService {
     private final ImageValidation imageValidation;
     private HashMap allLocationTraffic = new HashMap();
     private Vector<LocationTraffic> locationTrafficVector = new Vector<>();
+    private final FileAppender fileAppender;
 
     static int convertToDay(String date) {
         // 04/02/2017
@@ -130,29 +132,17 @@ public class TrainingServiceImpl implements TrainingService {
                 String loc = parts[0] + "#" + parts[1];
                 int d = Integer.parseInt(parts[2]);
                 int ti = Integer.parseInt(parts[3]);
-
                 double eval = Double.parseDouble(parts[4]);
-
                 double aval = predictTraffic(loc, d, ti);
                 double aval2 = aval * 2.5;
-
                 String cth = "P#" + c + "#" + aval;
-
-//                FileAppender.AppendtoFile("Perfg1.txt", cth);
-
+                fileAppender.appendToFile("Perfg1.txt", cth);
                 cth = "E#" + c + "#" + aval2;
-
-//                FileAppender.AppendtoFile("Perfg1.txt", cth);
-
+                fileAppender.appendToFile("Perfg1.txt", cth);
                 cth = "A#" + c + "#" + eval;
-
-//                FileAppender.AppendtoFile("Perfg1.txt", cth);
-
+                fileAppender.appendToFile("Perfg1.txt", cth);
                 c++;
-
             }
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -1,6 +1,7 @@
 package com.vvts.traffic_congestion.utils;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -12,9 +13,10 @@ import java.io.RandomAccessFile;
  * @created at 2024-08-06
  */
 @Slf4j
+@Component
 public class FileAppender {
 
-    public static void AppendToFile(String filename, String content) {
+    public void appendToFile(String filename, String content) {
         System.out.println(content);
         try {
             PrintStream out =
