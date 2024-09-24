@@ -15,7 +15,7 @@ public class Forecasting {
 
     private String date;
     private int day;
-    private String time;
+    private String timeInterval;
     private List<Prediction> predictions;
 
 }

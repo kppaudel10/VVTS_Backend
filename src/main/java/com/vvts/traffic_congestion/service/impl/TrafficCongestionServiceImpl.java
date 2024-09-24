@@ -191,7 +191,7 @@ public class TrafficCongestionServiceImpl implements TrafficCongestionService {
             for (int m = 0; m < kValue; m++) {
                 locationTrafficVector.get(i).locationTraffics.add(others.get(m));
                 writeTrainDataIntoLog(others.get(m).latitude + "," + others.get(m).longitude);
-                correlations.add(others.get(m).latitude + "," + others.get(m).longitude);
+                correlations.add(others.get(m).latitude + "#" + others.get(m).longitude);
             }
             spatialCorrelation.setCorrelations(correlations);
             spatialCorrelationList.add(spatialCorrelation);
@@ -238,10 +238,9 @@ public class TrafficCongestionServiceImpl implements TrafficCongestionService {
         int m = Integer.parseInt(pa[1]);
         int da = Integer.parseInt(pa[0]);
 
-        Forecasting forecasting = new Forecasting();
-        forecasting.setDate(date);
-        forecasting.setDay(d);
-        forecasting.setTime(timeInterval.toString());
+        forecastingData.setDate(date);
+        forecastingData.setDay(d);
+        forecastingData.setTimeInterval(timeInterval.toString());
         writeTrainDataIntoLog("!!!!!!!!!! Forecasting called with "
                 + date + " and day=" + d + " time:" + timeInterval);
         Vector<TrafficForecastDataPojo> trafficForecastDataList = new Vector<>();
@@ -261,7 +260,7 @@ public class TrafficCongestionServiceImpl implements TrafficCongestionService {
                 Prediction prediction = new Prediction();
                 writeTrainDataIntoLog("Trying to predict for " + strLine);
                 String[] parts = strLine.split("#");
-                prediction.setLocation(parts[0] + " , " + parts[1]);
+                prediction.setLocation(parts[0] + "#" + parts[1]);
                 TrafficForecastDataPojo trafficForecastData = new TrafficForecastDataPojo();
                 trafficForecastData.setLatitude(parts[0]);
                 trafficForecastData.setLongitude(parts[1]);
@@ -287,16 +286,17 @@ public class TrafficCongestionServiceImpl implements TrafficCongestionService {
                 }
                 predictionList.add(prediction);
             }
-            forecasting.setPredictions(predictionList);
+            forecastingData.setPredictions(predictionList);
 //            displayInMap(allres);
             br.close();
             in.close();
             fstream.close();
 
         } catch (Exception ex) {
+            ex.printStackTrace();
             throw new AppException(ex.getMessage());
         }
-        processLogs.setForecasting(forecasting);
+        processLogs.setForecasting(forecastingData);
         return trafficForecastDataList;
     }
 
