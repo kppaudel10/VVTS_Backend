@@ -2,7 +2,7 @@ package com.vvts.controller.traffic_congestion;
 
 import com.vvts.dto.traffic_congestion.TrafficForecastRequestPojo;
 import com.vvts.dto.traffic_congestion.TrainingRequestPojo;
-import com.vvts.traffic_congestion.service.TrainingService;
+import com.vvts.traffic_congestion.service.TrafficCongestionService;
 import com.vvts.utiles.GlobalApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
@@ -19,9 +19,9 @@ import java.io.IOException;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/traffic-congestion/training")
-public class TrainingController {
+public class TrafficCongestionController {
 
-    private final TrainingService trainingService;
+    private final TrafficCongestionService trafficCongestionService;
 
     private final MessageSource messageSource;
 
@@ -29,19 +29,25 @@ public class TrainingController {
     @PostMapping("/data")
     public GlobalApiResponse trainTrafficData(@Valid @ModelAttribute TrainingRequestPojo trainingRequestPojo) throws IOException {
         return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true,
-                trainingService.trainData(trainingRequestPojo.getTrainingDataFile(), trainingRequestPojo.getKValue()));
+                trafficCongestionService.trainData(trainingRequestPojo.getTrainingDataFile(), trainingRequestPojo.getKValue()));
     }
 
     @PostMapping("/forecast/data")
     public GlobalApiResponse getForecast(@Valid @ModelAttribute TrafficForecastRequestPojo trafficForecastRequestPojo) throws IOException {
         return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true,
-                trainingService.getTrafficForecastData(trafficForecastRequestPojo));
+                trafficCongestionService.getTrafficForecastData(trafficForecastRequestPojo));
     }
 
     @GetMapping("/logs")
     public GlobalApiResponse getLogs() {
         return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true,
-                trainingService.getTrafficCongestionLogs());
+                trafficCongestionService.getTrafficCongestionLogs());
+    }
+
+    @GetMapping("/forecast/performance")
+    public GlobalApiResponse getForecastPerformance() throws IOException {
+        return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true,
+                trafficCongestionService.getForecastPerformance());
     }
 
 }

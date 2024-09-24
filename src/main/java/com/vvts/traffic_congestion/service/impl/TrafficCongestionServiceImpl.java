@@ -4,7 +4,7 @@ import com.vvts.config.AppException;
 import com.vvts.dto.traffic_congestion.TrafficForecastDataPojo;
 import com.vvts.dto.traffic_congestion.TrafficForecastRequestPojo;
 import com.vvts.traffic_congestion.pojo.*;
-import com.vvts.traffic_congestion.service.TrainingService;
+import com.vvts.traffic_congestion.service.TrafficCongestionService;
 import com.vvts.traffic_congestion.utils.FileAppender;
 import com.vvts.traffic_congestion.utils.LocationTraffic;
 import com.vvts.traffic_congestion.utils.MyDistanceSort;
@@ -28,7 +28,7 @@ import java.util.*;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class TrainingServiceImpl implements TrainingService {
+public class TrafficCongestionServiceImpl implements TrafficCongestionService {
 
     private final ImageUtils imageUtils;
     private final ImageValidation imageValidation;
@@ -141,7 +141,12 @@ public class TrainingServiceImpl implements TrainingService {
                 String loc = parts[0] + "#" + parts[1];
                 int d = Integer.parseInt(parts[2]);
                 int ti = Integer.parseInt(parts[3]);
-                double eval = Double.parseDouble(parts[4]);
+                double eval;
+                if (parts[4].split("\\.").length == 2) {
+                    eval = Double.parseDouble(String.format("%.2f", parts[4]));
+                } else {
+                    eval = Double.parseDouble(parts[4]);
+                }
                 double aval = predictTraffic(loc, d, ti);
                 double aval2 = aval * 2.5;
                 String cth = "P#" + c + "#" + aval;
@@ -254,10 +259,9 @@ public class TrainingServiceImpl implements TrainingService {
             //Read File Line By Line
             while ((strLine = br.readLine()) != null) {
                 Prediction prediction = new Prediction();
-                prediction.setLocation(strLine);
                 writeTrainDataIntoLog("Trying to predict for " + strLine);
                 String[] parts = strLine.split("#");
-
+                prediction.setLocation(parts[0] + " , " + parts[1]);
                 TrafficForecastDataPojo trafficForecastData = new TrafficForecastDataPojo();
                 trafficForecastData.setLatitude(parts[0]);
                 trafficForecastData.setLongitude(parts[1]);
@@ -299,6 +303,37 @@ public class TrainingServiceImpl implements TrainingService {
     @Override
     public LogData getTrafficCongestionLogs() {
         return logData;
+    }
+
+    @Override
+    public List<PerformanceResponsePojo> getForecastPerformance() throws IOException {
+        List<PerformanceResponsePojo> performanceList = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader("Perfg1.txt"))) {
+            String line;
+            PerformanceResponsePojo trafficPerformance = null;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split("#");
+                switch (parts[0]) {
+                    case "P":
+                        trafficPerformance = new PerformanceResponsePojo();
+                        trafficPerformance.setIndex(Integer.parseInt(parts[1]));
+                        trafficPerformance.setPredictedTraffic(Double.parseDouble(parts[2]));
+                        break;
+                    case "E":
+                        if (trafficPerformance != null) {
+                            trafficPerformance.setEstimateTraffic(Double.parseDouble(parts[2]));
+                        }
+                        break;
+                    case "A":
+                        if (trafficPerformance != null) {
+                            trafficPerformance.setActualTraffic(Double.parseDouble(parts[2]));
+                            performanceList.add(trafficPerformance);  // Store the completed entry
+                        }
+                        break;
+                }
+            }
+        }
+        return performanceList;
     }
 
     @Override

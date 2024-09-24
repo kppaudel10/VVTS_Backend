@@ -11,7 +11,7 @@ public class LocationTraffic {
     public double latitude;
     public double longitude;
     public String location;
-    public Vector<LocationTraffic> locationTraffics = new Vector<LocationTraffic>();
+    public Vector<LocationTraffic> locationTraffics = new Vector<>();
     public DayTraffic[] allDayTraffic = new DayTraffic[7];
     public double dis;
 
