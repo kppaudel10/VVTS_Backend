@@ -39,7 +39,7 @@ public class TrainingController {
     }
 
     @GetMapping("/logs")
-    public GlobalApiResponse getLogs() throws IOException {
+    public GlobalApiResponse getLogs() {
         return new GlobalApiResponse(messageSource.getMessage("data.fetch", null, null), true,
                 trainingService.getTrafficCongestionLogs());
     }

@@ -2,6 +2,7 @@ package com.vvts.traffic_congestion.service;
 
 import com.vvts.dto.traffic_congestion.TrafficForecastDataPojo;
 import com.vvts.dto.traffic_congestion.TrafficForecastRequestPojo;
+import com.vvts.traffic_congestion.pojo.LogData;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -13,7 +14,7 @@ import java.util.List;
  */
 public interface TrainingService {
 
-    Object trainData(MultipartFile dataFile, Integer kValue) throws IOException;
+    LogData trainData(MultipartFile dataFile, Integer kValue) throws IOException;
 
     void writeTrainDataIntoLog(String content);
 
@@ -23,6 +24,6 @@ public interface TrainingService {
 
     List<TrafficForecastDataPojo> getTrafficForecastData(TrafficForecastRequestPojo trafficForecastRequestPojo) throws IOException;
 
-    Object getTrafficCongestionLogs();
+    LogData getTrafficCongestionLogs();
 
 }

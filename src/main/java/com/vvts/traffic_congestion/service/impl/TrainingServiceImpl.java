@@ -3,6 +3,7 @@ package com.vvts.traffic_congestion.service.impl;
 import com.vvts.config.AppException;
 import com.vvts.dto.traffic_congestion.TrafficForecastDataPojo;
 import com.vvts.dto.traffic_congestion.TrafficForecastRequestPojo;
+import com.vvts.traffic_congestion.pojo.*;
 import com.vvts.traffic_congestion.service.TrainingService;
 import com.vvts.traffic_congestion.utils.FileAppender;
 import com.vvts.traffic_congestion.utils.LocationTraffic;
@@ -35,24 +36,24 @@ public class TrainingServiceImpl implements TrainingService {
     private ArrayList<LocationTraffic> locationTrafficVector = new ArrayList<>();
     private final FileAppender fileAppender;
     private final StringBuilder logs = new StringBuilder();
+    private final LogData logData = new LogData();
+    private final Logs processLogs = new Logs();
+    private final List<SpatialCorrelation> spatialCorrelationList = new ArrayList<>();
+    private final Forecasting forecastingData = new Forecasting();
 
     static int convertToDay(String date) {
         // 04/02/2017
         Calendar cal = Calendar.getInstance();
         String[] pa = date.split("/");
-        int y = Integer.parseInt(pa[2]);
-        int m = Integer.parseInt(pa[1]);
-        int d = Integer.parseInt(pa[0]);
-
-        cal.set(y, m, d);
-        int val = cal.get(Calendar.DAY_OF_WEEK);
-
-        //System.out.println(val);
-        return val;
+        int year = Integer.parseInt(pa[2]);
+        int months = Integer.parseInt(pa[1]);
+        int days = Integer.parseInt(pa[0]);
+        cal.set(year, months, days);
+        return cal.get(Calendar.DAY_OF_WEEK);
     }
 
     @Override
-    public Object trainData(MultipartFile dataFileMultipartFile, Integer kValue) throws IOException {
+    public LogData trainData(MultipartFile dataFileMultipartFile, Integer kValue) throws IOException {
         String dataFile = getFilePath(dataFileMultipartFile);
         Vector<String> totrec = new Vector<>();
         try {
@@ -77,6 +78,7 @@ public class TrainingServiceImpl implements TrainingService {
             throw new AppException(e.getMessage());
         }
         int trainRows = (int) (totrec.size() * 0.80);
+        List<String> storingLocationList = new ArrayList<>();
         try {
             FileInputStream fileInputStream = new FileInputStream(dataFile);
             DataInputStream in = new DataInputStream(fileInputStream);
@@ -112,6 +114,10 @@ public class TrainingServiceImpl implements TrainingService {
                         lt.allDayTraffic[day].getTrafficRate()[ti] = traff;
                     }
                     writeTrainDataIntoLog("Storing location <" + t + ">");
+                    // storing into location
+                    String storingLocation = lt.latitude + " , " + lt.longitude;
+                    storingLocationList.add(storingLocation);
+
                     allLocationTraffic.put(t, lt);
                 } else {
                     if (traff > lt.allDayTraffic[day].getTrafficRate()[ti]) {
@@ -119,6 +125,7 @@ public class TrainingServiceImpl implements TrainingService {
                     }
                 }
             }
+            processLogs.setStoringLocations(storingLocationList);
 
             br.close();
             in.close();
@@ -148,16 +155,16 @@ public class TrainingServiceImpl implements TrainingService {
         } catch (Exception e) {
             throw new AppException(e.getMessage());
         }
-        return logs;
+        logData.setLogs(processLogs);
+        return logData;
     }
 
     @Override
     public void analyzeKNN(Integer kValue) {
         locationTrafficVector = new ArrayList<>();
         Collection ct = allLocationTraffic.values();
-        Iterator it = ct.iterator();
-        while (it.hasNext()) {
-            LocationTraffic lt = (LocationTraffic) it.next();
+        for (Object o : ct) {
+            LocationTraffic lt = (LocationTraffic) o;
             locationTrafficVector.add(lt);
         }
         for (int i = 0; i < locationTrafficVector.size(); i++) {
@@ -172,39 +179,46 @@ public class TrainingServiceImpl implements TrainingService {
             }
             Collections.sort(others, new MyDistanceSort());
             writeTrainDataIntoLog("!!!! The spatial correlation values Locaiton " + x.latitude + "," + x.longitude);
+            // add into logs
+            SpatialCorrelation spatialCorrelation = new SpatialCorrelation();
+            spatialCorrelation.setLocation(x.latitude + " , " + x.longitude);
+            List<String> correlations = new ArrayList<>();
             for (int m = 0; m < kValue; m++) {
                 locationTrafficVector.get(i).locationTraffics.add(others.get(m));
                 writeTrainDataIntoLog(others.get(m).latitude + "," + others.get(m).longitude);
+                correlations.add(others.get(m).latitude + "," + others.get(m).longitude);
             }
+            spatialCorrelation.setCorrelations(correlations);
+            spatialCorrelationList.add(spatialCorrelation);
             writeTrainDataIntoLog("!!!!!!!!!!!!!!!!!!!!!!!!!!");
         }
+        processLogs.setSpatialCorrelation(spatialCorrelationList);
     }
 
     @Override
     public double predictTraffic(String loc, int day, int timeInterval) {
-        for (int i = 0; i < locationTrafficVector.size(); i++) {
-            //writetolog("Mathching against location :" + vloctraffic.get(i).loc);
-            if (locationTrafficVector.get(i).location.equals(loc)) {
-                System.out.println("Mathced in location :" + loc);
+        for (LocationTraffic locationTraffic : locationTrafficVector) {
+            if (locationTraffic.location.equals(loc)) {
+                log.info("Mathced in location :{}", loc);
                 //prediction of traffic
                 //temporal traffic
-                double temp = locationTrafficVector.get(i).allDayTraffic[day].getTrafficRate()[timeInterval];
-                System.out.println("Temporal traffic:" + temp);
-                double[] spatico = new double[locationTrafficVector.get(i).locationTraffics.size()];
+                double temp = locationTraffic.allDayTraffic[day].getTrafficRate()[timeInterval];
+                log.info("Temporal traffic:{}", temp);
+                double[] spatialCorrelation = new double[locationTraffic.locationTraffics.size()];
                 double spattot = 0;
-                for (int j = 0; j < locationTrafficVector.get(i).locationTraffics.size(); j++) {
-                    spatico[j] = locationTrafficVector.get(i).
+                for (int j = 0; j < locationTraffic.locationTraffics.size(); j++) {
+                    spatialCorrelation[j] = locationTraffic.
                             locationTraffics.get(j).allDayTraffic[day].getTrafficRate()[timeInterval];
-                    spattot = spattot + spatico[j];
+                    spattot = spattot + spatialCorrelation[j];
                 }
-                System.out.println("Spatial traffic:" + spattot);
+                log.info("Spatial traffic:{}", spattot);
                 temp = temp + spattot;
-                temp = temp / (spatico.length + 1);
-                System.out.println("Spatio temporal is " + temp);
+                temp = temp / (spatialCorrelation.length + 1);
+                log.info("Spatio temporal is {}", temp);
                 return temp;
             }
         }
-        System.out.println("Location not matched");
+        log.info("Location not matched");
         return -1;
 
     }
@@ -218,8 +232,11 @@ public class TrainingServiceImpl implements TrainingService {
         int y = Integer.parseInt(pa[2]);
         int m = Integer.parseInt(pa[1]);
         int da = Integer.parseInt(pa[0]);
-        String dastr = da + "-" + m + "-" + y;
 
+        Forecasting forecasting = new Forecasting();
+        forecasting.setDate(date);
+        forecasting.setDay(d);
+        forecasting.setTime(timeInterval.toString());
         writeTrainDataIntoLog("!!!!!!!!!! Forecasting called with "
                 + date + " and day=" + d + " time:" + timeInterval);
         Vector<TrafficForecastDataPojo> trafficForecastDataList = new Vector<>();
@@ -233,8 +250,11 @@ public class TrainingServiceImpl implements TrainingService {
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
             String strLine;
+            List<Prediction> predictionList = new ArrayList<>();
             //Read File Line By Line
             while ((strLine = br.readLine()) != null) {
+                Prediction prediction = new Prediction();
+                prediction.setLocation(strLine);
                 writeTrainDataIntoLog("Trying to predict for " + strLine);
                 String[] parts = strLine.split("#");
 
@@ -245,6 +265,7 @@ public class TrainingServiceImpl implements TrainingService {
                 trafficForecastData.setTraffic((int) res);
 
                 trafficForecastDataList.add(trafficForecastData);
+                prediction.setTraffic(res);
                 writeTrainDataIntoLog("Predicted traffic for loc:" + strLine + "=" + res);
                 try {
           /*          Database db = new Database();
@@ -260,8 +281,9 @@ public class TrainingServiceImpl implements TrainingService {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
+                predictionList.add(prediction);
             }
+            forecasting.setPredictions(predictionList);
 //            displayInMap(allres);
             br.close();
             in.close();
@@ -270,12 +292,13 @@ public class TrainingServiceImpl implements TrainingService {
         } catch (Exception ex) {
             throw new AppException(ex.getMessage());
         }
+        processLogs.setForecasting(forecasting);
         return trafficForecastDataList;
     }
 
     @Override
-    public Object getTrafficCongestionLogs() {
-        return logs;
+    public LogData getTrafficCongestionLogs() {
+        return logData;
     }
 
     @Override
