@@ -12,6 +12,7 @@ import java.util.List;
  * @created at 2024-09-20
  */
 public interface TrainingService {
+
     Object trainData(MultipartFile dataFile, Integer kValue) throws IOException;
 
     void writeTrainDataIntoLog(String content);
@@ -19,6 +20,9 @@ public interface TrainingService {
     void analyzeKNN(Integer kValue);
 
     double predictTraffic(String loc, int day, int timeInterval);
+
     List<TrafficForecastDataPojo> getTrafficForecastData(TrafficForecastRequestPojo trafficForecastRequestPojo) throws IOException;
+
+    Object getTrafficCongestionLogs();
 
 }

@@ -1,5 +1,6 @@
 package com.vvts.traffic_congestion.service.impl;
 
+import com.vvts.config.AppException;
 import com.vvts.dto.traffic_congestion.TrafficForecastDataPojo;
 import com.vvts.dto.traffic_congestion.TrafficForecastRequestPojo;
 import com.vvts.traffic_congestion.service.TrainingService;
@@ -31,8 +32,9 @@ public class TrainingServiceImpl implements TrainingService {
     private final ImageUtils imageUtils;
     private final ImageValidation imageValidation;
     private HashMap allLocationTraffic = new HashMap();
-    private Vector<LocationTraffic> locationTrafficVector = new Vector<>();
+    private ArrayList<LocationTraffic> locationTrafficVector = new ArrayList<>();
     private final FileAppender fileAppender;
+    private final StringBuilder logs = new StringBuilder();
 
     static int convertToDay(String date) {
         // 04/02/2017
@@ -72,7 +74,7 @@ public class TrainingServiceImpl implements TrainingService {
             in.close();
             fileInputStream.close();
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+            throw new AppException(e.getMessage());
         }
         int trainRows = (int) (totrec.size() * 0.80);
         try {
@@ -144,14 +146,14 @@ public class TrainingServiceImpl implements TrainingService {
                 c++;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new AppException(e.getMessage());
         }
-        return true;
+        return logs;
     }
 
     @Override
     public void analyzeKNN(Integer kValue) {
-        locationTrafficVector = new Vector<>();
+        locationTrafficVector = new ArrayList<>();
         Collection ct = allLocationTraffic.values();
         Iterator it = ct.iterator();
         while (it.hasNext()) {
@@ -231,7 +233,6 @@ public class TrainingServiceImpl implements TrainingService {
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
             String strLine;
-            int count = 0;
             //Read File Line By Line
             while ((strLine = br.readLine()) != null) {
                 writeTrainDataIntoLog("Trying to predict for " + strLine);
@@ -267,14 +268,20 @@ public class TrainingServiceImpl implements TrainingService {
             fstream.close();
 
         } catch (Exception ex) {
-            ex.printStackTrace();
+            throw new AppException(ex.getMessage());
         }
         return trafficForecastDataList;
     }
 
     @Override
+    public Object getTrafficCongestionLogs() {
+        return logs;
+    }
+
+    @Override
     public void writeTrainDataIntoLog(String content) {
         log.info("logs----------------:::::" + content);
+        logs.append(content);
     }
 
     private String getFilePath(MultipartFile file) throws IOException {
