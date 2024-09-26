@@ -264,7 +264,8 @@ public class TrafficCongestionServiceImpl implements TrafficCongestionService {
                 TrafficForecastDataPojo trafficForecastData = new TrafficForecastDataPojo();
                 trafficForecastData.setLatitude(parts[0]);
                 trafficForecastData.setLongitude(parts[1]);
-                double res = predictTraffic(strLine, d, timeInterval);
+                String location = parts[0] + "#" + parts[1];
+                double res = predictTraffic(location, d, timeInterval);
                 trafficForecastData.setTraffic((int) res);
 
                 trafficForecastDataList.add(trafficForecastData);

@@ -29,7 +29,9 @@ VALUES (1, true, 'A-Dashboard'),
        (7, true, 'U-Dashboard'),
        (8, true, 'Process Tax'),
        (9, true, 'Add New Vehicle'),
-       (10, true, 'User List');
+       (10, true, 'User List'),
+       (11, true, 'Traffic Congestion'),
+;
 
 /*
  insert role mapping public user
@@ -46,7 +48,8 @@ VALUES (6, true, 2, 1),
        (9, true, 2, 4),
        (10, true, 2, 5),
        (11, true, 2, 6),
-       (12, true, 2, 10);
+       (12, true, 2, 10),
+       (13, true, 2, 11);
 /*
  basic module insert
  */
@@ -59,5 +62,5 @@ VALUES (6, true, 2, 1),
 
 INSERT INTO public.users (id, address, citizenship_back_url, citizenship_font_url, citizenship_no, email, is_enable,
                           is_new_kyc_request, mobile_number, name, password, profile_image_url, role_id)
-VALUES (1, null, null, null, null, 'dotm@gmail.com', true, null, '09234322034', 'Department of Transportation',
+VALUES (1, null, null, null, null, 'dotm@gmail.com', true, null, 'dotm@gmail.com', 'Department of Transportation',
         '$2a$10$nW3NeXp7oxjxasMiym4zJOaJbZOeUIBNYRXOIOp2EKl9sMTaSBc9e', null, 2);

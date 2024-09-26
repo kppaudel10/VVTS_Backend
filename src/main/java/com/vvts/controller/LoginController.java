@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.*;
 public class LoginController {
 
     private final JwtUserDetailsService jwtUserDetailsService;
-
     private final TokenManager tokenManager;
 
     private final AuthenticationManager authenticationManager;
@@ -78,3 +77,4 @@ public class LoginController {
 
 
 }
+
