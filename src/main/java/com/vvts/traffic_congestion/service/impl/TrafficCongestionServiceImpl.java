@@ -102,16 +102,16 @@ public class TrafficCongestionServiceImpl implements TrafficCongestionService {
 
                 LocationTraffic lt = (LocationTraffic) allLocationTraffic.get(t);
                 int day = Integer.parseInt(parts[2]);
-                int ti = Integer.parseInt(parts[3]);
-                double traff = Double.parseDouble(parts[4]);
+                int timeInterval = Integer.parseInt(parts[3]);
+                double trafficNumber = Double.parseDouble(parts[4]);
                 if (lt == null) {
                     lt = new LocationTraffic();
                     lt.location = t;
                     lt.latitude = Double.parseDouble(parts[0]);
                     lt.longitude = Double.parseDouble(parts[1]);
 
-                    if (traff > lt.allDayTraffic[day].getTrafficRate()[ti]) {
-                        lt.allDayTraffic[day].getTrafficRate()[ti] = traff;
+                    if (trafficNumber > lt.allDayTraffic[day].getTrafficRate()[timeInterval]) {
+                        lt.allDayTraffic[day].getTrafficRate()[timeInterval] = trafficNumber;
                     }
                     writeTrainDataIntoLog("Storing location <" + t + ">");
                     // storing into location
@@ -120,8 +120,8 @@ public class TrafficCongestionServiceImpl implements TrafficCongestionService {
 
                     allLocationTraffic.put(t, lt);
                 } else {
-                    if (traff > lt.allDayTraffic[day].getTrafficRate()[ti]) {
-                        lt.allDayTraffic[day].getTrafficRate()[ti] = traff;
+                    if (trafficNumber > lt.allDayTraffic[day].getTrafficRate()[timeInterval]) {
+                        lt.allDayTraffic[day].getTrafficRate()[timeInterval] = trafficNumber;
                     }
                 }
             }
